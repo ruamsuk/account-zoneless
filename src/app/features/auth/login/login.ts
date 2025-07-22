@@ -18,7 +18,7 @@ import { NgClass } from '@angular/common';
         <div class="flex justify-center">
           <img src="/images/primeng-logo.png" alt="logo">
         </div>
-        <div class="flex justify-center text-900 text-2xl font-medium my-5">
+        <div class="flex justify-center text-900 dark:text-gray-300 text-2xl font-medium my-5">
           Ruamsuk Acc.
         </div>
 
@@ -36,7 +36,7 @@ import { NgClass } from '@angular/common';
             </label>
             <input
               type="email" id="email" formControlName="email"
-              class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 border"
+              class="form-input w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 border"
               [ngClass]="email?.invalid && email?.touched ?
               ['border-red-500 focus:ring-red-500'] :
               ['border-gray-300 focus:ring-blue-500 dark:border-gray-400']" autocomplete="email">
@@ -52,7 +52,7 @@ import { NgClass } from '@angular/common';
             </label>
             <div class="relative">
               <input [type]="passwordVisible() ? 'text' : 'password'" id="password" formControlName="password"
-                     class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 border pr-10"
+                     class="form-input w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 border pr-10"
                      [ngClass]="password?.invalid && password?.touched ?
                      ['border-red-500 focus:ring-red-500'] :
                      ['border-gray-300 focus:ring-blue-500 dark:border-gray-400']" autocomplete="current-password">
@@ -127,7 +127,7 @@ import { NgClass } from '@angular/common';
           <img class="w-5 h-5 mr-3" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google logo">
           Sign in with Google
         </button>
-        <p class="text-center mt-6 text-gray-600">
+        <p class="text-center mt-6 text-gray-600 dark:text-gray-300">
           Don't have an account?
           <a routerLink="/register" class="text-blue-600 hover:underline">Sign up here</a>
         </p>

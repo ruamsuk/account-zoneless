@@ -5,11 +5,10 @@ import { ToastContainer } from './components/toast-container.component';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog';
 import { AuthService } from './services/auth.service';
 import { Header } from './layout/header';
-import { TransactionForm } from './features/transactions/transaction-form';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Loading, ToastContainer, ConfirmDialogComponent, Header, TransactionForm],
+  imports: [RouterOutlet, Loading, ToastContainer, ConfirmDialogComponent, Header],
   template: `
     <app-loading/>
     <app-toast-container/>
@@ -34,9 +33,6 @@ import { TransactionForm } from './features/transactions/transaction-form';
                   <path d="M6 18L18 6M6 6l12 12"/>
                 </svg>
               </button>
-            </div>
-            <div class="p-6">
-              <app-transaction-form (formClose)="closeModal()"></app-transaction-form>
             </div>
           </div>
         </div>

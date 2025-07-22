@@ -120,3 +120,8 @@ input:-webkit-autofill:active {
 .dropdown-item {
   @apply block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600;
 }
+
+.form-radio {
+  @apply h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500;
+}
+
