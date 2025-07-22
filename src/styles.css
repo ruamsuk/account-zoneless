@@ -1,1 +1,122 @@
 /* You can add global styles to this file, and also import other style files */
+@import url('https://fonts.googleapis.com/css2?family=Pattaya&family=Thasadith&family=Sarabun&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Charmonman:wght@400;700&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
+@import "tailwindcss";
+
+@reference "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@font-face {
+  font-family: 'Leelawadee UI';
+  src: url('./assets/fonts/LeelUIsl.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@theme {
+  --font-sarabun: Sarabun, sans-serif;
+  --font-thasadith: Thasadith, sans-serif;
+  --font-leera: 'Leelawadee UI', sans-serif;
+  --toast-message-font-size: 1.125rem;
+  --toast-message-font-style: italic;
+}
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background-image: url('/public/images/1001.jpg'); /* <-- แก้ชื่อไฟล์ตามจริง */
+  background-size: cover;
+  background-position: center center;
+  background-attachment: fixed; /* ทำให้พื้นหลังอยู่กับที่ตอน scroll */
+}
+
+body {
+  font-family: var(--font-sarabun), sans-serif;
+  font-size: 1rem;
+}
+
+/* Add your custom styles here */
+button {
+  cursor: pointer;
+
+  &:disabled {
+    cursor: not-allowed;
+  }
+}
+
+/* === Autofill Style Override for Dark Mode === */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+  /* ใช้ค่าสี Hex Code โดยตรง (สีเทา-700 ของ Tailwind) */
+  -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
+
+  /* ใช้ค่าสี Hex Code โดยตรง (สีขาว) */
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+.btn-disabled {
+  @apply py-2 px-3 bg-indigo-400 text-slate-300 rounded-lg opacity-45 cursor-not-allowed;
+}
+
+.loading-shade {
+  @apply fixed inset-0 bg-black/50 z-[9999999] flex items-center justify-center;
+}
+
+/* สร้าง custom style สำหรับ form elements เพื่อใช้ซ้ำ */
+.form-label {
+  @apply block text-gray-600 font-medium mb-2 dark:text-gray-300;
+}
+
+.form-input {
+  @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-300 disabled:opacity-50;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-300 transition duration-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500;
+}
+
+.btn-icon-round {
+  @apply p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200;
+}
+
+.btn-secondary-sm {
+  @apply bg-gray-200 text-gray-700 text-sm font-bold py-1.5 px-3 rounded-md hover:bg-gray-300 transition dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500;
+}
+
+.mobile-menu-item {
+  @apply block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700;
+}
+
+.form-error {
+  @apply text-red-600 text-sm mt-1;
+}
+
+/* Tailwind CSS styles for various components */
+.nav-link {
+  @apply px-3 py-2 rounded-md text-xl font-medium text-white text-shadow-lg dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-100;
+}
+
+.btn-secondary-sm {
+  @apply px-3 py-1.5 text-sm font-semibold text-white bg-red-600 rounded-md shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-red-600;
+}
+
+.btn-icon-round {
+  @apply p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700;
+}
+
+.mobile-menu-item {
+  @apply block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700;
+}
+
+.dropdown-item {
+  @apply block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600;
+}

@@ -1,59 +1,52 @@
-# AccountZoneless
+# โปรเจกต์ระบบบัญชีรายรับ-รายจ่าย (Account-Zoneless)
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.1.
+โปรเจกต์ส่วนตัวสำหรับพัฒนาระบบบัญชีรายรับ-รายจ่ายที่ทันสมัย สร้างขึ้นด้วย Angular และ Firebase โดยเน้นการใช้สถาปัตยกรรมแบบใหม่เพื่อประสิทธิภาพสูงสุด
 
-## Development server
+---
 
-To start a local development server, run:
+## ✨ คุณสมบัติหลัก (Key Features)
 
-```bash
-ng serve
-```
+* **การจัดการข้อมูล:** เพิ่ม, ลบ, แก้ไข รายการรายรับ-รายจ่าย
+* **ระบบยืนยันตัวตน:** ล็อกอินด้วย Email/Password และ Google
+* **การป้องกันสิทธิ์:** ใช้ Route Guard เพื่อจำกัดการเข้าถึงเฉพาะผู้ดูแลระบบ
+* **หน้า Dashboard:** แสดงภาพรวมและสรุปผลทางบัญชี
+* **การออกแบบที่ตอบสนอง (Responsive Design):** ใช้งานได้ดีบนทุกขนาดหน้าจอ
+* **โหมดมืด/สว่าง (Dark/Light Mode):** รองรับการสลับธีม
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 🛠️ เทคโนโลยีที่ใช้ (Tech Stack)
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+* **Frontend:**
+  * [Angular](https://angular.io/) (v20+)
+  * Standalone Components
+  * Zoneless Change Detection
+  * [Tailwind CSS](https://tailwindcss.com/) (v4+)
+* **Backend & Database:**
+  * [Firebase](https://firebase.google.com/) (Firestore, Firebase Authentication)
+* **State Management:**
+  * Angular Signals
 
-```bash
-ng generate component component-name
-```
+---
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+## 🚀 การติดตั้งและเริ่มใช้งาน (Setup & Run)
 
-```bash
-ng generate --help
-```
+1. **Clone the repository:**
+   ```bash
+   git clone [Your-Repository-URL]
+   ```
 
-## Building
+2. **Install dependencies:**
+   ```bash
+   npm install
+   ```
 
-To build the project run:
+3. **Set up Firebase:**
 
-```bash
-ng build
-```
+* สร้างไฟล์ `environment.ts` ในโฟลเดอร์ `src/environments/`
+* ใส่ Firebase config ของคุณในไฟล์นั้น
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+4. **Run the application:**
+   ```bash
+   ng serve
+   ```
