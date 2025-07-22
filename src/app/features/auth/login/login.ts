@@ -41,7 +41,7 @@ import { NgClass } from '@angular/common';
               ['border-red-500 focus:ring-red-500'] :
               ['border-gray-300 focus:ring-blue-500 dark:border-gray-400']" autocomplete="email">
 
-            @if (loginForm.get('email')?.invalid && loginForm.get('email')?.touched) {
+            @if (email?.invalid && email?.touched) {
               <p class="mt-1 text-sm text-red-600">กรุณากรอกอีเมลให้ถูกต้อง</p>
             }
           </div>
@@ -77,7 +77,7 @@ import { NgClass } from '@angular/common';
                 }
               </button>
             </div>
-            @if (loginForm.get('password')?.invalid && loginForm.get('password')?.touched) {
+            @if (password?.invalid && password?.touched) {
               <p class="mt-1 text-sm text-red-600">กรุณากรอกรหัสผ่าน</p>
             }
           </div>

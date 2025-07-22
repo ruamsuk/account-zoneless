@@ -31,6 +31,10 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('./features/auth/forgot-password').then(m => m.ForgotPassword)
+  },
+  {
     path: '',
     pathMatch: 'full',
     redirectTo: 'dashboard',
