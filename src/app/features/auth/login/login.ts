@@ -3,20 +3,21 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { NgClass } from '@angular/common';
+import { NgClass, NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   imports: [
     RouterLink,
     ReactiveFormsModule,
-    NgClass
+    NgClass,
+    NgOptimizedImage
   ],
   template: `
     <div class="min-h-screen bg-gray-100 dark:bg-gray-800 flex items-center justify-center">
       <div class="bg-white dark:bg-gray-900  p-8 rounded-xl shadow-lg w-full max-w-md">
         <div class="flex justify-center">
-          <img src="/images/primeng-logo.png" alt="logo">
+          <img ngSrc="/images/primeng-logo.png" alt="logo" height="43" width="40">
         </div>
         <div class="flex justify-center text-900 dark:text-gray-300 text-2xl font-medium my-5">
           Ruamsuk Acc.
@@ -36,7 +37,7 @@ import { NgClass } from '@angular/common';
             </label>
             <input
               type="email" id="email" formControlName="email"
-              class="form-input w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 border"
+              class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 border"
               [ngClass]="email?.invalid && email?.touched ?
               ['border-red-500 focus:ring-red-500'] :
               ['border-gray-300 focus:ring-blue-500 dark:border-gray-400']" autocomplete="email">
@@ -52,7 +53,7 @@ import { NgClass } from '@angular/common';
             </label>
             <div class="relative">
               <input [type]="passwordVisible() ? 'text' : 'password'" id="password" formControlName="password"
-                     class="form-input w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 border pr-10"
+                     class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 border pr-10"
                      [ngClass]="password?.invalid && password?.touched ?
                      ['border-red-500 focus:ring-red-500'] :
                      ['border-gray-300 focus:ring-blue-500 dark:border-gray-400']" autocomplete="current-password">
@@ -124,7 +125,8 @@ import { NgClass } from '@angular/common';
 
         <button (click)="googleSignIn()" [disabled]="loading()"
                 class="w-full inline-flex justify-center items-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-200 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50">
-          <img class="w-5 h-5 mr-3" src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google logo">
+          <img class="w-5 h-5 mr-3" height="20" width="20" ngSrc="https://www.svgrepo.com/show/475656/google-color.svg"
+               alt="Google logo">
           Sign in with Google
         </button>
         <p class="text-center mt-6 text-gray-600 dark:text-gray-300">
@@ -197,7 +199,7 @@ export class Login {
       .then(() => {
         this.loading.set(false);
         this.toastService.show('Success', 'Login successful!', 'success');
-        this.router.navigate(['/accounts']);
+        this.router.navigate(['/accounts']).then();
       })
       .catch(error => {
         // ++ จัดการ error ที่เราโยนมาจาก service ++

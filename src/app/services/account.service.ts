@@ -34,7 +34,7 @@ export class AccountService {
    *  1. Add a new account to Firestore
    *  2. Accept an account object without id
    *  3. Set create and modify dates to the current date
-   *  4. Use ?? false to set default value for isInCome if not provided
+   *  4. Use ?? false to set the default value for isInCome if not provided
    *  5. Return an observable of the add operation
    * */
   addAccount(account: Omit<Account, 'id'>) {

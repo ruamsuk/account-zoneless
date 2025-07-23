@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountService } from '../../services/account.service';
 import { Account } from '../../models/account.model';
@@ -49,11 +49,13 @@ import { Account } from '../../models/account.model';
   styles: ``
 })
 export class AccountForm implements OnInit {
-  @Output() formClose = new EventEmitter<void>();
-
   private fb = inject(FormBuilder);
-  private accountService = inject(AccountService); // <-- ใช้ service ใหม่
+  // 👇 ใช้ EventEmitter เพื่อส่งข้อมูลกลับไปยัง parent component
+  @Output() formClose = new EventEmitter<void>();
+  // 👇 ใช้ Input เพื่อรับข้อมูลบัญชีที่จะแก้ไขจาก parent component
+  @Input() accountToEdit!: Account | null;
 
+  private accountService = inject(AccountService); // <-- ใช้ service ใหม่
   accountForm!: FormGroup;
 
   ngOnInit(): void {

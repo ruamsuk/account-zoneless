@@ -1,10 +1,10 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, computed, EventEmitter, inject, Output, Signal, signal } from '@angular/core';
 import { AccountService } from '../../services/account.service';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { LoadingService } from '../../services/loading.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { catchError, finalize, Observable, tap, throwError } from 'rxjs';
+import { catchError, Observable, tap, throwError } from 'rxjs';
 import { ToastService } from '../../services/toast.service';
 import { Account } from '../../models/account.model';
 
@@ -28,7 +28,7 @@ import { Account } from '../../models/account.model';
     <div class="p-4 sm:p-6 lg:p-8">
       <div class="flex justify-between items-center mb-6">
         <h1 class="text-4xl font-bold text-white text-shadow">Dashboard</h1>
-        <button (click)="openModal()" class="btn-primary inline-flex items-center">
+        <button (click)="requestOpenModal.emit()" class="btn-primary inline-flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
             <path fill-rule="evenodd"
                   d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
@@ -62,7 +62,7 @@ import { Account } from '../../models/account.model';
             </tr>
             </thead>
             <tbody>
-              @for (acc of accounts(); track acc.id) {
+              @for (acc of paginateAccounts(); track acc.id) {
                 <tr class="border-b dark:border-gray-700 hover:bg-white/50 dark:hover:bg-black/50 dark:text-gray-200">
                   <td class="p-3" [ngClass]="acc.isInCome ? ['text-green-400'] : ['']">{{ acc.date | thaiDate }}</td>
                   <td class="p-3" [ngClass]="acc.isInCome ? ['text-green-400'] : ['']">{{ acc.details }}</td>
@@ -87,7 +87,7 @@ import { Account } from '../../models/account.model';
                                 d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                         </svg>
                       </button>
-                      <button title="แก้ไข" class="btn-icon text-amber-400">
+                      <button (click)="onEdit(acc)" title="แก้ไข" class="btn-icon text-amber-400">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/>
@@ -103,9 +103,32 @@ import { Account } from '../../models/account.model';
                   </td>
                 </tr>
               } @empty {
+                <div class="bg-white p-8 rounded-xl shadow-lg text-center dark:bg-gray-800">
+                  <p class="w-full text-gray-500 dark:text-gray-400">ไม่พบข้อมูลบัญชี</p>
+                </div>
               }
             </tbody>
           </table>
+          <!-- Pagination -->
+          @if (totalPages() > 1) {
+            <div class="mt-6 flex items-center justify-between">
+              <button (click)="firstPage()" [disabled]="currentPage() === 1"
+                      class="btn-secondary" title="หน้าแรก">«
+              </button>
+              <button (click)="previousPage()" [disabled]="currentPage() === 1"
+                      class="btn-secondary" title="หน้าก่อนหน้า">‹
+              </button>
+              <span class="text-gray-700 dark:text-gray-300">
+                หน้า {{ currentPage() }} ของ {{ totalPages() }}
+              </span>
+              <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
+                      class="btn-secondary" title="หน้าถัดไป">›
+              </button>
+              <button (click)="lastPage()" [disabled]="currentPage() === totalPages()"
+                      class="btn-secondary" title="หน้าสุดท้าย">»
+              </button>
+            </div>
+          }
         </div>
       </div>
     </div>
@@ -113,7 +136,11 @@ import { Account } from '../../models/account.model';
   styles: ``
 })
 export class Dashboard {
-  isModalOpen = signal(false);
+  @Output() requestOpenModal = new EventEmitter<void>();
+  @Output() requestEditModal = new EventEmitter<Account>();
+
+  currentPage = signal(1);
+  itemsPerPage = signal(9);
 
   private accountService = inject(AccountService);
   private loadingService = inject(LoadingService);
@@ -121,7 +148,20 @@ export class Dashboard {
 
   accounts = this.getAccounts();
 
-  private getAccounts() {
+  onEdit(account: Account): void {
+    this.requestEditModal.emit(account); // <-- เปลี่ยนจากเรียก openModal() โดยตรง
+  }
+
+  /**
+   *  1. Get all accounts from the account service
+   *  2. Use toSignal to convert the observable to signal
+   *  3. Show loading while fetching data
+   *  4. Hide loading after data is fetched
+   *  5. Handle errors and show a toast message
+   *  6. Return an initial value of an empty array
+   *  * @returns {Signal<Account[]>} - A signal containing the list of accounts
+   * */
+  private getAccounts(): Signal<Account[]> {
     this.loadingService.show(); // 👈 1. เปิด loading ก่อน
 
     return toSignal(
@@ -132,10 +172,10 @@ export class Dashboard {
           }),
           catchError((err: any) => {
             this.toastService.show('Error', 'Error loading accounts' + err.message, 'error');
+            this.loadingService.hide(); // 👈 4. ปิด loading เมื่อเกิดข้อผิดพลาด
             console.error(err);
             return throwError(() => err);
-          }),
-          finalize(() => this.loadingService.hide())
+          })
         ),
       {
         initialValue: [],
@@ -143,11 +183,37 @@ export class Dashboard {
     );
   }
 
-  openModal(): void {
-    this.isModalOpen.set(true);
+  /**
+   *  1. Paginate accounts based on the current page and items per page
+   *  2. Calculate start index based on current page
+   *  3. Return a slice of accounts for the current page
+   * */
+  paginateAccounts = computed(() => {
+    const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
+    return this.accounts().slice(startIndex, startIndex + this.itemsPerPage());
+  });
+
+  totalPages = computed(() => Math.ceil(this.accounts().length / this.itemsPerPage()));
+
+  goToPage(page: number): void {
+    if (page >= 1 && page <= this.totalPages()) this.currentPage.set(page);
   }
 
-  closeModal(): void {
-    this.isModalOpen.set(false);
+  nextPage(): void {
+    this.goToPage(this.currentPage() + 1);
   }
+
+  previousPage(): void {
+    this.goToPage(this.currentPage() - 1);
+  }
+
+  // ++ เพิ่มเมธอดใหม่สำหรับ Paginator ++
+  firstPage(): void {
+    this.goToPage(1);
+  }
+
+  lastPage(): void {
+    this.goToPage(this.totalPages());
+  }
+
 }
