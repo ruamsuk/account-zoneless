@@ -1,12 +1,18 @@
-import { Component, EventEmitter, inject, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountService } from '../../services/account.service';
 import { Account } from '../../models/account.model';
+import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
+import { ToastService } from '../../services/toast.service';
+import { NumberFormatDirective } from '../../shared/directives/number-format';
 
 @Component({
   selector: 'app-account-form',
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ThaiDatepicker,
+    NumberFormatDirective,
+    NumberFormatDirective
   ],
   template: `
     <form [formGroup]="accountForm" (ngSubmit)="onSubmit()">
@@ -19,7 +25,13 @@ import { Account } from '../../models/account.model';
 
         <div>
           <label for="amount" class="form-label">จำนวนเงิน</label>
-          <input id="amount" type="number" formControlName="amount" class="form-input">
+          <input id="amount"
+                 type="text"
+                 inputmode="decimal"
+                 formControlName="amount"
+                 class="form-input"
+                 appNumberFormat>
+          <!--<input id="amount" type="number" formControlName="amount" class="form-input">-->
         </div>
 
         <div class="flex items-center mt-4">
@@ -30,7 +42,7 @@ import { Account } from '../../models/account.model';
 
         <div>
           <label for="date" class="form-label">วันที่</label>
-          <input id="date" type="date" formControlName="date" class="form-input">
+          <app-thai-datepicker id="date" formControlName="date"></app-thai-datepicker>
         </div>
 
         <div>
@@ -48,51 +60,85 @@ import { Account } from '../../models/account.model';
   `,
   styles: ``
 })
-export class AccountForm implements OnInit {
-  private fb = inject(FormBuilder);
-  // 👇 ใช้ EventEmitter เพื่อส่งข้อมูลกลับไปยัง parent component
+export class AccountForm {
   @Output() formClose = new EventEmitter<void>();
-  // 👇 ใช้ Input เพื่อรับข้อมูลบัญชีที่จะแก้ไขจาก parent component
-  @Input() accountToEdit!: Account | null;
 
-  private accountService = inject(AccountService); // <-- ใช้ service ใหม่
-  accountForm!: FormGroup;
+  // 👇 1. เปลี่ยน @Input เป็น private property และสร้าง Setter
+  private _accountToEdit: Account | null = null;
 
-  ngOnInit(): void {
-    // 👇 ปรับฟอร์มให้ตรงกับ Interface 'Account'
-    this.accountForm = this.fb.group({
-      details: ['', Validators.required],
-      amount: [null, [Validators.required, Validators.min(0.01)]],
-      isInCome: [false, Validators.required],
-      date: [new Date().toISOString().substring(0, 10), Validators.required],
-      remark: ['']
-    });
+  @Input()
+  set accountToEdit(account: Account | null) {
+    this._accountToEdit = account;
+    // 2. ทันทีที่ได้รับข้อมูล ให้ patch ค่าลงฟอร์ม
+    if (this.accountForm && account) {
+      // 1. แปลง Timestamp เป็น Date object ก่อน
+      const jsDate = account.date ? (account.date as any).toDate() : null;
+
+      // 2. นำ Date object ที่แปลงแล้วไปใช้งาน
+      this.accountForm.patchValue({
+        ...account,
+        date: jsDate ? jsDate.toISOString().substring(0, 10) : ''
+      });
+    }
   }
+
+  get accountToEdit(): Account | null {
+    return this._accountToEdit;
+  }
+
+  private fb = inject(FormBuilder);
+  private accountService = inject(AccountService);
+  private toastService = inject(ToastService);
+
+  // 3. สร้างฟอร์มทันที ไม่ต้องรอ ngOnInit
+  accountForm: FormGroup = this.fb.group({
+    details: ['', Validators.required],
+    amount: [null, [Validators.required, Validators.min(0.01)]],
+    isInCome: [false, Validators.required],
+    date: [new Date().toISOString().substring(0, 10), Validators.required],
+    remark: ['']
+  });
 
   onSubmit(): void {
     if (this.accountForm.invalid) return;
 
     const formData = this.accountForm.value;
 
-    // 👇 แปลงข้อมูล amount ให้เป็น number ที่นี่
-    const amountAsNumber = typeof formData.amount === 'string'
-      ? parseFloat(formData.amount)
-      : formData.amount;
+    if (this.accountToEdit) {
+      const updatedData: Account = {
+        ...this.accountToEdit,
+        ...formData,
+        date: new Date(formData.date),
+      };
+      this.accountService.updateAccount(updatedData)
+        .then(() => {
+          this.toastService.show('Success', 'อัปเดตข้อมูลเรียบร้อย', 'success');
+          this.formClose.emit();
+        })
+        .catch(err => this.toastService.show('Error', 'ไม่สามารถอัปเดตข้อมูลได้', 'error'));
+    } else {
+      // แปลงค่า amount เป็นตัวเลขก่อนบันทึก
+      const amountAsNumber = typeof formData.amount === 'string'
+        ? parseFloat(formData.amount)
+        : formData.amount;
 
-    const accountData: Omit<Account, 'id'> = {
-      details: formData.details,
-      amount: amountAsNumber, // <-- ใช้ค่าที่แปลงแล้ว
-      isInCome: formData.isInCome,
-      date: new Date(formData.date),
-      remark: formData.remark
-    };
-
-    this.accountService.addAccount(accountData)
-      .then(() => {
-        console.log('Account added successfully!');
-        this.formClose.emit();
-      })
-      .catch(error => console.error('Error adding account: ', error));
+      const accountData: Omit<Account, 'id'> = {
+        details: formData.details,
+        amount: amountAsNumber, // <-- ใช้ค่าที่แปลงแล้ว
+        isInCome: formData.isInCome,
+        date: new Date(formData.date),
+        remark: formData.remark
+      };
+      this.accountService.addAccount(accountData)
+        .then(() => {
+          this.toastService.show('Success', 'Account added successfully!', 'success');
+          this.formClose.emit();
+        })
+        .catch(error => {
+          this.toastService.show('Error', 'ไม่สามารถเพิ่มข้อมูลได้', 'error');
+          console.error('Error adding account: ', error);
+        });
+    }
   }
 
   onCancel(): void {

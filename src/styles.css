@@ -125,3 +125,8 @@ input:-webkit-autofill:active {
   @apply h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500;
 }
 
+.btn-nav {
+  @apply p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600;
+}
+
+

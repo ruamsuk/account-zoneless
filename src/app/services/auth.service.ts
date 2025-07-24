@@ -34,7 +34,7 @@ import { ToastService } from './toast.service';
 
 // ++ สร้าง Interface สำหรับข้อมูล User ของเรา ++
 export interface AppUser extends User {
-  role?: 'admin' | 'member' | 'user';
+  role?: 'admin' | 'manager' | 'member' | 'user';
 }
 
 @Injectable({

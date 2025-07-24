@@ -1,5 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { Loading } from './shared/loading';
 import { ToastContainer } from './components/toast-container.component';
 import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog';
@@ -7,10 +7,19 @@ import { AuthService } from './services/auth.service';
 import { Header } from './layout/header';
 import { AccountForm } from './features/accounts/account-form';
 import { Account } from './models/account.model';
+import { AccountDetail } from './features/accounts/account-detail';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, Loading, ToastContainer, ConfirmDialogComponent, Header, AccountForm],
+  imports: [
+    RouterOutlet,
+    Loading,
+    ToastContainer,
+    ConfirmDialogComponent,
+    Header,
+    AccountForm,
+    AccountDetail
+  ],
   template: `
     <app-loading/>
     <app-toast-container/>
@@ -29,7 +38,7 @@ import { Account } from './models/account.model';
         <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg">
             <div class="flex justify-between items-center p-4 border-b dark:border-gray-700">
-              <h3 class="text-xl font-semibold">
+              <h3 class="text-xl font-thasadith text-gray-300 font-semibold">
                 {{ editingAccount() ? 'แก้ไขรายการ' : 'เพิ่มรายการใหม่' }}
               </h3>
               <button (click)="closeModal()" class="btn-icon-round">
@@ -44,7 +53,24 @@ import { Account } from './models/account.model';
           </div>
         </div>
       }
-
+      @if (isDetailModalOpen()) {
+        <div class="fixed inset-0 bg-black/60 z-40" (click)="closeDetailModal()"></div>
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg">
+            <div class="flex justify-between items-center p-4 border-b dark:border-gray-700">
+              <h3 class="text-xl font-thasadith text-gray-800 dark:text-gray-100 font-semibold">รายละเอียดรายการ</h3>
+              <button (click)="closeDetailModal()" class="btn-icon-round">
+                <svg class="w-6 h-6">
+                  <path d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              </button>
+            </div>
+            <div class="p-6">
+              <app-account-detail [account]="viewingAccount()" (close)="closeDetailModal()"></app-account-detail>
+            </div>
+          </div>
+        </div>
+      }
     } @else {
       <router-outlet></router-outlet>
     }
@@ -54,17 +80,17 @@ import { Account } from './models/account.model';
 })
 export class App {
   public authService = inject(AuthService);
-  private router = inject(Router);
 
   editingAccount = signal<Account | null>(null); // Signal สำหรับส่งข้อมูลไปแก้ไข
   isModalOpen = signal(false);
+  isDetailModalOpen = signal(false);
+  viewingAccount = signal<Account | null>(null);
 
   onActivate(component: any) {
     // เช็คว่า component ที่โหลดมี event ที่ชื่อ requestOpenModal หรือไม่
     if (component.requestOpenModal) {
-      // ถ้ามี ให้ subscribe เพื่อรอรับ event
-      component.requestOpenModal.subscribe(() => {
-        this.editingAccount.set(null); // เคลียร์ข้อมูลเก่า
+      component.requestEditModal.subscribe((account: Account) => {
+        this.editingAccount.set(account);
         this.openModal();
       });
     }
@@ -73,6 +99,13 @@ export class App {
       component.requestEditModal.subscribe((account: Account) => {
         this.editingAccount.set(account); // รับข้อมูลที่จะแก้ไข
         this.openModal();
+      });
+    }
+
+    if (component.requestViewModal) {
+      component.requestViewModal.subscribe((account: Account) => {
+        this.viewingAccount.set(account);
+        this.isDetailModalOpen.set(true);
       });
     }
   }
@@ -85,9 +118,7 @@ export class App {
     this.isModalOpen.set(false);
   }
 
-  logout() {
-    this.authService.logout().then(() => {
-      this.router.navigate(['/auth/login']).then();
-    });
+  closeDetailModal(): void {
+    this.isDetailModalOpen.set(false);
   }
 }

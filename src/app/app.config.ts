@@ -8,6 +8,10 @@ import { getAuth, provideAuth } from '@angular/fire/auth';
 import { getFirestore, provideFirestore } from '@angular/fire/firestore';
 import { getStorage, provideStorage } from '@angular/fire/storage';
 import { environment } from '../environments/environment';
+import { registerLocaleData } from '@angular/common';
+import localeTh from '@angular/common/locales/th';
+
+registerLocaleData(localeTh);
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -19,5 +23,9 @@ export const appConfig: ApplicationConfig = {
     provideAuth(() => getAuth()),
     provideFirestore(() => getFirestore()),
     provideStorage(() => getStorage()),
+    {
+      provide: 'LOCALE_ID',
+      useValue: 'th-TH'
+    }
   ]
 };

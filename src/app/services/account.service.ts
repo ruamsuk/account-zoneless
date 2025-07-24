@@ -49,7 +49,14 @@ export class AccountService {
 
   }
 
-  updateAccount(account: Account) {
+  /**
+   *  1. Update an existing account in Firestore
+   *  2. Accept an account object with id
+   *  3. Remove the id from the data to update
+   *  4. Set modify date to the current date
+   *  5. Return a promise of the update operation
+   * */
+  updateAccount(account: Account): Promise<void> {
     const accountDocRef = doc(this.firestore, `accounts/${account.id}`);
     const {id, ...data} = account;
     // อัปเดต modify date
@@ -60,7 +67,12 @@ export class AccountService {
     return updateDoc(accountDocRef, dataToUpdate);
   }
 
-  deleteAccount(id: string) {
+  /**
+   *  1. Delete an account from Firestore
+   *  2. Accept the id of the account to delete
+   *  3. Return a promise of the delete operation
+   * */
+  deleteAccount(id: string): Promise<void> {
     const accountDocRef = doc(this.firestore, `accounts/${id}`);
     return deleteDoc(accountDocRef);
   }
