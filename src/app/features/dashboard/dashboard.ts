@@ -100,13 +100,13 @@ import { AuthService } from '../../services/auth.service';
             <tbody>
               @for (acc of paginateAccounts(); track acc.id) {
                 <tr class="border-b dark:border-gray-700 hover:bg-white/50 dark:hover:bg-black/50 dark:text-gray-200">
-                  <td class="p-3" [ngClass]="acc.isInCome ? ['text-green-400'] : ['']">{{ acc.date | thaiDate }}</td>
-                  <td class="p-3" [ngClass]="acc.isInCome ? ['text-green-400'] : ['']">{{ acc.details }}</td>
+                  <td class="p-3" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.date | thaiDate }}</td>
+                  <td class="p-3" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.details }}</td>
                   <td class="p-3 text-right font-medium"
                       [ngClass]="acc.isInCome ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-500']">
                     {{ acc.isInCome ? '+' : '-' }} {{ acc.amount | number:'1.2-2' }}
                   </td>
-                  <td class="pl-10 text-left">{{ acc.remark }}</td>
+                  <td class="pl-10 text-left" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.remark }}</td>
 
                   <td class="p-3 font-medium text-green-600 dark:text-green-400">
                     @if (acc.isInCome) {

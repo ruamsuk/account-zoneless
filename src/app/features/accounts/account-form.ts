@@ -31,13 +31,12 @@ import { NumberFormatDirective } from '../../shared/directives/number-format';
                  formControlName="amount"
                  class="form-input"
                  appNumberFormat>
-          <!--<input id="amount" type="number" formControlName="amount" class="form-input">-->
         </div>
 
         <div class="flex items-center mt-4">
           <input id="isInCome" type="checkbox" formControlName="isInCome"
                  class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-          <label for="isInCome" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">เป็นรายการรายรับ</label>
+          <label for="isInCome" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">เป็นรายรับ</label>
         </div>
 
         <div>
@@ -115,7 +114,7 @@ export class AccountForm {
           this.toastService.show('Success', 'อัปเดตข้อมูลเรียบร้อย', 'success');
           this.formClose.emit();
         })
-        .catch(err => this.toastService.show('Error', 'ไม่สามารถอัปเดตข้อมูลได้', 'error'));
+        .catch(err => this.toastService.show('Error', 'ไม่สามารถอัปเดตข้อมูลได้' + err, 'error'));
     } else {
       // แปลงค่า amount เป็นตัวเลขก่อนบันทึก
       const amountAsNumber = typeof formData.amount === 'string'

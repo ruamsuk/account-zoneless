@@ -118,7 +118,7 @@ input:-webkit-autofill:active {
 }
 
 .dropdown-item {
-  @apply block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600;
+  @apply block px-4 py-2 text-base text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600;
 }
 
 .form-radio {
@@ -126,7 +126,7 @@ input:-webkit-autofill:active {
 }
 
 .btn-nav {
-  @apply p-1 rounded-full hover:bg-gray-200 dark:hover:bg-gray-600;
+  @apply p-1 rounded-full text-gray-800 dark:text-gray-200  hover:bg-gray-200 dark:hover:bg-gray-600;
 }
 
 

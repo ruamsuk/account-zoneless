@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnDestroy, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Loading } from './shared/loading';
 import { ToastContainer } from './components/toast-container.component';
@@ -8,6 +8,7 @@ import { Header } from './layout/header';
 import { AccountForm } from './features/accounts/account-form';
 import { Account } from './models/account.model';
 import { AccountDetail } from './features/accounts/account-detail';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -78,8 +79,9 @@ import { AccountDetail } from './features/accounts/account-detail';
   `,
   styles: [],
 })
-export class App {
+export class App implements OnDestroy {
   public authService = inject(AuthService);
+  private componentSubscription: Subscription | undefined;
 
   editingAccount = signal<Account | null>(null); // Signal สำหรับส่งข้อมูลไปแก้ไข
   isModalOpen = signal(false);
@@ -87,26 +89,45 @@ export class App {
   viewingAccount = signal<Account | null>(null);
 
   onActivate(component: any) {
+    if (this.componentSubscription) {
+      this.componentSubscription.unsubscribe();
+    }
+
+    this.componentSubscription = new Subscription();
+
     // เช็คว่า component ที่โหลดมี event ที่ชื่อ requestOpenModal หรือไม่
     if (component.requestOpenModal) {
-      component.requestEditModal.subscribe((account: Account) => {
-        this.editingAccount.set(account);
-        this.openModal();
-      });
+      this.componentSubscription.add(
+        component.requestOpenModal.subscribe(() => {
+          this.editingAccount.set(null);
+          this.openModal();
+        })
+      );
     }
     // เพิ่มการเชื่อม event สำหรับการแก้ไข
     if (component.requestEditModal) {
-      component.requestEditModal.subscribe((account: Account) => {
-        this.editingAccount.set(account); // รับข้อมูลที่จะแก้ไข
-        this.openModal();
-      });
+      this.componentSubscription.add(
+        component.requestEditModal.subscribe((account: Account) => {
+          this.editingAccount.set(account);
+          this.openModal();
+        })
+      );
     }
 
     if (component.requestViewModal) {
-      component.requestViewModal.subscribe((account: Account) => {
-        this.viewingAccount.set(account);
-        this.isDetailModalOpen.set(true);
-      });
+      this.componentSubscription.add(
+        component.requestViewModal.subscribe((account: Account) => {
+          this.viewingAccount.set(account);
+          this.isDetailModalOpen.set(true);
+        })
+      );
+    }
+
+  }
+
+  ngOnDestroy(): void {
+    if (this.componentSubscription) {
+      this.componentSubscription.unsubscribe();
     }
   }
 

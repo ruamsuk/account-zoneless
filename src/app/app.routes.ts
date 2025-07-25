@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { canActivate, redirectLoggedInTo, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
+import { adminGuard } from './features/auth/admin-guard';
 
 const redirectUnauthorizedToLogin = () =>
   redirectUnauthorizedTo(['auth/login']);
@@ -32,7 +33,14 @@ export const routes: Routes = [
   },
   {
     path: 'forgot-password',
-    loadComponent: () => import('./features/auth/forgot-password').then(m => m.ForgotPassword)
+    loadComponent: () => import('./features/auth/forgot-password')
+      .then(m => m.ForgotPassword)
+  },
+  {
+    path: 'reports/date-range',
+    loadComponent: () => import('./features/reports/date-range-report')
+      .then(m => m.DateRangeReport),
+    canActivate: [adminGuard]
   },
   {
     path: '',

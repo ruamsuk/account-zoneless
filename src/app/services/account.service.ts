@@ -8,7 +8,8 @@ import {
   Firestore,
   orderBy,
   query,
-  updateDoc
+  updateDoc,
+  where
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Account } from '../models/account.model';
@@ -27,6 +28,30 @@ export class AccountService {
    * */
   getAccounts(): Observable<Account[]> {
     const q = query(this.accountsCollection, orderBy('date', 'desc'));
+    return collectionData(q, {idField: 'id'}) as Observable<Account[]>;
+  }
+
+  /**
+   *  1. Get accounts by date range from Firestore
+   *  2. Accept start and end dates as parameters
+   *  3. Use where to filter accounts within the date range
+   *  4. Order by date in ascending order
+   *  5. Return an observable of the accounts
+   * */
+  getAccountsByDateRange(startDate: Date, endDate: Date): Observable<Account[]> {
+    // 1. สร้าง "วันถัดไป" จากวันที่สิ้นสุด
+    const nextDay = new Date(endDate);
+    nextDay.setDate(nextDay.getDate() + 1);
+    // ทำให้เวลาเป็นเที่ยงคืนของวันถัดไป
+    nextDay.setHours(0, 0, 0, 0);
+
+    const q = query(
+      this.accountsCollection,
+      where('date', '>=', startDate),
+      // 2. เปลี่ยนเงื่อนไขเป็น "น้อยกว่า" (<) วันถัดไป
+      where('date', '<', nextDay),
+      orderBy('date', 'asc')
+    );
     return collectionData(q, {idField: 'id'}) as Observable<Account[]>;
   }
 

@@ -1,5 +1,5 @@
 import { Component, forwardRef } from '@angular/core';
-import { NG_VALUE_ACCESSOR } from '@angular/forms';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { NgClass } from '@angular/common';
 
 @Component({
@@ -32,7 +32,7 @@ import { NgClass } from '@angular/common';
               class="font-semibold text-gray-800 dark:text-gray-200">{{ MONTH_NAMES[month] }} {{ year + 543 }}</span>
             <button type="button" (click)="changeMonth(1)" class="btn-nav">&gt;</button>
           </div>
-          <div class="grid grid-cols-7 text-center text-sm text-gray-300 dark:text-gray-200 mb-1">
+          <div class="grid grid-cols-7 text-center text-xs text-gray-500 dark:text-gray-400 mb-1">
             @for (day of DAYS; track day) {
               <div>{{ day }}</div>
             }
@@ -42,11 +42,10 @@ import { NgClass } from '@angular/common';
               <div></div>
             }
             @for (day of no_of_days; track day) {
-              <div class="text-center p-1 text-gray-200">
+              <div class="text-center p-1">
                 <div (click)="getDateValue(day)"
                      class="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full text-sm"
-                     [ngClass]="isToday(day) ? ['bg-blue-500 text-white'] : ['hover:bg-gray-200 dark:hover:bg-gray-600']"
-                >
+                     [ngClass]="isToday(day) ? ['bg-blue-500 text-white'] : ['hover:bg-gray-200 dark:hover:bg-gray-600']">
                   {{ day }}
                 </div>
               </div>
@@ -58,7 +57,7 @@ import { NgClass } from '@angular/common';
   `,
   styles: ``
 })
-export class ThaiDatepicker {
+export class ThaiDatepicker implements ControlValueAccessor {
   MONTH_NAMES = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
   DAYS = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
 
@@ -107,12 +106,16 @@ export class ThaiDatepicker {
   }
 
   getDateValue(day: number) {
-    // สร้าง Date object ด้วยปี ค.ศ.
     const selectedDate = new Date(this.year, this.month, day);
     this.displayValue = this.formatDisplay(selectedDate);
+    this.onTouch();
 
     // ส่งค่า YYYY-MM-DD (ค.ศ.) กลับไปให้ Form
-    this.onChange(selectedDate.toISOString().substring(0, 10));
+    const year = selectedDate.getFullYear();
+    const month = ('0' + (selectedDate.getMonth() + 1)).slice(-2); // +1 เพราะ getMonth() เริ่มจาก 0
+    const date = ('0' + selectedDate.getDate()).slice(-2);
+    const formattedString = `${year}-${month}-${date}`;
+    this.onChange(formattedString);
 
     this.showDatepicker = false;
   }
