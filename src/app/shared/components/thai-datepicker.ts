@@ -1,12 +1,9 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, computed, forwardRef, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-thai-datepicker',
-  imports: [
-    NgClass
-  ],
+  imports: [],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -15,40 +12,61 @@ import { NgClass } from '@angular/common';
     }
   ],
   template: `
-    <div class="relative w-full">
-      <input
-        type="text"
-        readonly
-        (click)="toggleDatepicker()"
-        [value]="displayValue"
-        placeholder="เลือกวันที่"
-        class="form-input cursor-pointer">
+    <div class="relative">
+      <!-- ==================== DATE SELECTOR VIEW ==================== -->
+      @if (!isYearPickerOpen()) {
+        <div class="flex gap-2">
+          <!-- Dropdown สำหรับ "วัน" -->
+          <select [disabled]="disabled()" (change)="onDayChange($event)" [value]="selectedDay() || ''"
+                  class="form-select">
+            <option value="" disabled>-- วัน --</option>
+            @for (day of daysInMonth(); track day) {
+              <option [value]="day">{{ day }}</option>
+            }
+          </select>
 
-      @if (showDatepicker) {
-        <div class="absolute top-full mt-2 w-72 bg-white dark:bg-gray-700 rounded-lg shadow-lg p-4 z-50">
-          <div class="flex justify-between items-center mb-2">
-            <button type="button" (click)="changeMonth(-1)" class="btn-nav">&lt;</button>
-            <span
-              class="font-semibold text-gray-800 dark:text-gray-200">{{ MONTH_NAMES[month] }} {{ year + 543 }}</span>
-            <button type="button" (click)="changeMonth(1)" class="btn-nav">&gt;</button>
-          </div>
-          <div class="grid grid-cols-7 text-center text-xs text-gray-500 dark:text-gray-400 mb-1">
-            @for (day of DAYS; track day) {
-              <div>{{ day }}</div>
+          <!-- Dropdown สำหรับ "เดือน" -->
+          <select [disabled]="disabled()" (change)="onMonthChange($event)" [value]="selectedMonth() ?? ''"
+                  class="form-select">
+            <option value="" disabled>-- เดือน --</option>
+            @for (month of months; track month.value) {
+              <option [value]="month.value">{{ month.name }}</option>
             }
+          </select>
+
+          <!-- ++ ปุ่มสำหรับเปิด Year Picker ++ -->
+          <button type="button" [disabled]="disabled()" (click)="toggleYearPicker()"
+                  class="form-select text-left w-full">
+            {{ selectedYear() || '-- ปี พ.ศ. --' }}
+          </button>
+        </div>
+      }
+
+      <!-- ==================== YEAR PICKER VIEW ==================== -->
+      @if (isYearPickerOpen()) {
+        <div
+          class="absolute top-0 left-0 w-full bg-white dark:bg-gray-700 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-10 p-2">
+          <!-- Header for Year Navigation -->
+          <div class="flex justify-between items-center mb-2 px-2">
+            <button type="button" (click)="changeYearPickerDecade(-12)"
+                    class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600">&lt;
+            </button>
+            <span class="font-semibold text-sm">{{ yearPickerGrid()[0] }} - {{ yearPickerGrid()[11] }}</span>
+            <button type="button" (click)="changeYearPickerDecade(12)"
+                    class="p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600">&gt;
+            </button>
           </div>
-          <div class="grid grid-cols-7">
-            @for (blank of blankdays; track $index) {
-              <div></div>
-            }
-            @for (day of no_of_days; track day) {
-              <div class="text-center p-1">
-                <div (click)="getDateValue(day)"
-                     class="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full text-sm"
-                     [ngClass]="isToday(day) ? ['bg-blue-500 text-white'] : ['hover:bg-gray-200 dark:hover:bg-gray-600']">
-                  {{ day }}
-                </div>
-              </div>
+
+          <!-- Grid of Years -->
+          <div class="grid grid-cols-4 gap-1">
+            @for (year of yearPickerGrid(); track year) {
+              <button
+                type="button"
+                (click)="selectYear(year)"
+                class="year-button"
+                [class.selected]="year === selectedYear()">
+                {{ year }}
+              </button>
             }
           </div>
         </div>
@@ -58,38 +76,54 @@ import { NgClass } from '@angular/common';
   styles: ``
 })
 export class ThaiDatepicker implements ControlValueAccessor {
-  MONTH_NAMES = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-  DAYS = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+  // --- Signals สำหรับเก็บค่าที่ผู้ใช้เลือก ---
+  selectedDay = signal<number | null>(null);
+  selectedMonth = signal<number | null>(null);
+  selectedYear = signal<number | null>(null);
 
-  showDatepicker = false;
-  displayValue = ''; // ค่าที่แสดงผล (dd MMMM yyyy พ.ศ.)
+  // --- Signals และข้อมูลสำหรับสร้าง Dropdowns ---
+  daysInMonth = signal<number[]>([]);
+  readonly months = [
+    {value: 0, name: 'มกราคม'}, {value: 1, name: 'กุมภาพันธ์'},
+    {value: 2, name: 'มีนาคม'}, {value: 3, name: 'เมษายน'},
+    {value: 4, name: 'พฤษภาคม'}, {value: 5, name: 'มิถุนายน'},
+    {value: 6, name: 'กรกฎาคม'}, {value: 7, name: 'สิงหาคม'},
+    {value: 8, name: 'กันยายน'}, {value: 9, name: 'ตุลาคม'},
+    {value: 10, name: 'พฤศจิกายน'}, {value: 11, name: 'ธันวาคม'}
+  ];
 
-  // --- ค่าที่ใช้คำนวณภายใน (ทั้งหมดเป็น ค.ศ.) ---
-  date = new Date();
-  month = this.date.getMonth();
-  year = this.date.getFullYear();
-  no_of_days: number[] = [];
-  blankdays: number[] = [];
+  // ++ Signals ใหม่สำหรับ Year Picker ++
+  isYearPickerOpen = signal(false);
+  yearPickerStartYear = signal(new Date().getFullYear() + 543 - 11); // เริ่มต้นให้แสดงทศวรรษปัจจุบัน
 
-  // --- ControlValueAccessor implementation ---
-  onChange: any = () => {
+  // ++ Computed Signal ใหม่สำหรับสร้าง Grid ของปี ++
+  yearPickerGrid = computed(() => {
+    const start = this.yearPickerStartYear();
+    return Array.from({length: 12}, (_, i) => start + i); // แสดง 12 ปี (4x3 grid)
+  });
+
+  // --- Implementation ของ ControlValueAccessor ---
+  onChange: (value: Date | null) => void = () => {
   };
-  onTouch: any = () => {
+  onTouched: () => void = () => {
   };
+  disabled = signal(false);
 
-  writeValue(value: string): void {
-    if (value) {
-      this.date = new Date(value);
-      this.year = this.date.getFullYear();
-      this.month = this.date.getMonth();
-      this.displayValue = this.formatDisplay(this.date);
+  constructor() {
+    this.updateDaysInMonth();
+  }
+
+  writeValue(value: Date | null): void {
+    if (value && !isNaN(value.getTime())) {
+      this.selectedDay.set(value.getDate());
+      this.selectedMonth.set(value.getMonth());
+      this.selectedYear.set(value.getFullYear() + 543);
+      this.updateDaysInMonth();
     } else {
-      // Set to today's date if no initial value
-      this.date = new Date();
-      this.year = this.date.getFullYear();
-      this.month = this.date.getMonth();
+      this.selectedDay.set(null);
+      this.selectedMonth.set(null);
+      this.selectedYear.set(null);
     }
-    this.getNoOfDays();
   }
 
   registerOnChange(fn: any): void {
@@ -97,58 +131,78 @@ export class ThaiDatepicker implements ControlValueAccessor {
   }
 
   registerOnTouched(fn: any): void {
-    this.onTouch = fn;
+    this.onTouched = fn;
   }
 
-  // --- Component Logic ---
-  toggleDatepicker() {
-    this.showDatepicker = !this.showDatepicker;
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled.set(isDisabled);
   }
 
-  getDateValue(day: number) {
-    const selectedDate = new Date(this.year, this.month, day);
-    this.displayValue = this.formatDisplay(selectedDate);
-    this.onTouch();
-
-    // ส่งค่า YYYY-MM-DD (ค.ศ.) กลับไปให้ Form
-    const year = selectedDate.getFullYear();
-    const month = ('0' + (selectedDate.getMonth() + 1)).slice(-2); // +1 เพราะ getMonth() เริ่มจาก 0
-    const date = ('0' + selectedDate.getDate()).slice(-2);
-    const formattedString = `${year}-${month}-${date}`;
-    this.onChange(formattedString);
-
-    this.showDatepicker = false;
+  // --- เมธอดสำหรับจัดการการเปลี่ยนแปลงค่า ---
+  onDayChange(event: Event) {
+    this.selectedDay.set(Number((event.target as HTMLSelectElement).value));
+    this.updateValue();
   }
 
-  changeMonth(monthOffset: number) {
-    this.month += monthOffset;
-    if (this.month < 0) {
-      this.month = 11;
-      this.year--;
-    } else if (this.month > 11) {
-      this.month = 0;
-      this.year++;
+  onMonthChange(event: Event) {
+    this.selectedMonth.set(Number((event.target as HTMLSelectElement).value));
+    this.updateDaysInMonth();
+    this.updateValue();
+  }
+
+  // ++ เมธอดใหม่สำหรับ Year Picker ++
+  toggleYearPicker(): void {
+    if (this.disabled()) return;
+    // เมื่อเปิด picker, ให้ grid เริ่มต้นที่ปีที่ถูกเลือกอยู่ (ถ้ามี)
+    if (!this.isYearPickerOpen() && this.selectedYear()) {
+      this.yearPickerStartYear.set(this.selectedYear()! - 4); // จัดให้อยู่กลางๆ grid
     }
-    this.getNoOfDays();
+    this.isYearPickerOpen.update(value => !value);
   }
 
-  isToday(day: number): boolean {
-    const today = new Date();
-    const d = new Date(this.year, this.month, day);
-    return today.toDateString() === d.toDateString();
+  changeYearPickerDecade(amount: number): void {
+    this.yearPickerStartYear.update(year => year + amount);
   }
 
-  getNoOfDays() {
-    const daysInMonth = new Date(this.year, this.month + 1, 0).getDate();
-    const dayOfWeek = new Date(this.year, this.month).getDay();
-    this.blankdays = Array(dayOfWeek).fill(null);
-    this.no_of_days = Array.from({length: daysInMonth}, (_, i) => i + 1);
+  selectYear(year: number): void {
+    this.selectedYear.set(year);
+    this.isYearPickerOpen.set(false); // ปิด picker ทันทีที่เลือก
+    this.updateDaysInMonth();
+    this.updateValue();
   }
 
-  private formatDisplay(date: Date): string {
-    const day = date.getDate();
-    const monthName = this.MONTH_NAMES[date.getMonth()];
-    const yearBE = date.getFullYear() + 543;
-    return `${day} ${monthName} ${yearBE}`;
+  private updateDaysInMonth() {
+    const month = this.selectedMonth();
+    const yearBE = this.selectedYear();
+
+    if (month === null || yearBE === null) {
+      const days = Array.from({length: 31}, (_, i) => i + 1);
+      this.daysInMonth.set(days);
+      return;
+    }
+
+    const yearCE = yearBE - 543;
+    const daysInSelectedMonth = new Date(yearCE, month + 1, 0).getDate();
+    const days = Array.from({length: daysInSelectedMonth}, (_, i) => i + 1);
+    this.daysInMonth.set(days);
+
+    if (this.selectedDay() && this.selectedDay()! > daysInSelectedMonth) {
+      this.selectedDay.set(null);
+    }
+  }
+
+  private updateValue() {
+    this.onTouched();
+    const day = this.selectedDay();
+    const month = this.selectedMonth();
+    const year = this.selectedYear();
+
+    if (day !== null && month !== null && year !== null) {
+      const christianYear = year - 543;
+      const newDate = new Date(christianYear, month, day);
+      this.onChange(newDate);
+    } else {
+      this.onChange(null);
+    }
   }
 }
