@@ -5,18 +5,18 @@ import { Account } from '../../models/account.model';
 import { LoadingService } from '../../services/loading.service';
 import { ToastService } from '../../services/toast.service';
 import { tap } from 'rxjs';
-import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
+import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
 
 @Component({
   selector: 'app-date-range-report',
   imports: [
-    ThaiDatepicker,
     ReactiveFormsModule,
     DecimalPipe,
     NgClass,
-    ThaiDatePipe
+    ThaiDatePipe,
+    ThaiDatepicker
   ],
   template: `
     <div class="p-4 sm:p-6 lg:p-8">
