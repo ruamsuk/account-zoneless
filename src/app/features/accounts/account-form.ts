@@ -72,7 +72,7 @@ export class AccountForm {
     // 2. ทันทีที่ได้รับข้อมูล ให้ patch ค่าลงฟอร์ม
     if (this.accountForm && account) {
       // 1. แปลง Timestamp เป็น Date object ก่อน
-      const jsDate = account.date ? (account.date as any).toDate() : null;
+      // const jsDate = account.date ? (account.date as any).toDate() : null;
 
       // 2. นำ Date object ที่แปลงแล้วไปใช้งาน
       this.accountForm.patchValue({
