@@ -68,7 +68,7 @@ export class AccountForm {
   @Input()
   set accountToEdit(account: Account | null) {
     this._accountToEdit = account;
-    console.log('accountToEdit', JSON.stringify(account, null, 2));
+    // console.log('accountToEdit', JSON.stringify(account, null, 2));
     // 2. ทันทีที่ได้รับข้อมูล ให้ patch ค่าลงฟอร์ม
     if (this.accountForm && account) {
       // 1. แปลง Timestamp เป็น Date object ก่อน

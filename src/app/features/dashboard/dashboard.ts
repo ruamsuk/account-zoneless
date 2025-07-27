@@ -1,7 +1,6 @@
 import { Component, computed, EventEmitter, inject, Output, Signal, signal } from '@angular/core';
 import { AccountService } from '../../services/account.service';
 import { DatePipe, DecimalPipe, NgClass } from '@angular/common';
-import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { LoadingService } from '../../services/loading.service';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, Observable, tap, throwError } from 'rxjs';
@@ -10,42 +9,36 @@ import { Account } from '../../models/account.model';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogService } from '../../shared/services/dialog';
 import { AuthService } from '../../services/auth.service';
+import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 
 @Component({
   selector: 'app-dashboard',
   imports: [
-    NgClass,
-    ThaiDatePipe,
     DecimalPipe,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ThaiDatePipe,
+    NgClass
   ],
   providers: [DatePipe],
   template: `
-    <!--<div class="flex flex-col items-center justify-center text-center pt-24 md:pt-32">
-      <h1 class="text-5xl md:text-6xl text-white font-bold font-serif text-shadow-lg">
-        Welcome to Your Site
-      </h1>
-      <p class="mt-4 text-white/90 text-lg md:text-xl font-sans text-shadow">
-        A comprehensive solution for all your accounting needs.
-      </p>
-    </div>-->
-
     <div class="p-4 sm:p-6 lg:p-8">
       <div class="flex justify-between items-center mb-6">
-        <h1 class="text-4xl font-serif font-bold text-white text-shadow-lg">Dashboard</h1>
+        <h1 class="text-2xl md:text-4xl sm:text-base font-serif font-bold text-white text-shadow-lg">Dashboard</h1>
         <button (click)="requestOpenModal.emit()" class="btn-primary inline-flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
             <path fill-rule="evenodd"
                   d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
                   clip-rule="evenodd"/>
           </svg>
+          <span class="hidden md:inline-block">
           เพิ่มรายการ
+        </span>
         </button>
       </div>
     </div>
-    <div class="flex flex-col items-center justify-center text-center">
-      <h1 class="text-4xl md:text-5xl text-white font-bold font-serif text-shadow-lg">
+    <div class="hidden md:flex flex-col items-center justify-center text-center">
+      <h1 class="text-2xl md:text-5xl  text-white font-bold font-serif text-shadow-lg">
         Welcome to Your Site
       </h1>
       <p class="mt-4 text-white/90 text-lg md:text-xl font-sans text-shadow">
@@ -54,7 +47,7 @@ import { AuthService } from '../../services/auth.service';
     </div>
 
     <div class="p-4 sm:p-6 lg:p-8">
-      <div class="bg-white/20 dark:bg-black/20 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 max-w-6xl mx-auto">
+      <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 max-w-6xl mx-auto">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-semibold font-thasadith text-gray-800 dark:text-gray-200 mb-4">รายการล่าสุด</h2>
           <div class="md:col-span-2">
@@ -88,32 +81,48 @@ import { AuthService } from '../../services/auth.service';
         <div class="overflow-x-auto">
           <table class="min-w-full">
             <thead>
-            <tr class="border-b-2 border-gray-400 dark:border-gray-600 dark:text-gray-200">
-              <th class="p-3 text-left text-teal-100 text-lg font-semibold">วันที่</th>
-              <th class="p-3 text-left text-teal-100 text-lg font-semibold">รายการ</th>
-              <th class="p-3 text-right text-teal-100 text-lg font-semibold">จำนวนเงิน</th>
-              <th class="pl-10 text-left text-teal-100 text-lg font-semibold">หมายเหตุ</th>
-              <th class="p-3 text-left text-teal-100 text-lg font-semibold">ประเภท</th>
-              <th class="p-3 text-center text-teal-100 text-lg font-semibold">Actions</th>
+            <tr
+              class="border-b-2 text-green-600 border-gray-400 dark:border-gray-600 dark:text-green-400 font-thasadith text-xl">
+              <th class="p-3 text-left font-semibold whitespace-nowrap">
+                วันที่
+              </th>
+              <th class="p-3 text-left font-semibold whitespace-nowrap">
+                รายการ
+              </th>
+              <th class="p-3 text-right font-semibold whitespace-nowrap">
+                จำนวนเงิน
+              </th>
+              <th class="pl-10 text-left font-semibold whitespace-nowrap">
+                หมายเหตุ
+              </th>
+              <th class="pl-3 text-left font-semibold whitespace-nowrap">
+                ประเภท
+              </th>
+              <th class="p-3 text-center font-semibold whitespace-nowrap">
+                Actions
+              </th>
             </tr>
             </thead>
             <tbody>
               @for (acc of paginateAccounts(); track acc.id) {
-                <tr class="border-b dark:border-gray-700 hover:bg-white/50 dark:hover:bg-black/50 dark:text-gray-200">
-                  <td class="p-3" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.date | thaiDate }}</td>
-                  <td class="p-3" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.details }}</td>
-                  <td class="p-3 text-right font-medium"
+                <tr class="border-b text-gray-800 dark:text-teal-100 text-lg font-semibold">
+                  <td class="p-3 whitespace-nowrap"
+                      [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.date | thaiDate }}
+                  </td>
+                  <td class="p-3 whitespace-nowrap" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.details }}</td>
+                  <td class="p-3 text-right font-medium whitespace-nowrap"
                       [ngClass]="acc.isInCome ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-500']">
                     {{ acc.isInCome ? '+' : '-' }} {{ acc.amount | number:'1.2-2' }}
                   </td>
-                  <td class="pl-10 text-left" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.remark }}</td>
+                  <td class="pl-10 text-left whitespace-nowrap"
+                      [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.remark }}
+                  </td>
 
-                  <td class="p-3 font-medium text-green-600 dark:text-green-400">
+                  <td class="p-3 whitespace-nowrap font-medium text-green-600 dark:text-green-400">
                     @if (acc.isInCome) {
                       <span>รายรับ</span>
                     }
                   </td>
-
                   <td class="p-3">
                     <div class="flex items-center justify-center gap-2">
                       @if (authService.currentUser()?.role !== 'user') {
@@ -145,28 +154,43 @@ import { AuthService } from '../../services/auth.service';
                 </tr>
               } @empty {
                 <div class="bg-white p-8 rounded-xl shadow-lg text-center dark:bg-gray-800">
-                  <p class="w-full text-gray-500 dark:text-gray-400">ไม่พบข้อมูลบัญชี</p>
+                  <p class="w-full text-gray-500 dark:text-gray-400">ไม่พบข้อมูลสมาชิก</p>
                 </div>
               }
             </tbody>
           </table>
+
           <!-- Pagination -->
           @if (totalPages() > 1) {
-            <div class="mt-6 flex items-center justify-between">
-              <button (click)="firstPage()" [disabled]="currentPage() === 1"
-                      class="btn-secondary" title="หน้าแรก">«
+            <!-- Paginator UI (ฉบับอัปเกรด) -->
+            <div class="mt-8 flex justify-center items-center gap-2">
+              <!-- First Page Button -->
+              <button (click)="firstPage()" [disabled]="currentPage() === 1" class="btn-paginator dark:text-gray-300">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                  <path fill-rule="evenodd"
+                        d="M15.79 14.77a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 1 1 1.06 1.06L11.81 10l3.98 3.98a.75.75 0 0 1 0 1.06ZM9.79 14.77a.75.75 0 0 1-1.06 0l-4.5-4.5a.75.75 0 0 1 0-1.06l4.5-4.5a.75.75 0 1 1 1.06 1.06L5.81 10l3.98 3.98a.75.75 0 0 1 0 1.06Z"
+                        clip-rule="evenodd"/>
+                </svg>
               </button>
+              <!-- Previous Button -->
               <button (click)="previousPage()" [disabled]="currentPage() === 1"
-                      class="btn-secondary" title="หน้าก่อนหน้า">‹
+                      class="btn-paginator dark:text-gray-300">Previous
               </button>
-              <span class="text-gray-700 dark:text-gray-300">
-                หน้า {{ currentPage() }} ของ {{ totalPages() }}
-              </span>
+              <!-- Page Info -->
+              <span class="text-sm text-gray-700 dark:text-gray-300">Page {{ currentPage() }}
+                of {{ totalPages() }}</span>
+              <!-- Next Button -->
               <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
-                      class="btn-secondary" title="หน้าถัดไป">›
+                      class="btn-paginator dark:text-gray-300">Next
               </button>
+              <!-- Last Page Button -->
               <button (click)="lastPage()" [disabled]="currentPage() === totalPages()"
-                      class="btn-secondary" title="หน้าสุดท้าย">»
+                      class="btn-paginator dark:text-gray-300">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                  <path fill-rule="evenodd"
+                        d="M4.21 5.23a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L8.19 10 4.21 6.02a.75.75 0 0 1 0-1.06ZM10.21 5.23a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1 0 1.06l-4.5 4.5a.75.75 0 1 1-1.06-1.06L14.19 10l-3.98-3.98a.75.75 0 0 1 0-1.06Z"
+                        clip-rule="evenodd"/>
+                </svg>
               </button>
             </div>
           }
@@ -174,8 +198,8 @@ import { AuthService } from '../../services/auth.service';
       </div>
     </div>
     <div class="p-4 sm:p-6 lg:p-8">
-      <p class="text-gray-500 dark:text-gray-400 text-center">
-        © 2023 Your Company. All rights reserved.
+      <p class="text-base text-gray-200 dark:text-gray-300 text-center">
+        © {{ _year }} Ruamsuk&trade; Kanchanaburi.. All rights reserved.
       </p>
     </div>
   `,
@@ -189,6 +213,7 @@ export class Dashboard {
   currentPage = signal(1);
   itemsPerPage = signal(9);
   searchTerm = signal('');
+  _year = new Date().getFullYear();
 
   public authService = inject(AuthService);
   private accountService = inject(AccountService);

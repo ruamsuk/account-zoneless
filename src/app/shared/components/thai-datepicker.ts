@@ -34,16 +34,16 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
               <button type="button" (click)="changeMonth(-1)" class="btn-nav">&lt;</button>
               <div>
                 <button type="button" (click)="pickerView.set('months')"
-                        class="font-semibold hover:text-blue-600 dark:hover:text-blue-400">{{ months[viewDate().getMonth()].name }}
+                        class="dark:text-gray-200 font-semibold hover:text-blue-600 dark:hover:text-blue-400">{{ months[viewDate().getMonth()].name }}
                 </button>
                 <button type="button" (click)="pickerView.set('years')"
-                        class="font-semibold hover:text-blue-600 dark:hover:text-blue-400 ml-2">{{ viewDate().getFullYear() + 543 }}
+                        class="dark:text-gray-200 font-semibold hover:text-blue-600 dark:hover:text-blue-400 ml-2">{{ viewDate().getFullYear() + 543 }}
                 </button>
               </div>
               <button type="button" (click)="changeMonth(1)" class="btn-nav">&gt;</button>
             </div>
             <!-- Day of Week Headers -->
-            <div class="grid grid-cols-7 text-center text-xs text-gray-500 dark:text-gray-400 mb-1">
+            <div class="grid grid-cols-7 text-center text-md text-gray-500 dark:text-gray-300 mb-1">
               @for (day of weekDays; track day) {
                 <span>{{ day }}</span>
               }

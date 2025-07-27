@@ -37,7 +37,7 @@ import { NgClass, NgOptimizedImage } from '@angular/common';
             </label>
             <input
               type="email" id="email" formControlName="email"
-              class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 border"
+              class="form-input"
               [ngClass]="email?.invalid && email?.touched ?
               ['border-red-500 focus:ring-red-500'] :
               ['border-gray-300 focus:ring-blue-500 dark:border-gray-400']" autocomplete="email">
@@ -53,7 +53,7 @@ import { NgClass, NgOptimizedImage } from '@angular/common';
             </label>
             <div class="relative">
               <input [type]="passwordVisible() ? 'text' : 'password'" id="password" formControlName="password"
-                     class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 border pr-10"
+                     class="form-input" placeholder="Password"
                      [ngClass]="password?.invalid && password?.touched ?
                      ['border-red-500 focus:ring-red-500'] :
                      ['border-gray-300 focus:ring-blue-500 dark:border-gray-400']" autocomplete="current-password">
@@ -199,7 +199,7 @@ export class Login {
       .then(() => {
         this.loading.set(false);
         this.toastService.show('Success', 'Login successful!', 'success');
-        this.router.navigate(['/accounts']).then();
+        this.router.navigate(['/']).then();
       })
       .catch(error => {
         // ++ จัดการ error ที่เราโยนมาจาก service ++
@@ -213,7 +213,7 @@ export class Login {
         this.loading.set(false);
       }).finally(() => {
       this.loading.set(false);
-      this.router.navigateByUrl('/dashboard').catch(err => {
+      this.router.navigateByUrl('/').catch(err => {
         console.error('Navigation error:', err);
       });
     });
