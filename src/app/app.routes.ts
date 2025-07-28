@@ -9,6 +9,13 @@ const redirectLoggedInToHome = () => redirectLoggedInTo(['/']);
 
 export const routes: Routes = [
   {
+    path: '',
+    pathMatch: 'full',
+    ...canActivate(redirectUnauthorizedToLogin),
+    loadComponent: () => import('./features/welcome')
+      .then(m => m.Welcome)
+  },
+  {
     path: 'dashboard',
     pathMatch: 'full',
     ...canActivate(redirectUnauthorizedToLogin),
@@ -43,13 +50,8 @@ export const routes: Routes = [
     canActivate: [adminGuard]
   },
   {
-    path: '',
-    pathMatch: 'full',
-    redirectTo: 'dashboard',
-  },
-  {
     path: '**',
     pathMatch: 'full',
-    redirectTo: 'dashboard',
+    redirectTo: '',
   }
 ];

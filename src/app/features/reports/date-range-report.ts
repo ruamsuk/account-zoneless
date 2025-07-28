@@ -5,23 +5,23 @@ import { Account } from '../../models/account.model';
 import { LoadingService } from '../../services/loading.service';
 import { ToastService } from '../../services/toast.service';
 import { tap } from 'rxjs';
-import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
+import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
 
 @Component({
   selector: 'app-date-range-report',
   imports: [
-    ThaiDatepicker,
     ReactiveFormsModule,
     DecimalPipe,
     NgClass,
-    ThaiDatePipe
+    ThaiDatePipe,
+    ThaiDatepicker
   ],
   template: `
     <div class="p-4 sm:p-6 lg:p-8">
       <h1 class="text-3xl font-thasadith font-bold text-white text-shadow mb-6">รายงานตามช่วงเวลา</h1>
-      <div class="flex items-center justify-center z-50">
+      <div class="flex items-center justify-center">
         <form [formGroup]="reportForm" (ngSubmit)="onSubmit()"
               class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg flex flex-col md:flex-row gap-4 items-center">
           <div>
@@ -37,7 +37,7 @@ import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
       </div>
       @if (accounts()) {
         <div
-          class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-center z-0">
+          class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-center max-w-5xl mx-auto">
           <div>
             <h3 class="text-lg font-semibold text-green-700 dark:text-green-400">รายรับรวม</h3>
             <p
@@ -54,46 +54,50 @@ import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
           </div>
         </div>
 
-        <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 z-0">
-          <h2 class="text-2xl font-thasadith font-semibold text-green-700 dark:text-gray-200 mb-4">รายละเอียดข้อมูล</h2>
-          <div class="overflow-x-auto">
-            <table class="min-w-full">
-              <thead>
-              <tr
-                class="border-b-2 border-gray-400 font-thasadith text-lg text-amber-800 dark:text-gray-300 dark:border-gray-600">
-                <th class="p-3 text-left font-semibold">วันที่</th>
-                <th class="p-3 text-left font-semibold">รายการ</th>
-                <th class="p-3 text-right font-semibold">จำนวนเงิน</th>
-                <th class="pl-5 text-left font-semibold">หมายเหตุ</th>
-                <th class="p-3 text-left font-semibold">ประเภท</th>
-              </tr>
-              </thead>
-              <tbody>
-                @for (acc of accounts(); track acc.id) {
-                  <tr class="border-b dark:border-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-black/50"
+        <div class="p-4 sm:p-6 lg:p-8">
+          <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 max-w-5xl mx-auto">
+            <h2 class="text-2xl font-thasadith font-semibold text-green-700 dark:text-gray-200 mb-4">
+              รายละเอียดข้อมูล</h2>
+            <div class="overflow-x-auto">
+              <table class="min-w-full">
+                <thead>
+                <tr
+                  class="border-b-2 border-gray-400 font-thasadith text-lg text-amber-800 dark:text-gray-300 dark:border-gray-600">
+                  <th class="p-3 text-left font-semibold whitespace-nowrap">วันที่</th>
+                  <th class="p-3 text-left font-semibold whitespace-nowrap">รายการ</th>
+                  <th class="p-3 text-right font-semibold whitespace-nowrap">จำนวนเงิน</th>
+                  <th class="pl-5 text-left font-semibold whitespace-nowrap">หมายเหตุ</th>
+                  <th class="p-3 text-left font-semibold whitespace-nowrap">ประเภท</th>
+                </tr>
+                </thead>
+                <tbody>
+                  @for (acc of accounts(); track acc.id) {
+                    <tr
+                      class="border-b dark:border-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-black/50"
                       [ngClass]="acc.isInCome ? ['bg-green-100/50 dark:bg-green-900/30'] : []">
 
-                    <td class="p-3">{{ acc.date | thaiDate }}</td>
-                    <td class="p-3">{{ acc.details }}</td>
+                      <td class="p-3 whitespace-nowrap">{{ acc.date | thaiDate }}</td>
+                      <td class="p-3 whitespace-nowrap">{{ acc.details }}</td>
 
-                    <td class="p-3 text-right font-medium"
-                        [ngClass]="acc.isInCome ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-400']">
-                      {{ acc.isInCome ? '+' : '-' }} {{ acc.amount | number:'1.2-2' }}
-                    </td>
-                    <td class="pl-5">{{ acc.remark }}</td>
-                    <td class="p-3 font-medium text-green-600 dark:text-green-400">
-                      @if (acc.isInCome) {
-                        <span>รายรับ</span>
-                      }
-                    </td>
-                  </tr>
-                } @empty {
-                  <tr>
-                    <td colspan="4" class="p-8 text-center text-gray-500 dark:text-gray-400">ไม่พบข้อมูล</td>
-                  </tr>
-                }
-              </tbody>
-            </table>
+                      <td class="p-3 whitespace-nowrap text-right font-medium"
+                          [ngClass]="acc.isInCome ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-400']">
+                        {{ acc.isInCome ? '+' : '-' }} {{ acc.amount | number:'1.2-2' }}
+                      </td>
+                      <td class="pl-5 whitespace-nowrap">{{ acc.remark }}</td>
+                      <td class="p-3 whitespace-nowrap font-medium text-green-600 dark:text-green-400">
+                        @if (acc.isInCome) {
+                          <span>รายรับ</span>
+                        }
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr>
+                      <td colspan="4" class="p-8 text-center text-gray-500 dark:text-gray-400">ไม่พบข้อมูล</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       }
@@ -125,23 +129,36 @@ export class DateRangeReport {
     const today = new Date();
     const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
 
+    // ฟังก์ชันช่วยแปลง Date เป็น 'YYYY-MM-DD' โดยไม่สน Timezone
+    const toLocalISOString = (date: Date): string => {
+      const year = date.getFullYear();
+      const month = ('0' + (date.getMonth() + 1)).slice(-2);
+      const day = ('0' + date.getDate()).slice(-2);
+      return `${year}-${month}-${day}`;
+    };
+
     this.reportForm = this.fb.group({
-      startDate: [firstDayOfMonth.toISOString().substring(0, 10)],
-      endDate: [today.toISOString().substring(0, 10)]
+      startDate: [toLocalISOString(firstDayOfMonth)],
+      endDate: [toLocalISOString(today)]
     });
   }
 
   onSubmit() {
-    if (this.reportForm.invalid) return;
-
-    this.loadingService.show();
-
+    console.log('Raw form value:', this.reportForm.value);
+    // 1. ตรวจสอบความถูกต้องของฟอร์มก่อน
+    if (this.reportForm.invalid) {
+      this.toastService.show('Warning', 'กรุณาเลือกวันที่ให้ครบถ้วน', 'warning');
+      return;
+    }
+    // 2. ดึงค่า string จากฟอร์ม
     const {startDate, endDate} = this.reportForm.value;
-
+// 3. ตรวจสอบว่าค่าที่ได้ไม่ใช่ค่าว่าง
     if (!startDate || !endDate || !(startDate instanceof Date) || !(endDate instanceof Date)) {
       this.toastService.show('Error', 'รูปแบบวันที่ไม่ถูกต้อง', 'error');
       return;
     }
+
+    this.loadingService.show();
 
     this.accountService.getAccountsByDateRange(startDate, endDate)
       .pipe(

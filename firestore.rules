@@ -1,0 +1,54 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+  	function emailVerified() {
+      return request.auth.token.email_verified;
+    }
+    
+  	function getRoles(role) {
+  	return get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role
+  	}
+    
+    function requestMatchesUID() {
+        return request.auth.uid == request.resource.data.uid;
+    }
+
+    function resourceMatchesUID() {
+        return request.auth.uid == resource.data.uid;
+    }
+    
+    function role() {
+    	return request.auth.token.role; 
+    }
+    
+    match /accounts/{document=**} {
+      allow read: if request.auth.uid != null  && emailVerified();
+    //  allow write: if userExists() && getRoles('admin') == true;
+      allow write: if role() == 'admin' || role() == 'manager';
+    }
+    
+    match /credit/{document=**} {
+    	allow read: if request.auth.uid != null  && emailVerified();
+    	allow write: if role() == 'admin' || role() == 'manager';
+    }
+    
+    match /monthly/{document=**} {
+    	allow read: if request.auth.uid != null  && emailVerified();
+    	allow write: if role() == 'admin' || role() == 'manager';
+    }
+    
+    match /bloodPressureRecords/{document=**} {
+    	allow read: if request.auth.uid != null  && emailVerified();
+    	allow write: if role() == 'admin' || role() == 'manager';
+    }
+        
+    match /users/{userId} {
+
+  	allow read: if request.auth.uid != null && emailVerified();
+    allow create: if request.auth.uid != null;
+    allow update: if requestMatchesUID() && resourceMatchesUID();
+    allow delete: if getRoles('admin') == true;
+	}
+  }
+}

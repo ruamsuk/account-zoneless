@@ -68,15 +68,16 @@ export class AccountForm {
   @Input()
   set accountToEdit(account: Account | null) {
     this._accountToEdit = account;
+    // console.log('accountToEdit', JSON.stringify(account, null, 2));
     // 2. ทันทีที่ได้รับข้อมูล ให้ patch ค่าลงฟอร์ม
     if (this.accountForm && account) {
       // 1. แปลง Timestamp เป็น Date object ก่อน
-      const jsDate = account.date ? (account.date as any).toDate() : null;
+      // const jsDate = account.date ? (account.date as any).toDate() : null;
 
       // 2. นำ Date object ที่แปลงแล้วไปใช้งาน
       this.accountForm.patchValue({
         ...account,
-        date: jsDate ? jsDate.toISOString().substring(0, 10) : ''
+        // date: jsDate ? jsDate.toISOString().substring(0, 10) : ''
       });
     }
   }
