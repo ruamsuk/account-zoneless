@@ -25,7 +25,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       <!-- ==================== DATEPICKER POPUP ==================== -->
       @if (isPickerOpen()) {
         <div
-          class="absolute top-full mt-2 left-0 w-72 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-10 p-2">
+          class="absolute top-full mt-2 left-0 w-72 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-50 p-2">
 
           <!-- +++ DAY VIEW +++ -->
           @if (pickerView() === 'days') {
