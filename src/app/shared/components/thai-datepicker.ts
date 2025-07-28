@@ -1,12 +1,9 @@
-import { Component, forwardRef } from '@angular/core';
+import { Component, computed, effect, ElementRef, forwardRef, HostListener, inject, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
-import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-thai-datepicker',
-  imports: [
-    NgClass
-  ],
+  imports: [],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -15,42 +12,91 @@ import { NgClass } from '@angular/common';
     }
   ],
   template: `
-    <div class="relative w-full">
+    <div class="relative" #datepickerContainer>
+      <!-- ==================== INPUT DISPLAY ==================== -->
       <input
         type="text"
-        readonly
-        (click)="toggleDatepicker()"
-        [value]="displayValue"
-        placeholder="เลือกวันที่"
-        class="form-input cursor-pointer">
+        [value]="formattedSelectedDate()"
+        (click)="togglePicker()"
+        class="form-select"
+        placeholder="-- เลือกวันที่ --"
+        readonly>
 
-      @if (showDatepicker) {
-        <div class="absolute top-full mt-2 w-72 bg-white dark:bg-gray-700 rounded-lg shadow-lg p-4 z-50">
-          <div class="flex justify-between items-center mb-2">
-            <button type="button" (click)="changeMonth(-1)" class="btn-nav">&lt;</button>
-            <span
-              class="font-semibold text-gray-800 dark:text-gray-200">{{ MONTH_NAMES[month] }} {{ year + 543 }}</span>
-            <button type="button" (click)="changeMonth(1)" class="btn-nav">&gt;</button>
-          </div>
-          <div class="grid grid-cols-7 text-center text-xs text-gray-500 dark:text-gray-400 mb-1">
-            @for (day of DAYS; track day) {
-              <div>{{ day }}</div>
-            }
-          </div>
-          <div class="grid grid-cols-7">
-            @for (blank of blankdays; track $index) {
-              <div></div>
-            }
-            @for (day of no_of_days; track day) {
-              <div class="text-center p-1">
-                <div (click)="getDateValue(day)"
-                     class="cursor-pointer w-8 h-8 flex items-center justify-center rounded-full text-sm"
-                     [ngClass]="isToday(day) ? ['bg-blue-500 text-white'] : ['hover:bg-gray-200 dark:hover:bg-gray-600']">
-                  {{ day }}
-                </div>
+      <!-- ==================== DATEPICKER POPUP ==================== -->
+      @if (isPickerOpen()) {
+        <div
+          class="absolute top-full mt-2 left-0 w-72 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-10 p-2">
+
+          <!-- +++ DAY VIEW +++ -->
+          @if (pickerView() === 'days') {
+            <!-- Header: Month/Year Navigation -->
+            <div class="flex justify-between items-center mb-2 px-2">
+              <button type="button" (click)="changeMonth(-1)" class="btn-nav">&lt;</button>
+              <div>
+                <button type="button" (click)="pickerView.set('months')"
+                        class="dark:text-gray-200 font-semibold hover:text-blue-600 dark:hover:text-blue-400">{{ months[viewDate().getMonth()].name }}
+                </button>
+                <button type="button" (click)="pickerView.set('years')"
+                        class="dark:text-gray-200 font-semibold hover:text-blue-600 dark:hover:text-blue-400 ml-2">{{ viewDate().getFullYear() + 543 }}
+                </button>
               </div>
-            }
-          </div>
+              <button type="button" (click)="changeMonth(1)" class="btn-nav">&gt;</button>
+            </div>
+            <!-- Day of Week Headers -->
+            <div class="grid grid-cols-7 text-center text-md text-gray-500 dark:text-gray-300 mb-1">
+              @for (day of weekDays; track day) {
+                <span>{{ day }}</span>
+              }
+            </div>
+            <!-- Calendar Grid -->
+            <div class="grid grid-cols-7 gap-1">
+              @for (day of calendarGrid(); track $index) {
+                <button
+                  type="button"
+                  (click)="selectDate(day.date)"
+                  class="day-cell"
+                  [disabled]="!day.isCurrentMonth"
+                  [class.other-month]="!day.isCurrentMonth"
+                  [class.selected]="isSameDay(day.date, selectedDate())"
+                  [class.today]="day.isCurrentMonth && isSameDay(day.date, today)">
+                  @if (day.isCurrentMonth) {
+                    <span>{{ day.day }}</span>
+                  }
+                </button>
+              }
+            </div>
+          }
+
+          <!-- +++ MONTH VIEW +++ -->
+          @if (pickerView() === 'months') {
+            <div class="grid grid-cols-3 gap-1">
+              @for (month of months; track month.value) {
+                <button type="button" (click)="selectMonth(month.value)" class="month-button">
+                  {{ month.name }}
+                </button>
+              }
+            </div>
+          }
+
+          <!-- +++ YEAR VIEW +++ -->
+          @if (pickerView() === 'years') {
+            <div class="flex justify-between items-center mb-2 px-2">
+              <button type="button" (click)="changeYearPickerDecade(-10)" class="btn-nav">&lt;</button>
+              <span class="font-semibold text-sm">{{ yearPickerGrid()[0] }} - {{ yearPickerGrid()[9] }}</span>
+              <button type="button" (click)="changeYearPickerDecade(10)" class="btn-nav">&gt;</button>
+            </div>
+            <div class="grid grid-cols-4 gap-1">
+              @for (year of yearPickerGrid(); track year) {
+                <button
+                  type="button"
+                  (click)="selectYear(year)"
+                  class="year-button"
+                  [class.selected]="selectedDate() && year === (selectedDate()!.getFullYear() + 543)">
+                  {{ year }}
+                </button>
+              }
+            </div>
+          }
         </div>
       }
     </div>
@@ -58,38 +104,98 @@ import { NgClass } from '@angular/common';
   styles: ``
 })
 export class ThaiDatepicker implements ControlValueAccessor {
-  MONTH_NAMES = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-  DAYS = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+  private elementRef = inject(ElementRef);
 
-  showDatepicker = false;
-  displayValue = ''; // ค่าที่แสดงผล (dd MMMM yyyy พ.ศ.)
+  // --- State Signals ---
+  isPickerOpen = signal(false);
+  selectedDate = signal<Date | null>(null);
+  viewDate = signal(new Date()); // เดือน/ปี ที่กำลังแสดงในปฏิทิน
+  pickerView = signal<'days' | 'months' | 'years'>('days');
+  today = new Date();
 
-  // --- ค่าที่ใช้คำนวณภายใน (ทั้งหมดเป็น ค.ศ.) ---
-  date = new Date();
-  month = this.date.getMonth();
-  year = this.date.getFullYear();
-  no_of_days: number[] = [];
-  blankdays: number[] = [];
+  valueFromParent = signal<any | null>(null);
 
-  // --- ControlValueAccessor implementation ---
+  // --- Data ---
+  readonly months = [
+    {value: 0, name: 'มกราคม'}, {value: 1, name: 'กุมภาพันธ์'},
+    {value: 2, name: 'มีนาคม'}, {value: 3, name: 'เมษายน'},
+    {value: 4, name: 'พฤษภาคม'}, {value: 5, name: 'มิถุนายน'},
+    {value: 6, name: 'กรกฎาคม'}, {value: 7, name: 'สิงหาคม'},
+    {value: 8, name: 'กันยายน'}, {value: 9, name: 'ตุลาคม'},
+    {value: 10, name: 'พฤศจิกายน'}, {value: 11, name: 'ธันวาคม'}
+  ];
+  readonly weekDays = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+
+  // --- Computed Signals ---
+  formattedSelectedDate = computed(() => {
+    const date = this.selectedDate();
+    if (!date) return '';
+    const day = date.getDate();
+    const month = this.months[date.getMonth()].name;
+    const year = date.getFullYear() + 543;
+    return `${day} ${month} ${year}`;
+  });
+
+  calendarGrid = computed(() => {
+    const date = this.viewDate();
+    const year = date.getFullYear();
+    const month = date.getMonth();
+
+    const firstDayOfMonth = new Date(year, month, 1);
+    const lastDayOfMonth = new Date(year, month + 1, 0);
+    const startingDayOfWeek = firstDayOfMonth.getDay(); // 0=Sun, 1=Mon,...
+    const daysInMonth = lastDayOfMonth.getDate();
+
+    const grid: { day: number, date: Date, isCurrentMonth: boolean }[] = [];
+
+    // Add blank days for the start of the month
+    for (let i = 0; i < startingDayOfWeek; i++) {
+      grid.push({day: 0, date: new Date(), isCurrentMonth: false}); // Placeholder
+    }
+
+    // Add days of the current month
+    for (let day = 1; day <= daysInMonth; day++) {
+      grid.push({day, date: new Date(year, month, day), isCurrentMonth: true});
+    }
+    return grid;
+  });
+
+  yearPickerGrid = computed(() => {
+    const year = this.viewDate().getFullYear() + 543;
+    const startYear = Math.floor((year - 1) / 10) * 10 + 1; // Start of the decade
+    return Array.from({length: 10}, (_, i) => startYear + i);
+  });
+
+  // --- CVA Implementation ---
   onChange: any = () => {
   };
-  onTouch: any = () => {
+  onTouched: any = () => {
   };
+  disabled = signal(false);
 
-  writeValue(value: string): void {
-    if (value) {
-      this.date = new Date(value);
-      this.year = this.date.getFullYear();
-      this.month = this.date.getMonth();
-      this.displayValue = this.formatDisplay(this.date);
-    } else {
-      // Set to today's date if no initial value
-      this.date = new Date();
-      this.year = this.date.getFullYear();
-      this.month = this.date.getMonth();
-    }
-    this.getNoOfDays();
+  constructor() {
+    effect(() => {
+      const value = this.valueFromParent();
+      let dateValue: Date | null = null;
+
+      if (value instanceof Date) {
+        dateValue = value;
+      } else if (value && typeof value.toDate === 'function') {
+        // Use type assertion (as any) to bypass incorrect type inference
+        dateValue = (value as any).toDate();
+      }
+
+      if (dateValue && !isNaN(dateValue.getTime())) {
+        this.selectedDate.set(dateValue);
+        this.viewDate.set(dateValue);
+      } else {
+        this.selectedDate.set(null);
+      }
+    });
+  }
+
+  writeValue(value: Date | null): void {
+    this.valueFromParent.set(value);
   }
 
   registerOnChange(fn: any): void {
@@ -97,58 +203,63 @@ export class ThaiDatepicker implements ControlValueAccessor {
   }
 
   registerOnTouched(fn: any): void {
-    this.onTouch = fn;
+    this.onTouched = fn;
   }
 
-  // --- Component Logic ---
-  toggleDatepicker() {
-    this.showDatepicker = !this.showDatepicker;
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled.set(isDisabled);
   }
 
-  getDateValue(day: number) {
-    const selectedDate = new Date(this.year, this.month, day);
-    this.displayValue = this.formatDisplay(selectedDate);
-    this.onTouch();
-
-    // ส่งค่า YYYY-MM-DD (ค.ศ.) กลับไปให้ Form
-    const year = selectedDate.getFullYear();
-    const month = ('0' + (selectedDate.getMonth() + 1)).slice(-2); // +1 เพราะ getMonth() เริ่มจาก 0
-    const date = ('0' + selectedDate.getDate()).slice(-2);
-    const formattedString = `${year}-${month}-${date}`;
-    this.onChange(formattedString);
-
-    this.showDatepicker = false;
-  }
-
-  changeMonth(monthOffset: number) {
-    this.month += monthOffset;
-    if (this.month < 0) {
-      this.month = 11;
-      this.year--;
-    } else if (this.month > 11) {
-      this.month = 0;
-      this.year++;
+  // --- UI Methods ---
+  togglePicker(): void {
+    if (this.disabled()) return;
+    this.isPickerOpen.update(v => !v);
+    if (this.isPickerOpen()) {
+      this.pickerView.set('days');
+      if (this.selectedDate()) {
+        this.viewDate.set(this.selectedDate()!);
+      }
     }
-    this.getNoOfDays();
   }
 
-  isToday(day: number): boolean {
-    const today = new Date();
-    const d = new Date(this.year, this.month, day);
-    return today.toDateString() === d.toDateString();
+  changeMonth(offset: number): void {
+    this.viewDate.update(d => new Date(d.getFullYear(), d.getMonth() + offset, 1));
   }
 
-  getNoOfDays() {
-    const daysInMonth = new Date(this.year, this.month + 1, 0).getDate();
-    const dayOfWeek = new Date(this.year, this.month).getDay();
-    this.blankdays = Array(dayOfWeek).fill(null);
-    this.no_of_days = Array.from({length: daysInMonth}, (_, i) => i + 1);
+  selectDate(date: Date): void {
+    this.selectedDate.set(date);
+    this.onChange(date);
+    this.isPickerOpen.set(false);
   }
 
-  private formatDisplay(date: Date): string {
-    const day = date.getDate();
-    const monthName = this.MONTH_NAMES[date.getMonth()];
-    const yearBE = date.getFullYear() + 543;
-    return `${day} ${monthName} ${yearBE}`;
+  selectMonth(monthIndex: number): void {
+    this.viewDate.update(d => new Date(d.getFullYear(), monthIndex, 1));
+    this.pickerView.set('days');
+  }
+
+  selectYear(yearBE: number): void {
+    const yearCE = yearBE - 543;
+    this.viewDate.update(d => new Date(yearCE, d.getMonth(), 1));
+    this.pickerView.set('days');
+  }
+
+  changeYearPickerDecade(offset: number): void {
+    this.viewDate.update(d => new Date(d.getFullYear() + offset, d.getMonth(), 1));
+  }
+
+  // --- Helper Methods ---
+  isSameDay(date1: Date | null, date2: Date | null): boolean {
+    if (!date1 || !date2) return false;
+    return date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate();
+  }
+
+  // Click outside to close
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.elementRef.nativeElement.contains(event.target)) {
+      this.isPickerOpen.set(false);
+    }
   }
 }
