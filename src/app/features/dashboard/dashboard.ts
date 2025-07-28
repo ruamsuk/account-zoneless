@@ -22,15 +22,6 @@ import { AuthService } from '../../services/auth.service';
   ],
   providers: [DatePipe],
   template: `
-    <!--<div class="flex flex-col items-center justify-center text-center pt-24 md:pt-32">
-      <h1 class="text-5xl md:text-6xl text-white font-bold font-serif text-shadow-lg">
-        Welcome to Your Site
-      </h1>
-      <p class="mt-4 text-white/90 text-lg md:text-xl font-sans text-shadow">
-        A comprehensive solution for all your accounting needs.
-      </p>
-    </div>-->
-
     <div class="p-4 sm:p-6 lg:p-8">
       <div class="flex justify-between items-center mb-6">
         <h1 class="text-4xl font-serif font-bold text-white text-shadow-lg">Dashboard</h1>
@@ -177,7 +168,7 @@ import { AuthService } from '../../services/auth.service';
     </div>
     <div class="p-4 sm:p-6 lg:p-8">
       <p class="text-gray-500 dark:text-gray-400 text-center">
-        © 2023 Your Company. All rights reserved.
+        © {{ _year }} Ruamsuk&trade; Kanchanaburi. All rights reserved.
       </p>
     </div>
   `,
@@ -191,6 +182,7 @@ export class Dashboard {
   currentPage = signal(1);
   itemsPerPage = signal(9);
   searchTerm = signal('');
+  _year = new Date().getFullYear();
 
   public authService = inject(AuthService);
   private accountService = inject(AccountService);
