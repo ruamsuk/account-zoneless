@@ -54,7 +54,7 @@ import { AuthService } from '../../services/auth.service';
     </div>
 
     <div class="p-4 sm:p-6 lg:p-8">
-      <div class="bg-white/20 dark:bg-black/20 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 max-w-6xl mx-auto">
+      <div class="bg-white/30 dark:bg-black/20 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 max-w-6xl mx-auto">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-semibold font-thasadith text-gray-800 dark:text-gray-200 mb-4">รายการล่าสุด</h2>
           <div class="md:col-span-2">
@@ -88,18 +88,20 @@ import { AuthService } from '../../services/auth.service';
         <div class="overflow-x-auto">
           <table class="min-w-full">
             <thead>
-            <tr class="border-b-2 border-gray-400 dark:border-gray-600 dark:text-gray-200">
-              <th class="p-3 text-left text-teal-100 text-lg font-semibold">วันที่</th>
-              <th class="p-3 text-left text-teal-100 text-lg font-semibold">รายการ</th>
-              <th class="p-3 text-right text-teal-100 text-lg font-semibold">จำนวนเงิน</th>
-              <th class="pl-10 text-left text-teal-100 text-lg font-semibold">หมายเหตุ</th>
-              <th class="p-3 text-left text-teal-100 text-lg font-semibold">ประเภท</th>
-              <th class="p-3 text-center text-teal-100 text-lg font-semibold">Actions</th>
+            <tr class="border-b-2 border-gray-400 text-gray-900 dark:border-gray-600 dark:text-gray-200">
+              <th class="p-3 text-left  text-lg font-semibold">วันที่</th>
+              <th class="p-3 text-left text-lg font-semibold">รายการ</th>
+              <th class="p-3 text-right text-lg font-semibold">จำนวนเงิน</th>
+              <th class="pl-10 text-left text-lg font-semibold">หมายเหตุ</th>
+              <th class="p-3 text-left  text-lg font-semibold">ประเภท</th>
+              <th class="p-3 text-center  text-lg font-semibold">Actions</th>
             </tr>
             </thead>
             <tbody>
               @for (acc of paginateAccounts(); track acc.id) {
-                <tr class="border-b dark:border-gray-700 hover:bg-white/50 dark:hover:bg-black/50 dark:text-gray-200">
+                <tr
+                  class="text-gray-900 border-b dark:border-gray-700 hover:bg-white/50 dark:hover:bg-black/50 dark:text-gray-200"
+                  [ngClass]="acc.isInCome ? ['bg-green-100/20 dark:bg-green-900/20'] : ['text-gray-100'] ">
                   <td class="p-3" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.date | thaiDate }}</td>
                   <td class="p-3" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.details }}</td>
                   <td class="p-3 text-right font-medium"
@@ -152,21 +154,24 @@ import { AuthService } from '../../services/auth.service';
           </table>
           <!-- Pagination -->
           @if (totalPages() > 1) {
-            <div class="mt-6 flex items-center justify-between">
+            <div class="mt-6 flex items-center justify-center gap-2">
+
               <button (click)="firstPage()" [disabled]="currentPage() === 1"
-                      class="btn-secondary" title="หน้าแรก">«
+                      class="btn-paginator" title="หน้าแรก">«
               </button>
               <button (click)="previousPage()" [disabled]="currentPage() === 1"
-                      class="btn-secondary" title="หน้าก่อนหน้า">‹
+                      class="btn-paginator" title="หน้าก่อนหน้า">‹
               </button>
-              <span class="text-gray-700 dark:text-gray-300">
-                หน้า {{ currentPage() }} ของ {{ totalPages() }}
+
+              <span class="text-gray-700  text-base dark:text-gray-300 px-2">
+              หน้า {{ currentPage() }} / {{ totalPages() }}
               </span>
+
               <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
-                      class="btn-secondary" title="หน้าถัดไป">›
+                      class="btn-paginator" title="หน้าถัดไป">›
               </button>
               <button (click)="lastPage()" [disabled]="currentPage() === totalPages()"
-                      class="btn-secondary" title="หน้าสุดท้าย">»
+                      class="btn-paginator" title="หน้าสุดท้าย">»
               </button>
             </div>
           }

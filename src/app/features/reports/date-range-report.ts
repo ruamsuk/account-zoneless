@@ -21,7 +21,7 @@ import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
   template: `
     <div class="p-4 sm:p-6 lg:p-8">
       <h1 class="text-3xl font-thasadith font-bold text-white text-shadow mb-6">รายงานตามช่วงเวลา</h1>
-      <div class="flex items-center justify-center">
+      <div class="flex items-center justify-center z-50">
         <form [formGroup]="reportForm" (ngSubmit)="onSubmit()"
               class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg flex flex-col md:flex-row gap-4 items-center">
           <div>
@@ -37,7 +37,7 @@ import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
       </div>
       @if (accounts()) {
         <div
-          class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+          class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-center z-0">
           <div>
             <h3 class="text-lg font-semibold text-green-700 dark:text-green-400">รายรับรวม</h3>
             <p
@@ -54,7 +54,7 @@ import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
           </div>
         </div>
 
-        <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8">
+        <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 z-0">
           <h2 class="text-2xl font-thasadith font-semibold text-green-700 dark:text-gray-200 mb-4">รายละเอียดข้อมูล</h2>
           <div class="overflow-x-auto">
             <table class="min-w-full">
@@ -138,10 +138,12 @@ export class DateRangeReport {
 
     const {startDate, endDate} = this.reportForm.value;
 
-    const start = new Date(startDate + 'T00:00:00');
-    const end = new Date(endDate + 'T00:00:00');
+    if (!startDate || !endDate || !(startDate instanceof Date) || !(endDate instanceof Date)) {
+      this.toastService.show('Error', 'รูปแบบวันที่ไม่ถูกต้อง', 'error');
+      return;
+    }
 
-    this.accountService.getAccountsByDateRange(new Date(start), new Date(end))
+    this.accountService.getAccountsByDateRange(startDate, endDate)
       .pipe(
         tap(() => {
           this.loadingService.hide();
