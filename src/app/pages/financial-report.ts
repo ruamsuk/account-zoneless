@@ -85,12 +85,22 @@ import { ToastService } from '../services/toast.service';
           <!-- Transaction Table -->
           <div class="overflow-x-auto">
             <table class="min-w-full">
-              <!-- ... table header ... -->
+              <thead class="bg-gray-100 dark:bg-gray-700">
+              <tr class="text-left text-base font-semibold text-gray-600 dark:text-gray-300">
+                <th class="p-3">วันที่</th>
+                <th class="p-3">รายละเอียด</th>
+                <th class="p-3">หมายเหตุ</th>
+                <th class="p-3 text-right">
+                  <span class="text-green-600">รายรับ</span>/
+                  <span class="text-red-600">รายจ่าย</span></th>
+              </tr>
+              </thead>
               <tbody>
                 @for (tx of transactions(); track tx.id) {
-                  <tr class="border-b dark:text-gray-200 dark:border-gray-700">
+                  <tr class="border-b dark:text-gray-200 dark:border-gray-700 hover:bg-black/20 dark:hover:bg-black/50">
                     <td class="p-3">{{ tx.date | thaiDate }}</td>
                     <td class="p-3">{{ tx.details }}</td>
+                    <td class="p-3">{{ tx.remark }}</td>
                     <td class="p-3 text-right"
                         [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-500']">
                       {{ tx.amount | number:'1.2-2' }}

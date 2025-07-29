@@ -62,7 +62,7 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
               <table class="min-w-full">
                 <thead>
                 <tr
-                  class="border-b-2 border-gray-400 font-thasadith text-lg text-amber-800 dark:text-gray-300 dark:border-gray-600">
+                  class="border-b-2 border-gray-400 font-thasadith text-lg text-amber-800 dark:text-gray-300 dark:border-gray-600 hover:bg-white/50 dark:hover:bg-black/50">
                   <th class="p-3 text-left font-semibold whitespace-nowrap">วันที่</th>
                   <th class="p-3 text-left font-semibold whitespace-nowrap">รายการ</th>
                   <th class="p-3 text-right font-semibold whitespace-nowrap">จำนวนเงิน</th>

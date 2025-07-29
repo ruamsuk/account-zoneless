@@ -6,5 +6,6 @@ export interface Transaction {
   amount: number;
   date: Date;
   isInCome: boolean;
+  remark?: string;
   imageUrl?: string;
 }
