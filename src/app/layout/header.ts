@@ -10,7 +10,7 @@ import { NgOptimizedImage } from '@angular/common';
     NgOptimizedImage
   ],
   template: `
-    <header class="bg-transparent sticky top-0 z-30 backdrop-blur-sm">
+    <header class="bg-transparent sticky top-0 backdrop-blur-sm z-50">
       <nav class="container mx-auto px-4 md:px-8 py-3">
         <div class="flex justify-between items-center">
 
@@ -31,7 +31,7 @@ import { NgOptimizedImage } from '@angular/common';
                 </svg>
               </button>
               @if (isTransactionsMenuOpen()) {
-                <div class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-40">
+                <div class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
                   <a routerLink="/dashboard" (click)="closeTransactionsMenu()"
                      class="dropdown-item">รายการทั้งหมด</a>
                   <button type="button" (click)="requestOpenModal()" class="dropdown-item w-full text-left">

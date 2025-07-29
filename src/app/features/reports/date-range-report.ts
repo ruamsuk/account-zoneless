@@ -21,9 +21,9 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
   template: `
     <div class="p-4 sm:p-6 lg:p-8">
       <h1 class="text-3xl font-thasadith font-bold text-white text-shadow mb-6">รายงานตามช่วงเวลา</h1>
-      <div class="flex items-center justify-center z-50">
+      <div class="flex items-center justify-center">
         <form [formGroup]="reportForm" (ngSubmit)="onSubmit()"
-              class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg flex flex-col md:flex-row gap-4 items-center z-50">
+              class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg flex flex-col md:flex-row gap-4 items-center z-40">
           <div>
             <label for="startDate" class="form-label">วันที่เริ่มต้น</label>
             <app-thai-datepicker id="startDate" formControlName="startDate"></app-thai-datepicker>
@@ -76,14 +76,20 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
                       class="border-b dark:border-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-black/50"
                       [ngClass]="acc.isInCome ? ['bg-green-100/50 dark:bg-green-900/30'] : []">
 
-                      <td class="p-3 whitespace-nowrap">{{ acc.date | thaiDate }}</td>
-                      <td class="p-3 whitespace-nowrap">{{ acc.details }}</td>
+                      <td class="p-3 whitespace-nowrap"
+                          [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.date | thaiDate }}
+                      </td>
+                      <td class="p-3 whitespace-nowrap"
+                          [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.details }}
+                      </td>
 
                       <td class="p-3 whitespace-nowrap text-right font-medium"
                           [ngClass]="acc.isInCome ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-400']">
                         {{ acc.isInCome ? '+' : '-' }} {{ acc.amount | number:'1.2-2' }}
                       </td>
-                      <td class="pl-5 whitespace-nowrap">{{ acc.remark }}</td>
+                      <td class="pl-5 whitespace-nowrap"
+                          [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.remark }}
+                      </td>
                       <td class="p-3 whitespace-nowrap font-medium text-green-600 dark:text-green-400">
                         @if (acc.isInCome) {
                           <span>รายรับ</span>

@@ -1,4 +1,4 @@
-import { Component, inject, OnDestroy, signal } from '@angular/core';
+import { Component, HostListener, inject, OnDestroy, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Loading } from './shared/loading';
 import { ToastContainer } from './components/toast-container.component';
@@ -87,6 +87,17 @@ export class App implements OnDestroy {
   isModalOpen = signal(false);
   isDetailModalOpen = signal(false);
   viewingAccount = signal<Account | null>(null);
+
+  /**
+   *  @HostListener
+   * ดักฟัง event การขยับเมาส์และการกดคีย์บอร์ดบนหน้าต่างทั้งหมด
+   * แล้วไปเรียกใช้ resetTimer() ใน AuthService
+   */
+  @HostListener('window:mousemove')
+  @HostListener('window:keydown')
+  resetIdleTimer() {
+    this.authService.resetTimer();
+  }
 
   onActivate(component: any) {
     if (this.componentSubscription) {
