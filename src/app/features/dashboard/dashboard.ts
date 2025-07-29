@@ -90,7 +90,7 @@ import { AuthService } from '../../services/auth.service';
             </tr>
             </thead>
             <tbody>
-              @for (acc of filteredAccounts(); track acc.id) {
+              @for (acc of paginateAccounts(); track acc.id) {
                 <tr
                   class="border-b text-black dark:border-gray-700 hover:bg-white/50 dark:hover:bg-black/50 dark:text-gray-200"
                   [ngClass]="acc.isInCome ? ['bg-green-100/50 dark:bg-green-900/30'] : []">
@@ -194,7 +194,14 @@ export class Dashboard {
 
   accounts = this.getAccounts();
 
-  // --- Computed Signals for Display ---
+
+  /**
+   *  1. Filter accounts based on search term
+   *  2. Convert search term to lowercase for case-insensitive search
+   *  3. Check if account details or remark includes the search term
+   *  4. Return filtered accounts
+   *  5. Use computed to automatically update when accounts or searchTerm change
+   * */
   filteredAccounts = computed(() => {
     const term = this.searchTerm().toLowerCase();
     return this.accounts().filter(account => {
@@ -287,11 +294,12 @@ export class Dashboard {
    *  3. Return a slice of accounts for the current page
    * */
   paginateAccounts = computed(() => {
+    const list = this.filteredAccounts();
     const startIndex = (this.currentPage() - 1) * this.itemsPerPage();
-    return this.accounts().slice(startIndex, startIndex + this.itemsPerPage());
+    return list.slice(startIndex, startIndex + this.itemsPerPage());
   });
 
-  totalPages = computed(() => Math.ceil(this.accounts().length / this.itemsPerPage()));
+  totalPages = computed(() => Math.ceil(this.filteredAccounts().length / this.itemsPerPage()));
 
   goToPage(page: number): void {
     if (page >= 1 && page <= this.totalPages()) this.currentPage.set(page);
