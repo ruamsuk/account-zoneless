@@ -20,7 +20,7 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
   ],
   template: `
     <div class="p-4 sm:p-6 lg:p-8">
-      <h1 class="text-3xl font-thasadith font-bold text-white text-shadow mb-6">รายงานตามช่วงเวลา</h1>
+      <h1 class="text-2xl md:text-3xl font-thasadith font-bold text-white text-shadow mb-6">รายงานตามช่วงเวลา</h1>
       <div class="flex items-center justify-center">
         <form [formGroup]="reportForm" (ngSubmit)="onSubmit()"
               class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg flex flex-col md:flex-row gap-4 items-center z-40">

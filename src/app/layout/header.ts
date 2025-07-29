@@ -41,6 +41,10 @@ import { NgOptimizedImage } from '@angular/common';
                   <a routerLink="/reports/date-range" (click)="closeTransactionsMenu()" class="dropdown-item">
                     รายงานตามช่วงเวลา
                   </a>
+                  <a routerLink="/financial-report" (click)="closeTransactionsMenu()"
+                     class="dropdown-item">
+                    รายงานรายเดือน
+                  </a>
                 </div>
               }
             </div>
