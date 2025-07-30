@@ -10,7 +10,6 @@ import { ToastService } from './toast.service';
 export class FinancialService {
   private firestore: Firestore = inject(Firestore);
   private readonly accountsCollection = collection(this.firestore, 'accounts');
-  private readonly transactionsCollection = collection(this.firestore, 'accounts');
   private readonly monthlyCollection = collection(this.firestore, 'monthly'); // อ้างอิงถึง collection ใหม่
   private readonly toastService = inject(ToastService);
 
@@ -24,9 +23,12 @@ export class FinancialService {
   }
 
   /**
-   * ++ เพิ่มเมธอดใหม่สำหรับดึงช่วงวันที่ ++
-   * ค้นหา startdate และ enddate จาก collection 'monthly'
-   */
+   *  ดึงช่วงวันที่สำหรับเดือนและปีที่ระบุ
+   *  @param monthIndex - ดัชนีของเดือน (0-11)
+   *  @param year - ปีที่ต้องการ (เช่น 2023)
+   *  @returns Promise ที่จะคืนค่าเป็นวัตถุที่มี startDate และ endDate
+   *  หรือ null หากไม่พบข้อมูล
+   * */
   async getMonthlyDateRange(monthIndex: number, year: number): Promise<{ startDate: Date, endDate: Date } | null> {
     // 1. แปลง month index (0-11) เป็นชื่อเดือนภาษาไทย
     const thaiMonthName = this.getThaiMonthName(monthIndex);
@@ -71,7 +73,7 @@ export class FinancialService {
       conditions.push(where('details', '==', detail));
     }
 
-    const q = query(this.transactionsCollection, ...conditions);
+    const q = query(this.accountsCollection, ...conditions);
 
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as Transaction));
@@ -82,7 +84,7 @@ export class FinancialService {
    * @returns Promise ที่จะคืนค่าเป็น array ของรายละเอียดที่ไม่ซ้ำกัน
    */
   async getUniqueDetails(): Promise<string[]> {
-    const querySnapshot = await getDocs(this.transactionsCollection);
+    const querySnapshot = await getDocs(this.accountsCollection);
     const details = new Set<string>();
     querySnapshot.forEach(doc => {
       const data = doc.data();
