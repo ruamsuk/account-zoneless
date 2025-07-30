@@ -20,7 +20,7 @@ import { NgOptimizedImage } from '@angular/common';
           </a>
 
           <div class="hidden md:flex items-center gap-4">
-            <a routerLink="/" class="nav-link">Dashboard</a>
+            <a routerLink="/" class="nav-link">Credit</a>
             <div class="relative" #transactionsMenu>
               <button (click)="toggleTransactionsMenu()" class="nav-link flex items-center gap-1">
                 <span>Transactions</span>
@@ -43,7 +43,7 @@ import { NgOptimizedImage } from '@angular/common';
                   </a>
                   <a routerLink="/financial-report" (click)="closeTransactionsMenu()"
                      class="dropdown-item">
-                    รายงานรายเดือน
+                    รายงานรายเดือน/ประเภท
                   </a>
                 </div>
               }

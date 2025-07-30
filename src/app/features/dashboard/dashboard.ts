@@ -153,7 +153,7 @@ import { AuthService } from '../../services/auth.service';
               <button (click)="previousPage()" [disabled]="currentPage() === 1"
                       class="btn-paginator" title="หน้าก่อนหน้า">‹
               </button>
-              <span class="text-gray-200 dark:text-gray-300">
+              <span class="text-gray-600 dark:text-gray-300">
                 หน้า {{ currentPage() }} ของ {{ totalPages() }}
               </span>
               <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"

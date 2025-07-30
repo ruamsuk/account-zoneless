@@ -63,6 +63,7 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
                 <thead>
                 <tr
                   class="border-b-2 border-gray-400 font-thasadith text-lg text-amber-800 dark:text-gray-300 dark:border-gray-600 hover:bg-white/50 dark:hover:bg-black/50">
+                  <th class="p-3 text-left">#</th>
                   <th class="p-3 text-left font-semibold whitespace-nowrap">วันที่</th>
                   <th class="p-3 text-left font-semibold whitespace-nowrap">รายการ</th>
                   <th class="p-3 text-right font-semibold whitespace-nowrap">จำนวนเงิน</th>
@@ -71,11 +72,11 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
                 </tr>
                 </thead>
                 <tbody>
-                  @for (acc of accounts(); track acc.id) {
+                  @for (acc of accounts(); track acc.id; let i = $index) {
                     <tr
                       class="border-b dark:border-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-black/50"
                       [ngClass]="acc.isInCome ? ['bg-green-100/50 dark:bg-green-900/30'] : []">
-
+                      <td class="p-3">{{ i + 1 }}</td>
                       <td class="p-3 whitespace-nowrap"
                           [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.date | thaiDate }}
                       </td>

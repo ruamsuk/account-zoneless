@@ -1,11 +1,11 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { AccountService } from '../services/account.service';
 import { LoadingService } from '../services/loading.service';
 import { Transaction } from '../models/transection.model';
 import { ThaiDatePipe } from '../pipe/thai-date.pipe';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../services/toast.service';
+import { FinancialService } from '../services/financial.service';
 
 @Component({
   selector: 'app-financial-report',
@@ -87,22 +87,30 @@ import { ToastService } from '../services/toast.service';
             <table class="min-w-full">
               <thead class="bg-gray-100 dark:bg-gray-700">
               <tr class="text-left text-base font-semibold text-gray-600 dark:text-gray-300">
+                <th>#</th>
                 <th class="p-3">วันที่</th>
                 <th class="p-3">รายละเอียด</th>
                 <th class="p-3">หมายเหตุ</th>
                 <th class="p-3 text-right">
-                  <span class="text-green-600">รายรับ</span>/
-                  <span class="text-red-600">รายจ่าย</span></th>
+                  จำนวนเงิน
               </tr>
               </thead>
               <tbody>
-                @for (tx of transactions(); track tx.id) {
-                  <tr class="border-b dark:text-gray-200 dark:border-gray-700 hover:bg-black/20 dark:hover:bg-black/50">
-                    <td class="p-3">{{ tx.date | thaiDate }}</td>
-                    <td class="p-3">{{ tx.details }}</td>
-                    <td class="p-3">{{ tx.remark }}</td>
+                @for (tx of transactions(); track tx.id; let i = $index) {
+                  <tr class="border-b dark:text-gray-200 dark:border-gray-700 hover:bg-black/20 dark:hover:bg-black/50"
+                      [ngClass]="tx.isInCome ? ['bg-green-50 dark:bg-green-900/30'] : ['']">
+                    <td class="p-3">{{ i + 1 }}</td>
+                    <td class="p-3"
+                        [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['']">{{ tx.date | thaiDate }}
+                    </td>
+                    <td class="p-3"
+                        [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['']">{{ tx.details }}
+                    </td>
+                    <td class="p-3"
+                        [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['']">{{ tx.remark }}
+                    </td>
                     <td class="p-3 text-right"
-                        [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-500']">
+                        [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-400']">
                       {{ tx.amount | number:'1.2-2' }}
                     </td>
                   </tr>
@@ -122,7 +130,7 @@ import { ToastService } from '../services/toast.service';
   styles: ``
 })
 export class FinancialReport implements OnInit {
-  private financialService = inject(AccountService);
+  private financialService = inject(FinancialService);
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
 
