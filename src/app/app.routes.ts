@@ -56,6 +56,12 @@ export const routes: Routes = [
     canActivate: [adminGuard]
   },
   {
+    path: 'annual-report',
+    loadComponent: () => import('./pages/annual-report')
+      .then(m => m.AnnualReport),
+    canActivate: [adminGuard]
+  },
+  {
     path: '**',
     pathMatch: 'full',
     redirectTo: '',
