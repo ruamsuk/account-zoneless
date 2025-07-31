@@ -20,7 +20,9 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
   ],
   template: `
     <div class="p-4 sm:p-6 lg:p-8">
-      <h1 class="text-2xl md:text-3xl font-thasadith font-bold text-white text-shadow mb-6">รายงานตามช่วงเวลา</h1>
+      <div class="container mx-auto px-4 md:px-8">
+        <h1 class="text-2xl md:text-3xl font-thasadith font-bold text-white text-shadow mb-6">รายงานตามช่วงเวลา</h1>
+      </div>
       <div class="flex items-center justify-center">
         <form [formGroup]="reportForm" (ngSubmit)="onSubmit()"
               class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg flex flex-col md:flex-row gap-4 items-center z-40">
@@ -37,7 +39,7 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
       </div>
       @if (accounts()) {
         <div
-          class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-center max-w-5xl mx-auto z-0">
+          class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-center max-w-5xl mx-auto z-0">
           <div>
             <h3 class="text-lg font-semibold text-green-700 dark:text-green-400">รายรับรวม</h3>
             <p
@@ -55,7 +57,7 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
         </div>
 
         <div class="p-4 sm:p-6 lg:p-8 z-0">
-          <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 max-w-5xl mx-auto">
+          <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-1 max-w-5xl mx-auto">
             <h2 class="text-2xl font-thasadith font-semibold text-green-700 dark:text-gray-200 mb-4">
               รายละเอียดข้อมูล</h2>
             <div class="overflow-x-auto">

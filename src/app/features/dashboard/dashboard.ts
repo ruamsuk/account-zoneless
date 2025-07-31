@@ -22,8 +22,8 @@ import { AuthService } from '../../services/auth.service';
   ],
   providers: [DatePipe],
   template: `
-    <div class="p-4 sm:p-6 lg:p-8">
-      <div class="flex justify-between items-center mb-6">
+    <div class="max-w-5xl p-4 sm:p-6 lg:p-8 mx-auto">
+      <div class="flex justify-between items-center">
         <h1 class="text-4xl font-serif font-bold text-white text-shadow-lg">Dashboard</h1>
         <button (click)="requestOpenModal.emit()" class="btn-primary inline-flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
@@ -35,17 +35,9 @@ import { AuthService } from '../../services/auth.service';
         </button>
       </div>
     </div>
-    <div class="flex flex-col items-center justify-center text-center">
-      <h1 class="text-4xl md:text-5xl text-white font-bold font-serif text-shadow-lg">
-        Welcome to Your Site
-      </h1>
-      <p class="mt-4 text-white/90 text-lg md:text-xl font-sans text-shadow">
-        A comprehensive solution for all your accounting needs.
-      </p>
-    </div>
 
     <div class="p-4 sm:p-6 lg:p-8">
-      <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-8 max-w-6xl mx-auto">
+      <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg max-w-5xl mx-auto">
         <div class="flex justify-between items-center mb-6">
           <h2 class="text-2xl font-semibold font-thasadith text-gray-800 dark:text-gray-200 mb-4">รายการล่าสุด</h2>
           <div class="md:col-span-2">

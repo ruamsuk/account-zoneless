@@ -5,7 +5,6 @@ import { MonthlySummary } from '../models/account.model';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../services/toast.service';
-import { Router } from '@angular/router';
 import { Transaction } from '../models/transection.model';
 import { MonthlyDetailModal } from './monthly-detail-modal';
 
@@ -23,8 +22,8 @@ import { MonthlyDetailModal } from './monthly-detail-modal';
       <h1 class="text-3xl font-thasadith font-bold text-gray-800 dark:text-gray-200 mb-6">รายงานสรุปประจำปี</h1>
 
       <!-- Filter Controls -->
-      <div class="mb-6 p-4 bg-white rounded-xl shadow-md dark:bg-gray-800">
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
+      <div class="mb-4 p-4 bg-white rounded-xl shadow-md dark:bg-gray-800 max-w-5xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
           <div>
             <label class="form-label">ปี (พ.ศ.)</label>
             <select class="form-input" [(ngModel)]="selectedYearBE">
@@ -50,7 +49,7 @@ import { MonthlyDetailModal } from './monthly-detail-modal';
 
       <!-- Results Display -->
       @if (monthlyBreakdown().length > 0) {
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-5xl mx-auto">
           <!-- Annual Summary -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-center">
             <div class="p-4 bg-green-50 dark:bg-green-900/50 rounded-lg">
@@ -161,9 +160,8 @@ export class AnnualReport implements OnInit {
   private financialService = inject(FinancialService);
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
-  private router = inject(Router);
 
-  // --- State Signal for Modal ---
+// --- State Signal for Modal ---
   isDetailModalOpen = signal(false);
   selectedMonthTransactions = signal<Transaction[]>([]);
   selectedMonthName = signal('');

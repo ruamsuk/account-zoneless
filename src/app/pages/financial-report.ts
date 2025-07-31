@@ -16,9 +16,11 @@ import { FinancialService } from '../services/financial.service';
     FormsModule
   ],
   template: `
-    <main class="container mx-auto p-4 md:p-8">
-      <h1 class="text-2xl md:text-3xl  font-thasadith font-bold text-gray-600  mb-6">
-        รายงานรายรับ-รายจ่าย รายเดือน</h1>
+    <main class="max-w-5xl mx-auto p-4 md:p-8">
+      <div class="container mx-auto px-4 md:px-8">
+        <h1 class="text-2xl md:text-3xl  font-thasadith font-bold text-gray-600  mb-6">
+          รายงานรายรับ-รายจ่าย รายเดือน</h1>
+      </div>
 
       <!-- Filter Controls -->
       <div class="mb-6 p-4 bg-white rounded-xl shadow-md dark:bg-gray-800">
