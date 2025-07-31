@@ -4,13 +4,19 @@ import { LoadingService } from '../services/loading.service';
 import { MonthlySummary } from '../models/account.model';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '../services/toast.service';
+import { Router } from '@angular/router';
+import { Transaction } from '../models/transection.model';
+import { MonthlyDetailModal } from './monthly-detail-modal';
+
 
 @Component({
   selector: 'app-annual-report',
   imports: [
     NgClass,
     FormsModule,
-    DecimalPipe
+    DecimalPipe,
+    MonthlyDetailModal
   ],
   template: `
     <main class="container mx-auto p-4 md:p-8">
@@ -106,7 +112,8 @@ import { FormsModule } from '@angular/forms';
               </thead>
               <tbody>
                 @for (summary of monthlyBreakdown(); track summary.month) {
-                  <tr class="border-b dark:border-gray-700">
+                  <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"
+                      (click)="doDetail(summary)">
                     <td class="p-3 font-semibold dark:text-gray-200">{{ summary.month }}</td>
                     <td
                       class="p-3 text-right text-green-600 dark:text-green-400">{{ summary.income | number:'1.2-2' }}
@@ -137,14 +144,30 @@ import { FormsModule } from '@angular/forms';
           </div>
         </div>
       }
-
     </main>
+
+    <!-- Detail Modal -->
+    <app-monthly-detail-modal
+      [isOpen]="isDetailModalOpen()"
+      [monthName]="selectedMonthName()"
+      [yearBE]="selectedYearForDetail()"
+      [transactions]="selectedMonthTransactions()"
+      (close)="closeDetailModal()">
+    </app-monthly-detail-modal>
   `,
   styles: ``
 })
 export class AnnualReport implements OnInit {
   private financialService = inject(FinancialService);
   private loadingService = inject(LoadingService);
+  private toastService = inject(ToastService);
+  private router = inject(Router);
+
+  // --- State Signal for Modal ---
+  isDetailModalOpen = signal(false);
+  selectedMonthTransactions = signal<Transaction[]>([]);
+  selectedMonthName = signal('');
+  selectedYearForDetail = signal(0);
 
   // --- Filter State ---
   selectedYearBE = signal(new Date().getFullYear() + 543);
@@ -154,6 +177,15 @@ export class AnnualReport implements OnInit {
   monthlyBreakdown = signal<MonthlySummary[]>([]);
   uniqueDetails = signal<string[]>([]);
 
+  // --- Static Data for Dropdown ---
+  readonly months = [
+    {value: 0, name: 'มกราคม'}, {value: 1, name: 'กุมภาพันธ์'},
+    {value: 2, name: 'มีนาคม'}, {value: 3, name: 'เมษายน'},
+    {value: 4, name: 'พฤษภาคม'}, {value: 5, name: 'มิถุนายน'},
+    {value: 6, name: 'กรกฎาคม'}, {value: 7, name: 'สิงหาคม'},
+    {value: 8, name: 'กันยายน'}, {value: 9, name: 'ตุลาคม'},
+    {value: 10, name: 'พฤศจิกายน'}, {value: 11, name: 'ธันวาคม'}
+  ];
   readonly yearRange: number[] = [];
 
   // --- Computed Signals for Summary & Analysis ---
@@ -239,9 +271,62 @@ export class AnnualReport implements OnInit {
       this.monthlyBreakdown.set(breakdownResult);
 
     } catch (error) {
+      this.monthlyBreakdown.set([]); // เคลียร์ข้อมูลหากเกิดข้อผิดพลาด
       console.error('Error generating annual report:', error);
+      this.toastService.show('Error', 'เกิดข้อผิดพลาดในการดึงข้อมูล' + error, 'error');
     } finally {
       this.loadingService.hide();
     }
+  }
+
+  async doDetail(summary: MonthlySummary): Promise<void> {
+    this.loadingService.show();
+    try {
+      const yearCE = this.selectedYearBE() - 543;
+      // แปลงชื่อเดือนกลับเป็น index
+      const monthIndex = this.months.findIndex(m => m.name === summary.month);
+
+      if (monthIndex === -1) {
+        // 1. จัดการ Error โดยตรง: แจ้งเตือน
+        this.toastService.show('Error', 'ชื่อเดือนไม่ถูกต้อง', 'error');
+        console.error('Invalid month name:', summary.month);
+        // 2. หยุดการทำงานของฟังก์ชัน
+        return;
+      }
+
+      const dateRange = await this.financialService.getAnnualMonthlyRanges(yearCE);
+      const specificMonthRange = dateRange?.find(r => r.month === summary.month);
+
+      if (!dateRange) {
+        this.toastService.show('Info', 'ไม่พบข้อมูลในช่วงที่เลือก', 'info');
+        console.log(`Date range not found for ${summary.month} ${yearCE + 543}`);
+        return;
+      }
+      // ดึงข้อมูลธุรกรรม
+      const transactions = await this.financialService.getTransactionsByFilter(
+        specificMonthRange?.datestart || new Date(),
+        specificMonthRange?.dateend || new Date(),
+        this.selectedDetail()
+      );
+
+      // ตั้งค่า State สำหรับ Modal
+      this.selectedMonthName.set(summary.month);
+      this.selectedYearForDetail.set(this.selectedYearBE());
+      this.selectedMonthTransactions.set(transactions);
+
+      // เปิด Modal
+      this.isDetailModalOpen.set(true);
+
+    } catch (error) {
+      console.error('Error fetching details:', error);
+      // this.toastService.showError(...)
+    } finally {
+      this.loadingService.hide();
+    }
+  }
+
+  // ++ 7. เพิ่มเมธอดสำหรับปิด Modal ++
+  closeDetailModal(): void {
+    this.isDetailModalOpen.set(false);
   }
 }

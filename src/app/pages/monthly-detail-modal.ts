@@ -1,22 +1,22 @@
-import { Component, computed, EventEmitter, Input, Output } from '@angular/core';
+import { Component, computed, EventEmitter, input, Output } from '@angular/core';
 import { Transaction } from '../models/transection.model';
 import { ThaiDatePipe } from '../pipe/thai-date.pipe';
 import { DecimalPipe, NgClass } from '@angular/common';
 
 @Component({
-  selector: 'app-monthly-detail',
+  selector: 'app-monthly-detail-modal',
   imports: [
     ThaiDatePipe,
     DecimalPipe,
     NgClass
   ],
   template: `
-    @if (isOpen) {
+    @if (isOpen()) {
       <div (click)="onClose()" class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
         <div (click)="$event.stopPropagation()"
              class="bg-white p-6 md:p-8 rounded-xl shadow-2xl z-50 w-full max-w-2xl mx-auto max-h-[90vh] flex flex-col dark:bg-gray-800">
           <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-6">
-            รายละเอียดเดือน {{ monthName }} พ.ศ. {{ yearBE }}
+            รายละเอียดเดือน {{ monthName() }} พ.ศ. {{ yearBE() }}
           </h2>
 
           <!-- Summary Cards -->
@@ -53,7 +53,7 @@ import { DecimalPipe, NgClass } from '@angular/common';
               </tr>
               </thead>
               <tbody>
-                @for (tx of transactions; track tx.id) {
+                @for (tx of transactions(); track tx.id) {
                   <tr class="border-b dark:border-gray-700">
                     <td class="p-3 text-sm text-gray-700 dark:text-gray-300">{{ tx.date | thaiDate }}</td>
                     <td class="p-3 text-sm text-gray-700 dark:text-gray-300">{{ tx.details }}</td>
@@ -78,20 +78,20 @@ import { DecimalPipe, NgClass } from '@angular/common';
   styles: ``
 })
 export class MonthlyDetailModal {
-  @Input() isOpen: boolean = false;
-  @Input() monthName: string = '';
-  @Input() yearBE: number = 0;
-  @Input() transactions: Transaction[] = [];
+  isOpen = input<boolean>(false);
+  monthName = input<string>('');
+  yearBE = input<number>(0);
+  transactions = input<Transaction[]>([]);
   @Output() close = new EventEmitter<void>();
 
   // --- Computed Signals for Summary ---
   totalIncome = computed(() =>
-    this.transactions
+    this.transactions()
       .filter(t => t.isInCome)
       .reduce((sum, t) => sum + t.amount, 0)
   );
   totalExpense = computed(() =>
-    this.transactions
+    this.transactions()
       .filter(t => !t.isInCome)
       .reduce((sum, t) => sum + t.amount, 0)
   );

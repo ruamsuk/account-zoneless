@@ -95,7 +95,7 @@ export class AccountForm {
     details: ['', Validators.required],
     amount: [null, [Validators.required, Validators.min(0.01)]],
     isInCome: [false, Validators.required],
-    date: [new Date().toISOString().substring(0, 10), Validators.required],
+    date: [new Date(), Validators.required],
     remark: ['']
   });
 
@@ -104,11 +104,19 @@ export class AccountForm {
 
     const formData = this.accountForm.value;
 
+    // --- แปลง Timestamp เป็น Date object ---
     if (this.accountToEdit) {
+      let finalDate;
+      if (formData.date && typeof formData.date.toDate === 'function') {
+        finalDate = formData.date.toDate(); // ถ้าใช่, ให้แปลงเป็น JS Date
+      } else {
+        finalDate = new Date(formData.date); // ถ้าไม่ใช่, ก็สร้าง Date object ตามปกติ
+      }
+
       const updatedData: Account = {
         ...this.accountToEdit,
         ...formData,
-        date: new Date(formData.date),
+        date: finalDate,
       };
       this.accountService.updateAccount(updatedData)
         .then(() => {

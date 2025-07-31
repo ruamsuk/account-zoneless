@@ -62,7 +62,7 @@ export const routes: Routes = [
   },
   {
     path: 'monthly-detail/:year/:month',
-    loadComponent: () => import('./pages/monthly-detail.modal').then(m => m.MonthlyDetailModal),
+    loadComponent: () => import('./pages/monthly-detail-modal').then(m => m.MonthlyDetailModal),
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
