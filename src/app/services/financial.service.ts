@@ -59,26 +59,33 @@ export class FinancialService {
   }
 
   /**
-   * ดึงข้อมูลธุรกรรมตามเดือน, ปี, และรายละเอียดที่เลือก
-   * @param startDate
-   * @param endDate
-   * @param detail - (Optional) รายละเอียดที่ต้องการกรอง
-   * @returns Promise ที่จะคืนค่าเป็น array ของธุรกรรม
+   * ดึงธุรกรรมตามช่วงวันที่และรายละเอียดที่ระบุ
+   * @param startDate - วันที่เริ่มต้น
+   * @param endDate - วันที่สิ้นสุด
+   * @param detail - รายละเอียดที่ต้องการค้นหา (อาจเป็น null)
+   * @returns Promise ที่จะคืนค่าเป็น array ของ Transaction
    */
   async getTransactionsByFilter(startDate: Date, endDate: Date, detail: string | null): Promise<Transaction[]> {
-    let conditions = [
+    // 1. ดึงข้อมูลทั้งหมดที่อยู่ในช่วงวันที่ที่ต้องการมาก่อน
+    const dateQuery = query(
+      this.accountsCollection,
       where('date', '>=', Timestamp.fromDate(startDate)),
       where('date', '<=', Timestamp.fromDate(endDate))
-    ];
+    );
 
+    const querySnapshot = await getDocs(dateQuery);
+    let transactions = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as Transaction));
+
+    // 2. ถ้ามีการระบุ 'detail' ให้ทำการกรองข้อมูลที่ได้มาในฝั่ง Client
     if (detail) {
-      conditions.push(where('details', '==', detail));
+      const searchTerm = detail.toLowerCase().trim(); // ทำความสะอาดคำค้นหา
+
+      transactions = transactions.filter(tx =>
+        (tx.details || '').toLowerCase().trim().includes(searchTerm)
+      );
     }
 
-    const q = query(this.accountsCollection, ...conditions);
-
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as Transaction));
+    return transactions;
   }
 
   /**
@@ -88,12 +95,23 @@ export class FinancialService {
   async getUniqueDetails(): Promise<string[]> {
     const querySnapshot = await getDocs(this.accountsCollection);
     const details = new Set<string>();
+
     querySnapshot.forEach(doc => {
       const data = doc.data();
-      if (data['details']) {
-        details.add(data['details']);
+
+      // 1. ตรวจสอบว่ามีฟิลด์ 'details' และเป็น string หรือไม่
+      if (data['details'] && typeof data['details'] === 'string') {
+
+        // 2. ใช้ .trim() เพื่อ "ตัด" ช่องว่างที่ไม่จำเป็นทั้งข้างหน้าและข้างหลังออก
+        const trimmedDetail = data['details'].trim();
+
+        // 3. เพิ่มข้อมูลที่ "สะอาด" แล้วเข้าไปใน Set (ถ้ามันไม่ใชค่าว่าง)
+        if (trimmedDetail) {
+          details.add(trimmedDetail);
+        }
       }
     });
+
     return Array.from(details).sort();
   }
 

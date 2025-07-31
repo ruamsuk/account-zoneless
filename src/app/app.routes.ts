@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 import { canActivate, redirectLoggedInTo, redirectUnauthorizedTo } from '@angular/fire/auth-guard';
-import { adminGuard } from './features/auth/admin-guard';
 
 const redirectUnauthorizedToLogin = () =>
   redirectUnauthorizedTo(['auth/login']);
@@ -47,19 +46,24 @@ export const routes: Routes = [
     path: 'reports/date-range',
     loadComponent: () => import('./features/reports/date-range-report')
       .then(m => m.DateRangeReport),
-    canActivate: [adminGuard]
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'financial-report',
     loadComponent: () => import('./pages/financial-report')
       .then(m => m.FinancialReport),
-    canActivate: [adminGuard]
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'annual-report',
-    loadComponent: () => import('./pages/annual-report')
+    loadComponent: () => import('./pages/annual-report-')
       .then(m => m.AnnualReport),
-    canActivate: [adminGuard]
+    ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'monthly-detail/:year/:month',
+    loadComponent: () => import('./pages/monthly-detail.modal').then(m => m.MonthlyDetailModal),
+    ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: '**',
