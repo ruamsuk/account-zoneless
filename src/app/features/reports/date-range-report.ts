@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { AccountService } from '../../services/account.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Account } from '../../models/account.model';
@@ -8,6 +8,7 @@ import { tap } from 'rxjs';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-date-range-report',
@@ -119,6 +120,7 @@ export class DateRangeReport {
   private accountService = inject(AccountService);
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
+  private destroyRef = inject(DestroyRef);
 
   reportForm: FormGroup;
   accounts = signal<Account[] | undefined>(undefined);
@@ -153,7 +155,6 @@ export class DateRangeReport {
   }
 
   onSubmit() {
-    console.log('Raw form value:', this.reportForm.value);
     // 1. ตรวจสอบความถูกต้องของฟอร์มก่อน
     if (this.reportForm.invalid) {
       this.toastService.show('Warning', 'กรุณาเลือกวันที่ให้ครบถ้วน', 'warning');
@@ -171,6 +172,7 @@ export class DateRangeReport {
 
     this.accountService.getAccountsByDateRange(startDate, endDate)
       .pipe(
+        takeUntilDestroyed(this.destroyRef),
         tap(() => {
           this.loadingService.hide();
         }),
@@ -182,7 +184,7 @@ export class DateRangeReport {
         },
         complete: () => {
           // อาจจะมีการทำงานเพิ่มเติมเมื่อเสร็จสิ้น
-          this.toastService.show('Success', 'ดึงข้อมูลเรียบร้อยแล้ว', 'success');
+          // this.toastService.show('Success', 'ดึงข้อมูลเรียบร้อยแล้ว', 'success');
         },
         error: (err) => {
           // จัดการกรณีล้มเหลวที่นี่ที่เดียว
