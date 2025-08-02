@@ -122,10 +122,18 @@ import { NgOptimizedImage } from '@angular/common';
         @if (isMobileMenuOpen()) {
           <div class="md:hidden mt-4">
             <div class="flex flex-col gap-2">
-              <a routerLink="/dashboard" (click)="closeMobileMenu()" class="mobile-menu-item">Dashboard</a>
-              <a routerLink="/transactions" (click)="closeMobileMenu()" class="mobile-menu-item">รายการทั้งหมด</a>
+              <a routerLink="/" (click)="closeMobileMenu()" class="mobile-menu-item">Dashboard</a>
+              <a routerLink="/dashboard" (click)="closeMobileMenu()" class="mobile-menu-item">รายการทั้งหมด</a>
               <a routerLink="/reports/date-range" (click)="closeMobileMenu()"
                  class="mobile-menu-item">รายงานตามช่วงเวลา</a>
+              <a routerLink="/financial-report" (click)="closeMobileMenu()"
+                 class="dropdown-item">
+                รายงานรายเดือน/ประเภท
+              </a>
+              <a routerLink="/annual-report" (click)="closeMobileMenu()"
+                 class="dropdown-item">
+                รายงานรายปี
+              </a>
               <div class="border-t border-gray-500 pt-2 mt-2">
                 <button type="button" (click)="requestOpenModal()" class="mobile-menu-item text-left w-full">
                   เพิ่มรายการใหม่

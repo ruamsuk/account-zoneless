@@ -25,13 +25,16 @@ import { AuthService } from '../../services/auth.service';
     <div class="max-w-5xl p-4 sm:p-6 lg:p-8 mx-auto">
       <div class="flex justify-between items-center">
         <h1 class="text-4xl font-serif font-bold text-white text-shadow-lg">Dashboard</h1>
-        <button (click)="requestOpenModal.emit()" class="btn-primary inline-flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 mr-2">
+        <button (click)="requestOpenModal.emit()"
+                class="md:btn-primary btn-primary-sm inline-flex items-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 md:mr-2">
             <path fill-rule="evenodd"
                   d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
                   clip-rule="evenodd"/>
           </svg>
-          เพิ่มรายการ
+          <span class="hidden sm:block">
+            เพิ่มรายการ
+          </span>
         </button>
       </div>
     </div>
@@ -39,7 +42,9 @@ import { AuthService } from '../../services/auth.service';
     <div class="p-4 sm:p-6 lg:p-8">
       <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg max-w-5xl mx-auto">
         <div class="flex justify-between items-center mb-6">
-          <h2 class="text-2xl font-semibold font-thasadith text-gray-800 dark:text-gray-200 mb-4">รายการล่าสุด</h2>
+          <h2
+            class="hidden md:inline-block text-2xl font-semibold font-thasadith text-gray-800 dark:text-gray-200 mb-4">
+            รายการล่าสุด</h2>
           <div class="md:col-span-2">
             <div class="relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -86,15 +91,19 @@ import { AuthService } from '../../services/auth.service';
                 <tr
                   class="border-b text-black dark:border-gray-700 hover:bg-white/50 dark:hover:bg-black/50 dark:text-gray-200"
                   [ngClass]="acc.isInCome ? ['bg-green-100/50 dark:bg-green-900/30'] : []">
-                  <td class="p-3" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.date | thaiDate }}</td>
-                  <td class="p-3" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.details }}</td>
-                  <td class="p-3 text-right font-medium"
+                  <td class="p-3 whitespace-nowrap"
+                      [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.date | thaiDate }}
+                  </td>
+                  <td class="p-3 whitespace-nowrap" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.details }}</td>
+                  <td class="p-3 whitespace-nowrap text-right font-medium"
                       [ngClass]="acc.isInCome ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-500']">
                     {{ acc.isInCome ? '+' : '-' }} {{ acc.amount | number:'1.2-2' }}
                   </td>
-                  <td class="pl-10 text-left" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.remark }}</td>
+                  <td class="pl-10 whitespace-nowrap text-left"
+                      [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.remark }}
+                  </td>
 
-                  <td class="p-3 font-medium text-green-600 dark:text-green-400">
+                  <td class="p-3 whitespace-nowrap font-medium text-green-600 dark:text-green-400">
                     @if (acc.isInCome) {
                       <span>รายรับ</span>
                     }
