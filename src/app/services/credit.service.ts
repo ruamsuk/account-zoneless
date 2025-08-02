@@ -1,7 +1,21 @@
 import { inject, Injectable } from '@angular/core';
-import { collection, Firestore, getDocs, orderBy, query, where } from '@angular/fire/firestore';
+import {
+  addDoc,
+  collection,
+  collectionData,
+  deleteDoc,
+  doc,
+  Firestore,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where
+} from '@angular/fire/firestore';
 import { CreditData } from '../models/credit.model';
 import { Timestamp } from 'firebase/firestore';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -34,4 +48,38 @@ export class CreditService {
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as CreditData));
   }
+
+  /**
+   * ดึงข้อมูลธุรกรรมทั้งหมดแบบเรียลไทม์
+   */
+  getAllTransactions(): Observable<CreditData[]> {
+    const q = query(this.creditCollection, orderBy('date', 'desc'));
+    return (collectionData(q, {idField: 'id'}) as Observable<CreditData[]>).pipe(
+      map(transactions => transactions.filter(tx => !!tx.id))
+    );
+  }
+
+  /**
+   * เพิ่มธุรกรรมใหม่
+   */
+  addTransaction(data: Partial<CreditData>) {
+    return addDoc(this.creditCollection, {...data, created: new Date()});
+  }
+
+  /**
+   * อัปเดตธุรกรรม
+   */
+  updateTransaction(transaction: CreditData): Promise<void> {
+    const docInstance = doc(this.firestore, `credit/${transaction.id}`);
+    return updateDoc(docInstance, {...transaction, modify: new Date()});
+  }
+
+  /**
+   * ลบธุรกรรม
+   */
+  deleteTransaction(id: string): Promise<void> {
+    const docInstance = doc(this.firestore, 'credit', id);
+    return deleteDoc(docInstance);
+  }
+
 }

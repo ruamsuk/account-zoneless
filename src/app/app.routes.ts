@@ -66,10 +66,20 @@ export const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
-    path: 'credit-report',
-    loadComponent: () => import('./pages/credit-report')
-      .then(m => m.CreditReport),
-    ...canActivate(redirectUnauthorizedToLogin)
+    path: 'credit',
+    ...canActivate(redirectUnauthorizedToLogin),
+    children: [
+      {
+        path: 'list',
+        loadComponent: () => import('./pages/credit-list')
+          .then(m => m.CreditList)
+      },
+      {
+        path: 'report',
+        loadComponent: () => import('./pages/credit-report')
+          .then(m => m.CreditReport),
+      },
+    ]
   },
   {
     path: '**',

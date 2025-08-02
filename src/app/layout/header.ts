@@ -38,9 +38,9 @@ import { NgOptimizedImage } from '@angular/common';
                 <div class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
                   <a routerLink="/dashboard" (click)="closeTransactionsMenu()"
                      class="dropdown-item">รายการทั้งหมด</a>
-                  <button type="button" (click)="requestOpenModal()" class="dropdown-item w-full text-left">
+                  <!--<button type="button" (click)="requestOpenModal()" class="dropdown-item w-full text-left">
                     เพิ่มรายการใหม่
-                  </button>
+                  </button>-->
                   <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
                   <a routerLink="/reports/date-range" (click)="closeTransactionsMenu()" class="dropdown-item">
                     รายงานตามช่วงเวลา
@@ -68,8 +68,14 @@ import { NgOptimizedImage } from '@angular/common';
                 <div
                   class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
                   <div class="py-1">
-                    <a routerLink="/credit-report" (click)="closeCreditMenu()" class="dropdown-item">
-                      รายงานบัตรเครดิต
+                    <a routerLink="/credit/list" (click)="closeCreditMenu()" class="dropdown-item">
+                      รายการทั้งหมด
+                    </a>
+                    <a routerLink="/credit/report" (click)="closeCreditMenu()" class="dropdown-item">
+                      รายการรายเดือน
+                    </a>
+                    <a routerLink="/credit/report-year" (click)="closeCreditMenu()" class="dropdown-item">
+                      รายการรายปี
                     </a>
                     <!-- คุณสามารถเพิ่มลิงก์อื่นๆ ได้ที่นี่ -->
                   </div>
@@ -134,12 +140,12 @@ import { NgOptimizedImage } from '@angular/common';
                  class="dropdown-item">
                 รายงานรายปี
               </a>
-              <div class="border-t border-gray-500 pt-2 mt-2">
+              <!--<div class="border-t border-gray-500 pt-2 mt-2">
                 <button type="button" (click)="requestOpenModal()" class="mobile-menu-item text-left w-full">
                   เพิ่มรายการใหม่
                 </button>
                 <button (click)="logout()" class="mobile-menu-item text-red-400 w-full text-left mt-2">Logout</button>
-              </div>
+              </div>-->
             </div>
           </div>
         }
