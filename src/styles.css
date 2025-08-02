@@ -195,3 +195,8 @@ input:-webkit-autofill:active {
 .btn-paginator.active {
   @apply bg-blue-600 border-blue-600 text-white dark:bg-blue-500 dark:border-blue-500;
 }
+
+/* Table styles */
+.table-header {
+  @apply px-6 py-3 text-base font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300;
+}

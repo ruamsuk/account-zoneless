@@ -19,8 +19,10 @@ import { NgOptimizedImage } from '@angular/common';
             <span class="text-2xl text-white text-shadow-lg font-semibold font-serif">Account App</span>
           </a>
 
+          <!-- Credit menu -->
           <div class="hidden md:flex items-center gap-4">
-            <a routerLink="/" class="nav-link">Credit</a>
+
+            <!-- Account menu -->
             <div class="relative" #transactionsMenu>
               <button (click)="toggleTransactionsMenu()" class="nav-link flex items-center gap-1">
                 <span>Transactions</span>
@@ -30,6 +32,8 @@ import { NgOptimizedImage } from '@angular/common';
                         clip-rule="evenodd"/>
                 </svg>
               </button>
+
+              <!-- Popup menu for account -->
               @if (isTransactionsMenuOpen()) {
                 <div class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
                   <a routerLink="/dashboard" (click)="closeTransactionsMenu()"
@@ -52,6 +56,26 @@ import { NgOptimizedImage } from '@angular/common';
                 </div>
               }
             </div>
+
+            <!-- Credit Menu -->
+            <div class="relative">
+              <button (click)="toggleCreditMenu($event)" class="nav-link flex items-center gap-1"
+                      [class.active]="isCreditMenuOpen()">
+                Credit
+              </button>
+
+              @if (isCreditMenuOpen()) {
+                <div
+                  class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
+                  <div class="py-1">
+                    <a routerLink="/credit-report" (click)="closeCreditMenu()" class="dropdown-item">
+                      รายงานบัตรเครดิต
+                    </a>
+                    <!-- คุณสามารถเพิ่มลิงก์อื่นๆ ได้ที่นี่ -->
+                  </div>
+                </div>
+              }
+            </div>
             <button (click)="toggleTheme()" class="btn-icon-round" title="Toggle theme">
               @if (isDarkMode()) {
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -69,6 +93,7 @@ import { NgOptimizedImage } from '@angular/common';
             </button>
             <button (click)="logout()" class="btn-secondary-sm">Logout</button>
           </div>
+
 
           <div class="md:hidden flex items-center gap-2">
             <button (click)="toggleTheme()" class="btn-icon-round" title="Toggle theme">
@@ -121,6 +146,8 @@ export class Header implements OnInit {
   private eRef = inject(ElementRef);
 
   isTransactionsMenuOpen = signal(false);
+  isCreditMenuOpen = signal(false);
+  // สถานะสำหรับเมนูมือถือ
   isMobileMenuOpen = signal(false);
   isDarkMode = signal(false);
 
@@ -136,6 +163,16 @@ export class Header implements OnInit {
     this.isTransactionsMenuOpen.set(false);
   }
 
+  // เมธอดสำหรับเปิด/ปิดเมนู Credit
+  toggleCreditMenu(event: Event): void {
+    event.stopPropagation();
+    this.isCreditMenuOpen.update(value => !value);
+  }
+
+  closeCreditMenu() {
+    this.isCreditMenuOpen.set(false);
+  }
+
   // เมธอดสำหรับส่ง Event ขอเปิด Modal
   requestOpenModal() {
     this.openTransactionModal.emit();
@@ -145,8 +182,9 @@ export class Header implements OnInit {
   // ตรวจจับการคลิกนอก Dropdown เพื่อปิดเมนู
   @HostListener('document:click', ['$event'])
   clickout(event: Event) {
-    if (!this.eRef.nativeElement.contains(event.target)) {
+    if (this.isCreditMenuOpen() || !this.eRef.nativeElement.contains(event.target)) {
       this.closeTransactionsMenu();
+      this.closeCreditMenu();
     }
   }
 
@@ -186,4 +224,5 @@ export class Header implements OnInit {
       this.router.navigate(['/auth/login']).then();
     });
   }
+
 }
