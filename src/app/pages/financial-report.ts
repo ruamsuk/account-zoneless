@@ -101,17 +101,17 @@ import { FinancialService } from '../services/financial.service';
                 @for (tx of transactions(); track tx.id; let i = $index) {
                   <tr class="border-b dark:text-gray-200 dark:border-gray-700 hover:bg-black/20 dark:hover:bg-black/50"
                       [ngClass]="tx.isInCome ? ['bg-green-50 dark:bg-green-900/30'] : ['']">
-                    <td class="p-3">{{ i + 1 }}</td>
-                    <td class="p-3"
+                    <td class="p-3 whitespace-nowrap">{{ i + 1 }}</td>
+                    <td class="p-3 whitespace-nowrap"
                         [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['']">{{ tx.date | thaiDate }}
                     </td>
-                    <td class="p-3"
+                    <td class="p-3 whitespace-nowrap"
                         [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['']">{{ tx.details }}
                     </td>
-                    <td class="p-3"
+                    <td class="p-3 whitespace-nowrap"
                         [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['']">{{ tx.remark }}
                     </td>
-                    <td class="p-3 text-right"
+                    <td class="p-3 whitespace-nowrap text-right"
                         [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-400']">
                       {{ tx.amount | number:'1.2-2' }}
                     </td>

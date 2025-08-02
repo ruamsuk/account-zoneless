@@ -71,24 +71,38 @@ import { FormsModule } from '@angular/forms';
               <table class="min-w-full">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th class="table-header">วันที่</th>
-                  <th class="table-header">รายละเอียด</th>
-                  <th class="table-header text-right">จำนวนเงิน</th>
+                  <th class="p-3 text-left w-2.5">#</th>
+                  <th class="p-3 text-left">วันที่</th>
+                  <th class="p-3 text-left">รายละเอียด</th>
+                  <th class="p-3 text-right">จำนวนเงิน</th>
                 </tr>
                 </thead>
                 <tbody>
-                  @for (tx of transactions(); track tx.id) {
-                    <tr class="border-b dark:border-gray-700"
+                  @for (tx of transactions(); track tx.id; let i = $index) {
+                    <tr class="border-b dark:border-gray-700 text-base text-gray-700 dark:text-gray-300"
                         [ngClass]="tx.isCashback ? ['bg-green-50 dark:bg-green-900/20'] : ['']">
-                      <td class="p-3 text-base text-gray-700 dark:text-gray-300">{{ tx.date | thaiDate }}</td>
-                      <td class="p-3 text-base text-gray-700 dark:text-gray-300">{{ tx.details }}</td>
-                      <td class="p-3 text-right text-base"
+                      <td class="p-3 whitespace-nowrap text-left">{{ i + 1 }}</td>
+                      <td class="p-3 whitespace-nowrap">{{ tx.date | thaiDate }}</td>
+                      <td class="p-3 whitespace-nowrap">{{ tx.details }}</td>
+                      <td class="p-3 whitespace-nowrap text-right text-base"
                           [ngClass]="tx.isCashback ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-500']">
                         {{ tx.isCashback ? '+' : '-' }} {{ tx.amount | number:'1.2-2' }}
                       </td>
                     </tr>
                   }
                 </tbody>
+                <tfoot class="bg-gray-100 dark:bg-gray-700">
+                <tr class="border-b-2 ">
+                  <td colspan="2" class="p-3 whitespace-nowrap font-semibold dark:text-gray-200">
+                    ยอดใช้จ่ายรวม: {{ totalExpense() | number:'1.2-2' }}
+                  </td>
+                  <td class="p-3 whitespace-nowrap text-left font-bold text-green-600 dark:text-green-400">
+                    เงินคืน : + {{ totalCashback() | number:'1.2-2' }}
+                  </td>
+                  <td class="p-3 whitespace-nowrap text-right font-bold text-red-600 dark:text-red-500">
+                    ยอดสุทธิ: - {{ netExpense() | number:'1.2-2' }}
+                  </td>
+                </tfoot>
               </table>
             </div>
           } @else {
