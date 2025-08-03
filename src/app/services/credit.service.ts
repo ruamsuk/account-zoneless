@@ -82,4 +82,25 @@ export class CreditService {
     return deleteDoc(docInstance);
   }
 
+  /**
+   * 1. ดึงรายละเอียดธุรกรรมที่ไม่ซ้ำกัน
+   * 2. แปลงเป็น array และเรียงลำดับ
+   * 3. คืนค่าเป็น Promise ที่จะให้ array ของรายละเอียดธุรกรรมที่ไม่ซ้ำกัน
+   *  @returns Promise<string[]> - รายละเอียดธุรกรรมที่ไม่ซ้ำกัน
+   */
+  async getUniqueDetails(): Promise<string[]> {
+    const querySnapshot = await getDocs(this.creditCollection);
+    const details = new Set<string>();
+    querySnapshot.forEach(doc => {
+      const data = doc.data();
+      if (data['details'] && typeof data['details'] === 'string') {
+        const trimmedDetail = data['details'].trim();
+        if (trimmedDetail) {
+          details.add(trimmedDetail);
+        }
+      }
+    });
+    return Array.from(details).sort();
+  }
+
 }

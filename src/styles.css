@@ -47,15 +47,25 @@ button {
   }
 }
 
-/* === Autofill Style Override for Dark Mode === */
+/* === Autofill Style Override === */
+
+/* 1. สำหรับโหมดสว่าง (Light Mode) */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  /* ใช้ค่าสี Hex Code โดยตรง (สีเทา-700 ของ Tailwind) */
-  -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
+  /* บังคับให้พื้นหลังเป็นสีขาว และตัวอักษรเป็นสีเทาเข้ม */
+  -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+  -webkit-text-fill-color: #1f2937 !important; /* Tailwind gray-800 */
+}
 
-  /* ใช้ค่าสี Hex Code โดยตรง (สีขาว) */
+/* 2. สำหรับโหมดมืด (Dark Mode) */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+  /* บังคับให้พื้นหลังเป็นสีเทาเข้ม และตัวอักษรเป็นสีขาว */
+  -webkit-box-shadow: 0 0 0 30px #374151 inset !important; /* Tailwind gray-700 */
   -webkit-text-fill-color: #ffffff !important;
 }
 

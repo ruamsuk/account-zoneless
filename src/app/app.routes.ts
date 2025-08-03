@@ -79,6 +79,11 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/credit-report')
           .then(m => m.CreditReport),
       },
+      {
+        path: 'credit-annual-report',
+        loadComponent: () => import('./pages/credit-annual-report')
+          .then(m => m.CreditAnnualReport),
+      },
     ]
   },
   {

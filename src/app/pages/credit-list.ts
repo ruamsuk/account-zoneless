@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, Signal, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ToastService } from '../services/toast.service';
 import { DialogService } from '../shared/services/dialog';
@@ -9,6 +9,8 @@ import { CreditData } from '../models/credit.model';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../pipe/thai-date.pipe';
 import { ThaiDatepicker } from '../shared/components/thai-datepicker';
+import { catchError, Observable, tap, throwError } from 'rxjs';
+import { NumberFormatDirective } from '../shared/directives/number-format';
 
 @Component({
   selector: 'app-credit-list',
@@ -18,7 +20,8 @@ import { ThaiDatepicker } from '../shared/components/thai-datepicker';
     NgClass,
     DecimalPipe,
     ThaiDatePipe,
-    ThaiDatepicker
+    ThaiDatepicker,
+    NumberFormatDirective
   ],
   template: `
     <div class="max-w-5xl p-4 sm:p-6 lg:p-8 mx-auto">
@@ -63,75 +66,82 @@ import { ThaiDatepicker } from '../shared/components/thai-datepicker';
           </div>
         </div>
         <div class="overflow-x-auto">
-          <table class="min-w-full">
-            <thead>
-            <tr
-              class="border-b-2 border-gray-400 font-semibold text-amber-800 dark:text-gray-300 text-lg dark:border-gray-600 ">
-              <th class="p-3 text-left w-2.5">#</th>
-              <th class="p-3 text-left">วันที่</th>
-              <th class="p-3 text-left">รายละเอียด</th>
-              <th class="p-3 text-right">จำนวนเงิน</th>
-              <th class="p-3 text-center">Actions</th>
-            </tr>
-            </thead>
-            <tbody>
-              @for (tx of paginatedTransactions(); track tx.id; let i = $index) {
-                <tr
-                  class="text-base text-gray-800 dark:text-gray-300 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
-                  [ngClass]="tx.isCashback ? ['bg-green-100/50 dark:bg-green-900/30'] : []">
-                  <td class="p-3 whitespace-nowrap text-left">{{ (currentPage() - 1) * itemsPerPage() + i + 1 }}</td>
-                  <td class="p-3 whitespace-nowrap">{{ tx.date | thaiDate }}</td>
-                  <td class="p-3 whitespace-nowrap">{{ tx.details }}</td>
-                  <td class="p-3 whitespace-nowrap text-right"
-                      [ngClass]="tx.isCashback ? ['text-green-600'] : ['text-red-600']">
-                    {{ tx.isCashback ? '+' : '-' }} {{ tx.amount | number:'1.2-2' }}
-                  </td>
-                  <td class="p-3 whitespace-nowrap text-center">
-                    <button (click)="onViewDetails(tx)" title="ดูรายละเอียด" class="btn-icon text-sky-500">
-                      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                      </svg>
-                    </button>
-                    <button (click)="openModal(tx)" class="btn-icon mx-2 text-green-600" title="แก้ไข">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                        <path
-                          d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.886 1.343Z"/>
-                      </svg>
-                    </button>
-                    <button (click)="onDelete(tx)" class="btn-icon text-red-600" title="ลบ">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                        <path fill-rule="evenodd"
-                              d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.33l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193v-.443A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm3.44 0a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
-                              clip-rule="evenodd"/>
-                      </svg>
-                    </button>
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
+          @if (paginatedTransactions().length > 0) {
+            <!-- Transaction Table -->
+            <table class="min-w-full">
+              <thead>
+              <tr
+                class="border-b-2 border-gray-400 font-semibold text-amber-800 dark:text-gray-300 text-lg dark:border-gray-600 ">
+                <th class="p-3 text-left w-2.5">#</th>
+                <th class="p-3 text-left">วันที่</th>
+                <th class="p-3 text-left">รายละเอียด</th>
+                <th class="p-3 text-right">จำนวนเงิน</th>
+                <th class="p-3 text-center">Actions</th>
+              </tr>
+              </thead>
+              <tbody>
+                @for (tx of paginatedTransactions(); track tx.id; let i = $index) {
+                  <tr
+                    class="text-base text-gray-800 dark:text-gray-300 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
+                    [ngClass]="tx.isCashback ? ['bg-green-100/50 dark:bg-green-900/30'] : []">
+                    <td class="p-3 whitespace-nowrap text-left">{{ (currentPage() - 1) * itemsPerPage() + i + 1 }}</td>
+                    <td class="p-3 whitespace-nowrap">{{ tx.date | thaiDate }}</td>
+                    <td class="p-3 whitespace-nowrap">{{ tx.details }}</td>
+                    <td class="p-3 whitespace-nowrap text-right"
+                        [ngClass]="tx.isCashback ? ['text-green-600'] : ['text-red-600']">
+                      {{ tx.isCashback ? '+' : '-' }} {{ tx.amount | number:'1.2-2' }}
+                    </td>
+                    <td class="p-3 whitespace-nowrap text-center">
+                      <button (click)="onViewDetails(tx)" title="ดูรายละเอียด" class="btn-icon text-sky-500">
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                        </svg>
+                      </button>
+                      <button (click)="openModal(tx)" class="btn-icon mx-2 text-green-600" title="แก้ไข">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                          <path
+                            d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.886 1.343Z"/>
+                        </svg>
+                      </button>
+                      <button (click)="onDelete(tx)" class="btn-icon text-red-600" title="ลบ">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                          <path fill-rule="evenodd"
+                                d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.33l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193v-.443A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm3.44 0a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
+                                clip-rule="evenodd"/>
+                        </svg>
+                      </button>
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
 
-          <!-- Pagination Controls -->
-          @if (totalPages() > 1) {
-            <div class="mt-6 flex items-center justify-center gap-2">
-              <button (click)="firstPage()" [disabled]="currentPage() === 1"
-                      class="btn-paginator" title="หน้าแรก">«
-              </button>
-              <button (click)="previousPage()" [disabled]="currentPage() === 1"
-                      class="btn-paginator" title="หน้าก่อนหน้า">‹
-              </button>
-              <span class="text-gray-600 dark:text-gray-300">
+            <!-- Pagination Controls -->
+            @if (totalPages() > 1) {
+              <div class="mt-6 flex items-center justify-center gap-2">
+                <button (click)="firstPage()" [disabled]="currentPage() === 1"
+                        class="btn-paginator" title="หน้าแรก">«
+                </button>
+                <button (click)="previousPage()" [disabled]="currentPage() === 1"
+                        class="btn-paginator" title="หน้าก่อนหน้า">‹
+                </button>
+                <span class="text-gray-600 dark:text-gray-300">
                 หน้า {{ currentPage() }} ของ {{ totalPages() }}
               </span>
-              <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
-                      class="btn-paginator" title="หน้าถัดไป">›
-              </button>
-              <button (click)="lastPage()" [disabled]="currentPage() === totalPages()"
-                      class="btn-paginator" title="หน้าสุดท้าย">»
-              </button>
+                <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
+                        class="btn-paginator" title="หน้าถัดไป">›
+                </button>
+                <button (click)="lastPage()" [disabled]="currentPage() === totalPages()"
+                        class="btn-paginator" title="หน้าสุดท้าย">»
+                </button>
+              </div>
+            }
+          } @else {
+            <div class="text-center text-red-500 dark:text-red-400">
+              <p class="text-lg">ไม่พบรายการธุรกรรมที่ตรงกับคำค้นหา</p>
             </div>
           }
           <!-- Add/Edit Modal -->
@@ -157,10 +167,10 @@ import { ThaiDatepicker } from '../shared/components/thai-datepicker';
                       </p>
                       <p><strong>หมายเหตุ:</strong> {{ selectedTransaction()!.remark || '-' }}</p>
                       <p class="text-base text-gray-400 pt-4 border-t dark:border-gray-600">
-                        <strong>บันทึกเมื่อ:</strong> {{ selectedTransaction()!.created | thaiDate }}</p>
+                        <strong>บันทึกเมื่อ:</strong> {{ selectedTransaction()!.created | thaiDate:'mediumt' }}</p>
                       @if (selectedTransaction()!.modify) {
                         <p class="text-base text-gray-400">
-                          <strong>แก้ไขล่าสุด:</strong> {{ selectedTransaction()!.modify | thaiDate }}</p>
+                          <strong>แก้ไขล่าสุด:</strong> {{ selectedTransaction()!.modify | thaiDate:'mediumt' }}</p>
                       }
                     </div>
                     <div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t dark:border-gray-700">
@@ -185,7 +195,11 @@ import { ThaiDatepicker } from '../shared/components/thai-datepicker';
                       </div>
                       <div class="mb-4">
                         <label class="form-label">จำนวนเงิน</label>
-                        <input type="number" formControlName="amount" class="form-input">
+                        <input
+                          type="text"
+                          inputmode="decimal"
+                          formControlName="amount" class="form-input"
+                          appNumberFormat>
                       </div>
                       <div class="mb-4">
                         <label class="form-label">หมายเหตุ</label>
@@ -223,7 +237,7 @@ export class CreditList {
   private fb = inject(FormBuilder);
 
   // --- Data & State ---
-  transactions = toSignal(this.creditService.getAllTransactions(), {initialValue: []});
+  transactions: Signal<CreditData[]>;
   currentPage = signal(1);
   itemsPerPage = signal(10);
   searchTerm = signal('');
@@ -235,9 +249,41 @@ export class CreditList {
   isEditing = computed(() => !!this.selectedTransaction());
   creditForm!: FormGroup;
 
-  // --- Computed for Display ---
+  /**
+   *  1. Get all credit from the credit service
+   *  2. Use toSignal to convert the observable to signal
+   *  3. Show loading while fetching data
+   *  4. Hide loading after data is fetched
+   *  5. Handle errors and show a toast message
+   *  6. Return an initial value of an empty array
+   *  * @returns {Signal<CreditData[]>} - A signal containing
+   *    the list of credit transactions
+   * */
+  private getCreditData(): Signal<CreditData[]> {
+    this.loadingService.show();
+
+    return toSignal(
+      (this.creditService.getAllTransactions() as Observable<CreditData[]>)
+        .pipe(
+          tap(() => {
+            this.loadingService.hide();
+          }),
+          catchError((err: any) => {
+            this.toastService.show('Error', 'Error loading credit' + err.message, 'error');
+            this.loadingService.hide(); // 👈 4. ปิด loading เมื่อเกิดข้อผิดพลาด
+            console.error(err);
+            return throwError(() => err);
+          })
+        ),
+      {
+        initialValue: [],
+      }
+    );
+  }
+
 
   constructor() {
+    this.transactions = this.getCreditData();
     this.initializeForm();
   }
 
@@ -253,6 +299,12 @@ export class CreditList {
     });
   }
 
+// --- Computed for Display ---
+  /**
+   * ฟิลเตอร์รายการธุรกรรมตามคำค้นหา
+   * @returns รายการธุรกรรมที่ตรงกับคำค้นหา
+   *  ถ้าไม่มีคำค้นหาจะคืนค่าทั้งหมด
+   */
   filteredTransactions = computed(() => {
     const searchTerm = this.searchTerm().toLowerCase();
     return this.transactions().filter(tx =>

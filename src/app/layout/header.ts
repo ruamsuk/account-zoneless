@@ -38,9 +38,6 @@ import { NgOptimizedImage } from '@angular/common';
                 <div class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
                   <a routerLink="/dashboard" (click)="closeTransactionsMenu()"
                      class="dropdown-item">รายการทั้งหมด</a>
-                  <!--<button type="button" (click)="requestOpenModal()" class="dropdown-item w-full text-left">
-                    เพิ่มรายการใหม่
-                  </button>-->
                   <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
                   <a routerLink="/reports/date-range" (click)="closeTransactionsMenu()" class="dropdown-item">
                     รายงานตามช่วงเวลา
@@ -74,7 +71,7 @@ import { NgOptimizedImage } from '@angular/common';
                     <a routerLink="/credit/report" (click)="closeCreditMenu()" class="dropdown-item">
                       รายการรายเดือน
                     </a>
-                    <a routerLink="/credit/report-year" (click)="closeCreditMenu()" class="dropdown-item">
+                    <a routerLink="/credit/credit-annual-report" (click)="closeCreditMenu()" class="dropdown-item">
                       รายการรายปี
                     </a>
                     <!-- คุณสามารถเพิ่มลิงก์อื่นๆ ได้ที่นี่ -->
