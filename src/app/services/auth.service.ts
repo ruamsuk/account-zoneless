@@ -211,7 +211,9 @@ export class AuthService {
   }
 
   logout() {
-    return signOut(this.auth);
+    return signOut(this.auth).then(() => {
+      this.toastService.show('Success', 'You have been logged out.', 'success');
+    });
   }
 
   /**

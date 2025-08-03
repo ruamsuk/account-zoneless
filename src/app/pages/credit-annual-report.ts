@@ -25,7 +25,7 @@ interface AnnualReportRow extends MonthSummary {
         รายงานบัตรเครดิตประจำปี</h1>
 
       <!-- Filter Controls -->
-      <div class="mb-6 p-4 bg-white rounded-xl shadow-md dark:bg-gray-800">
+      <div class="mb-6 p-4 bg-white rounded-xl shadow-md dark:bg-gray-800 max-w-4xl mx-auto">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
           <div>
             <label class="form-label">ปี (พ.ศ.)</label>
@@ -52,7 +52,7 @@ interface AnnualReportRow extends MonthSummary {
 
       <!-- Results Display -->
       @if (monthlyBreakdown().length > 0) {
-        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 max-w-4xl mx-auto">
           <!-- Annual Summary -->
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-center">
             <div class="p-4 bg-red-50 dark:bg-red-900/50 rounded-lg">
@@ -180,29 +180,48 @@ export class CreditAnnualReport implements OnInit {
     this.monthlyBreakdown.set([]);
     try {
       const yearCE = this.selectedYearBE() - 543;
+
+      // 1. ดึงข้อมูลทั้งหมดของปีนั้นๆ มาในครั้งเดียว
+      const allTransactionsForYear = await this.creditService.getTransactionsByBillingYear(yearCE);
+
+      // (ทางเลือก) กรองตาม details ถ้ามีการเลือก
+      let filteredTransactions = allTransactionsForYear;
+      if (this.selectedDetail()) {
+        filteredTransactions = allTransactionsForYear.filter(tx => tx.details.trim() === this.selectedDetail()!.trim());
+      }
+
+      // 2. จัดกลุ่มข้อมูลออกเป็น 12 เดือนในฝั่ง Client
       const breakdownResult: AnnualReportRow[] = [];
-
       for (let monthIndex = 0; monthIndex < 12; monthIndex++) {
-        const transactions = await this.creditService.getTransactionsByMonth(monthIndex, yearCE);
+        const monthName = this.getMonthName(monthIndex);
 
-        let filteredTransactions = transactions;
-        if (this.selectedDetail()) {
-          filteredTransactions = transactions.filter(tx => tx.details.trim() === this.selectedDetail()!.trim());
-        }
+        // 3. แปลงช่วงวันที่ของ "รอบบิล" ให้เป็นตัวเลขมิลลิวินาที
+        const monthStartTime = new Date(yearCE, monthIndex - 1, 13).getTime();
+        const monthEndTime = new Date(yearCE, monthIndex, 12, 23, 59, 59).getTime();
 
-        const expense = filteredTransactions.filter(t => !t.isCashback).reduce((sum, t) => sum + t.amount, 0);
-        const cashback = filteredTransactions.filter(t => t.isCashback).reduce((sum, t) => sum + t.amount, 0);
+        // 4. กรองธุรกรรมโดยการเปรียบเทียบ "ตัวเลข"
+        const transactionsForThisMonth = filteredTransactions.filter(tx => {
+          // 1. แปลง Timestamp เป็น Date object ก่อน
+          const txDate = (tx.date as any).toDate();
+          // 2. จากนั้นค่อยเรียก .getTime()
+          const txTime = txDate.getTime();
+          return txTime >= monthStartTime && txTime <= monthEndTime;
+        });
+
+        // คำนวณยอดสรุป
+        const expense = transactionsForThisMonth.filter(t => !t.isCashback).reduce((sum, t) => sum + t.amount, 0);
+        const cashback = transactionsForThisMonth.filter(t => t.isCashback).reduce((sum, t) => sum + t.amount, 0);
 
         breakdownResult.push({
-          month: this.getMonthName(monthIndex),
+          month: monthName,
           expense,
           cashback,
           balance: expense - cashback,
-          transactions: filteredTransactions // เก็บรายการธุรกรรมของเดือนนั้นๆ ไว้ด้วย
+          transactions: transactionsForThisMonth
         });
       }
-      this.monthlyBreakdown.set(breakdownResult);
 
+      this.monthlyBreakdown.set(breakdownResult);
     } catch (error) {
       console.error('Error generating annual report:', error);
       this.toastService.show('Error', 'ไม่สามารถสร้างรายงานได้: ' + error, 'error');

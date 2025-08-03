@@ -38,6 +38,8 @@ export class CreditService {
     // JavaScript Date object ฉลาดพอที่จะจัดการกับเดือนธันวาคม (11 + 1 = 12) ให้เป็นเดือนมกราคมของปีถัดไปได้เอง
     const endDate = new Date(year, month, 12, 23, 59, 59);
 
+    console.log(`%c[CreditService] Querying for month ${month + 1}/${year}`, 'color: blue; font-weight: bold;');
+
     const q = query(
       this.creditCollection,
       where('date', '>=', Timestamp.fromDate(startDate)),
@@ -47,6 +49,31 @@ export class CreditService {
 
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as CreditData));
+  }
+
+  /**
+   * ++ เพิ่มเมธอดใหม่สำหรับดึงข้อมูลทั้งปีในครั้งเดียว ++
+   * @param year - ปี ค.ศ. ที่ต้องการ
+   * @returns Promise ที่จะคืนค่าเป็น array ของธุรกรรมทั้งหมดในรอบบิลปีนั้นๆ
+   */
+  async getTransactionsByBillingYear(year: number): Promise<CreditData[]> {
+    // รอบบิลของปี 'year' จะเริ่มต้นวันที่ 13 ธ.ค. ของปีก่อนหน้า
+    const startDate = new Date(year - 1, 11, 13); // 11 คือเดือนธันวาคม
+
+    // และสิ้นสุดวันที่ 12 ธ.ค. ของปีที่เลือก
+    const endDate = new Date(year, 11, 12, 23, 59, 59);
+
+    const q = query(
+      this.creditCollection,
+      where('date', '>=', Timestamp.fromDate(startDate)),
+      where('date', '<=', Timestamp.fromDate(endDate)),
+      orderBy('date', 'desc')
+    );
+
+    const querySnapshot = await getDocs(q);
+    const transactions = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as CreditData));
+
+    return transactions.sort((a, b) => (b.date as any).toDate().getTime() - (a.date as any).toDate().getTime());
   }
 
   /**

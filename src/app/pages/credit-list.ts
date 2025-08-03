@@ -31,7 +31,7 @@ import { NumberFormatDirective } from '../shared/directives/number-format';
       </div>
     </div>
     <div class="p-4 sm:p-6 lg:p-8">
-      <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg max-w-5xl mx-auto">
+      <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg max-w-4xl mx-auto">
         <div class="flex justify-between items-center mb-6">
           <h2
             class="hidden md:inline-block text-2xl font-semibold font-thasadith text-gray-800 dark:text-gray-200 mb-4">

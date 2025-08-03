@@ -124,25 +124,44 @@ import { NgOptimizedImage } from '@angular/common';
 
         @if (isMobileMenuOpen()) {
           <div class="md:hidden mt-4">
-            <div class="flex flex-col gap-2">
+            <div class="flex flex-col gap-2 ">
+              <span class="mobile-menu-header">รายการเงินสด</span>
               <a routerLink="/" (click)="closeMobileMenu()" class="mobile-menu-item">Dashboard</a>
               <a routerLink="/dashboard" (click)="closeMobileMenu()" class="mobile-menu-item">รายการทั้งหมด</a>
               <a routerLink="/reports/date-range" (click)="closeMobileMenu()"
                  class="mobile-menu-item">รายงานตามช่วงเวลา</a>
               <a routerLink="/financial-report" (click)="closeMobileMenu()"
-                 class="dropdown-item">
+                 class="mobile-menu-item">
                 รายงานรายเดือน/ประเภท
               </a>
               <a routerLink="/annual-report" (click)="closeMobileMenu()"
-                 class="dropdown-item">
+                 class="mobile-menu-item">
                 รายงานรายปี
               </a>
-              <!--<div class="border-t border-gray-500 pt-2 mt-2">
-                <button type="button" (click)="requestOpenModal()" class="mobile-menu-item text-left w-full">
-                  เพิ่มรายการใหม่
-                </button>
-                <button (click)="logout()" class="mobile-menu-item text-red-400 w-full text-left mt-2">Logout</button>
-              </div>-->
+              <!-- ===== เส้นคั่น ===== -->
+              <div class="px-3 py-2">
+                <div class="border-t border-gray-200 dark:border-gray-700"></div>
+              </div>
+
+              <!-- ===== ส่วนบัตรเครดิต (Credit) ===== -->
+              <span class="mobile-menu-header">บัตรเครดิต</span>
+              <a routerLink="/credit/list" (click)="closeMobileMenu()" class="mobile-menu-item">รายการบัตรเครดิต</a>
+              <a routerLink="/credit/report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานประจำเดือน</a>
+              <a routerLink="/credit/credit-annual-report" (click)="closeMobileMenu()"
+                 class="mobile-menu-item">รายงานประจำปี</a>
+
+              <!-- ===== เส้นคั่น ===== -->
+              <div class="px-3 py-2">
+                <div class="border-t border-gray-200 dark:border-gray-700"></div>
+              </div>
+
+              <!-- ===== ส่วนบัญชีและการตั้งค่า ===== -->
+              <a routerLink="/profile" (click)="closeMobileMenu()" class="mobile-menu-item">โปรไฟล์</a>
+              @if (authService.currentUser()?.role === 'admin') {
+                <a routerLink="/user-management" (click)="closeMobileMenu()" class="mobile-menu-item">จัดการผู้ใช้</a>
+              }
+              <button (click)="logout()" class="mobile-menu-item text-red-500 w-full text-left">ออกจากระบบ</button>
+
             </div>
           </div>
         }
