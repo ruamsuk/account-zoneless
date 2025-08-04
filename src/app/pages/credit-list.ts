@@ -345,16 +345,14 @@ export class CreditList {
     this.loadingService.show();
 
     const formValue = this.creditForm.value;
-    // แปลง string 'yyyy-MM-dd' กลับไปเป็น Date object ก่อนบันทึก
-    const dataToSave = {...formValue, date: new Date(formValue.date)};
 
     try {
       if (this.isEditing() && this.selectedTransaction()) {
-        const updatedData = {...this.selectedTransaction()!, ...dataToSave};
+        const updatedData = {...this.selectedTransaction()!, ...formValue};
         await this.creditService.updateTransaction(updatedData);
         this.toastService.show('Success', 'อัปเดตรายการสำเร็จ', 'success');
       } else {
-        await this.creditService.addTransaction(dataToSave);
+        await this.creditService.addTransaction(formValue);
         this.toastService.show('Success', 'เพิ่มรายการสำเร็จ', 'success');
       }
       this.closeModal();

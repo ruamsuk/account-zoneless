@@ -173,6 +173,12 @@ input:-webkit-autofill:active {
   @apply text-gray-400 dark:text-gray-500 font-bold;
 }
 
+.day-cell.other-month.selected {
+  &:disabled {
+    @apply text-gray-400 dark:text-gray-500 font-bold;
+  }
+}
+
 .day-cell.today {
   @apply font-bold border border-blue-500;
 }
