@@ -33,7 +33,7 @@ import { NgClass, NgOptimizedImage } from '@angular/common';
           <div class="mb-6">
             <label for="email"
                    [ngClass]="email?.invalid && email?.touched ? ['text-red-500'] : ['text-gray-600 dark:text-gray-400']"
-                   class="block text-gray-600 dark:text-gray-400 font-medium mb-2">Email
+                   class="block text-gray-800 dark:text-gray-400 font-medium mb-2">Email
             </label>
             <input
               type="email" id="email" formControlName="email"
@@ -49,7 +49,7 @@ import { NgClass, NgOptimizedImage } from '@angular/common';
           <div class="mb-6">
             <label for="password"
                    [ngClass]="password?.invalid && password?.touched ? ['text-red-500'] : ['text-gray-600 dark:text-gray-400']"
-                   class="block text-gray-600 dark:text-gray-400 font-medium mb-2">Password
+                   class="block text-gray-800 dark:text-gray-400 font-medium mb-2">Password
             </label>
             <div class="relative">
               <input [type]="passwordVisible() ? 'text' : 'password'" id="password" formControlName="password"

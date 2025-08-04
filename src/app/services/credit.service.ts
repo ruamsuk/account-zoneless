@@ -38,8 +38,6 @@ export class CreditService {
     // JavaScript Date object ฉลาดพอที่จะจัดการกับเดือนธันวาคม (11 + 1 = 12) ให้เป็นเดือนมกราคมของปีถัดไปได้เอง
     const endDate = new Date(year, month, 12, 23, 59, 59);
 
-    console.log(`%c[CreditService] Querying for month ${month + 1}/${year}`, 'color: blue; font-weight: bold;');
-
     const q = query(
       this.creditCollection,
       where('date', '>=', Timestamp.fromDate(startDate)),

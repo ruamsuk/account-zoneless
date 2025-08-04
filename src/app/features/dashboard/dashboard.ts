@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, inject, Output, Signal, signal } from '@angular/core';
+import { Component, computed, inject, Signal, signal } from '@angular/core';
 import { AccountService } from '../../services/account.service';
 import { DatePipe, DecimalPipe, NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
@@ -10,6 +10,7 @@ import { Account } from '../../models/account.model';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogService } from '../../shared/services/dialog';
 import { AuthService } from '../../services/auth.service';
+import { AccountModal } from '../../pages/account-modal';
 
 @Component({
   selector: 'app-dashboard',
@@ -18,14 +19,15 @@ import { AuthService } from '../../services/auth.service';
     ThaiDatePipe,
     DecimalPipe,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    AccountModal
   ],
   providers: [DatePipe],
   template: `
     <div class="max-w-5xl p-4 sm:p-6 lg:p-8 mx-auto">
       <div class="flex justify-between items-center">
         <h1 class="text-4xl font-serif font-bold text-white text-shadow-lg">Dashboard</h1>
-        <button (click)="requestOpenModal.emit()"
+        <button (click)="openAddModal()"
                 class="md:btn-primary btn-primary-sm inline-flex items-center">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 md:mr-2">
             <path fill-rule="evenodd"
@@ -112,7 +114,7 @@ import { AuthService } from '../../services/auth.service';
                   <td class="p-3">
                     <div class="flex items-center justify-center gap-2">
                       @if (authService.currentUser()?.role !== 'user') {
-                        <button (click)="onViewDetails(acc)" title="ดูรายละเอียด" class="btn-icon text-sky-500">
+                        <button (click)="openDetailModal(acc)" title="ดูรายละเอียด" class="btn-icon text-sky-500">
                           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -122,7 +124,7 @@ import { AuthService } from '../../services/auth.service';
                         </button>
                       }
                       @if (authService.currentUser()?.role == 'admin' || authService.currentUser()?.role == 'manager') {
-                        <button (click)="onEdit(acc)" title="แก้ไข" class="btn-icon text-amber-400">
+                        <button (click)="openEditModal(acc)" title="แก้ไข" class="btn-icon text-amber-400">
                           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/>
@@ -173,28 +175,61 @@ import { AuthService } from '../../services/auth.service';
         © {{ _year }} Ruamsuk&trade; Kanchanaburi. All rights reserved.
       </p>
     </div>
+
+    <app-account-modal
+      [isOpen]="isModalOpen()"
+      [accountToEdit]="selectedAccount()"
+      [initialMode]="modalMode()"
+      (close)="closeModal()"
+      (save)="onSave($event)">
+    </app-account-modal>
   `,
   styles: ``
 })
 export class Dashboard {
-  @Output() requestOpenModal = new EventEmitter<void>();
-  @Output() requestEditModal = new EventEmitter<Account>();
-  @Output() requestViewModal = new EventEmitter<Account>();
+  public authService = inject(AuthService);
+  private accountService = inject(AccountService);
+  private loadingService = inject(LoadingService);
+  private dialogService = inject(DialogService);
+  private toastService = inject(ToastService);
+  private datePipe = inject(DatePipe);
 
   currentPage = signal(1);
   itemsPerPage = signal(9);
   searchTerm = signal('');
   _year = new Date().getFullYear();
 
-  public authService = inject(AuthService);
-  private accountService = inject(AccountService);
-  private dialogService = inject(DialogService);
-  private loadingService = inject(LoadingService);
-  private toastService = inject(ToastService);
-  private datePipe = inject(DatePipe);
-
+  // --- Data & State ---
   accounts = this.getAccounts();
 
+  // --- Modal State ---
+  isModalOpen = signal(false);
+  selectedAccount = signal<Account | null>(null);
+  modalMode = signal<'view' | 'form'>('form');
+
+
+  // --- UI Action Methods ---
+  openDetailModal(account: Account): void {
+    this.selectedAccount.set(account);
+    this.modalMode.set('view');
+    this.isModalOpen.set(true);
+  }
+
+  openAddModal(): void {
+    this.selectedAccount.set(null);
+    this.modalMode.set('form');
+    this.isModalOpen.set(true);
+  }
+
+  openEditModal(account: Account): void {
+    this.selectedAccount.set(account);
+    this.modalMode.set('form');
+    this.isModalOpen.set(true);
+  }
+
+  closeModal(): void {
+    this.isModalOpen.set(false);
+  }
 
   /**
    *  1. Filter accounts based on search term
@@ -211,12 +246,23 @@ export class Dashboard {
     });
   });
 
-  onEdit(account: Account): void {
-    this.requestEditModal.emit(account); // <-- เปลี่ยนจากเรียก openModal() โดยตรง
-  }
-
-  onViewDetails(account: Account): void {
-    this.requestViewModal.emit(account);
+  async onSave(dataToSave: any): Promise<void> {
+    this.loadingService.show();
+    try {
+      if (this.selectedAccount()) {
+        const updatedAccount = {...this.selectedAccount()!, ...dataToSave};
+        await this.accountService.updateAccount(updatedAccount);
+        this.toastService.show('Success', 'อัปเดตรายการสำเร็จ', 'success');
+      } else {
+        await this.accountService.addAccount(dataToSave);
+        this.toastService.show('Success', 'เพิ่มรายการสำเร็จ', 'success');
+      }
+      this.closeModal();
+    } catch (error) {
+      this.toastService.show('Error', 'เกิดข้อผิดพลาดในการบันทึก', 'error');
+    } finally {
+      this.loadingService.hide();
+    }
   }
 
   /**
