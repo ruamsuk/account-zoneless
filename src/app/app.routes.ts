@@ -38,11 +38,6 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'forgot-password',
-    loadComponent: () => import('./features/auth/forgot-password')
-      .then(m => m.ForgotPassword)
-  },
-  {
     path: 'reports/date-range',
     loadComponent: () => import('./features/reports/date-range-report')
       .then(m => m.DateRangeReport),
@@ -84,6 +79,27 @@ export const routes: Routes = [
         loadComponent: () => import('./pages/credit-annual-report')
           .then(m => m.CreditAnnualReport),
       },
+    ]
+  },
+  {
+    path: 'blood',
+    ...canActivate(redirectUnauthorizedToLogin),
+    children: [
+      {
+        path: 'list',
+        loadComponent: () => import('./pages/blood/blood-list')
+          .then(m => m.BloodList)
+      },
+      {
+        path: 'time-period',
+        loadComponent: () => import('./pages/blood/blood-period')
+          .then(m => m.BloodPeriod)
+      },
+      {
+        path: 'time-year',
+        loadComponent: () => import('./pages/blood/blood-year')
+          .then(m => m.BloodYear)
+      }
     ]
   },
   {

@@ -84,7 +84,7 @@ import { NgClass, NgOptimizedImage } from '@angular/common';
           </div>
 
           <div class="text-right mb-6">
-            <a routerLink="/forgot-password" class="text-sm text-blue-600 hover:underline">
+            <a routerLink="/auth/forgot-password" class="text-sm text-blue-600 hover:underline">
               Forgot Password?
             </a>
           </div>
