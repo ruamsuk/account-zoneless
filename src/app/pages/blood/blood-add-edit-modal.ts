@@ -103,13 +103,13 @@ export class BloodAddEditModal {
     this.bpForm = this.fb.group({
       date: [dateValue, Validators.required],
       morning: this.fb.group({
-        bp1: [data?.morning?.bp1 || null, Validators.required],
-        bp2: [data?.morning?.bp2 || null, Validators.required]
+        bp1: [data?.morning?.bp1 || '', Validators.required], // ทำงานกับ string
+        bp2: [data?.morning?.bp2 || '', Validators.required]
       }),
       evening: this.fb.group({
-        bp1: [data?.evening?.bp1 || null, Validators.required],
-        bp2: [data?.evening?.bp2 || null, Validators.required]
-      }),
+        bp1: [data?.evening?.bp1 || '', Validators.required],
+        bp2: [data?.evening?.bp2 || '', Validators.required]
+      })
     });
   }
 

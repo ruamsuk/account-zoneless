@@ -10,7 +10,7 @@ import { NgOptimizedImage } from '@angular/common';
     NgOptimizedImage
   ],
   template: `
-    <header class="bg-transparent sticky top-0 backdrop-blur-sm z-50">
+    <header class="bg-transparent sticky top-0 backdrop-blur-sm z-50 print-hide">
       <nav class="container mx-auto px-4 md:px-8 py-3">
         <div class="flex justify-between items-center">
 

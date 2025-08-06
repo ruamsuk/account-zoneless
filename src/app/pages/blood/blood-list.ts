@@ -3,62 +3,76 @@ import { BloodService } from '../../services/blood.service';
 import { LoadingService } from '../../services/loading.service';
 import { DialogService } from '../../shared/services/dialog';
 import { ToastService } from '../../services/toast.service';
-import { BloodPressure, BloodPressureReading } from '../../models/blood-pressure.model';
+import { BloodPressure } from '../../models/blood-pressure.model';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { BloodAddEditModal } from './blood-add-edit-modal';
+import { PrintDialog } from './print-dialog';
 
 @Component({
   selector: 'app-blood-list',
   imports: [
     NgClass,
     ThaiDatePipe,
-    BloodAddEditModal
+    BloodAddEditModal,
+    PrintDialog
   ],
   template: `
     <main class="container mx-auto p-4 md:p-8">
-      <div class="flex justify-between items-center mb-6">
+      <div class="flex justify-end md:justify-between items-center mb-6">
         <h1
           class="hidden md:block text-3xl text-gray-100 text-shadow-lg font-semibold font-serif  dark:text-gray-200 underline underline-offset-4">
           Blood Pressure Tracker</h1>
-        <button (click)="openModal(null)" class="btn-primary">+ เพิ่มบันทึก</button>
+        <div class="flex items-end md:items-center gap-2 ">
+          <button (click)="openModal(null)" class="btn-primary">+ เพิ่มบันทึก</button>
+        </div>
       </div>
 
       <!-- Table Display -->
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
+        <div class="p-3">
+          <button (click)="openPrintModal()" class="inline-flex btn-primary" title="พิมพ์รายงาน">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+              <path fill-rule="evenodd"
+                    d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.552c.377.046.74.14 1.095.282.355.143.66.348.905.602a4.004 4.004 0 0 1 1.595 5.565A4.004 4.004 0 0 1 15.25 19h-3.5a.75.75 0 0 1 0-1.5h3.5a2.5 2.5 0 1 0 0-5h-10a2.5 2.5 0 1 0 0 5h3.5a.75.75 0 0 1 0 1.5h-3.5A4.004 4.004 0 0 1 2 12.75a4.004 4.004 0 0 1 1.595-5.565c.244-.254.55-.459.905-.602.355-.142.718-.236 1.095-.282V2.75Z"
+                    clip-rule="evenodd"/>
+            </svg>
+            <span class="pl-2">พิมพ์</span>
+          </button>
+        </div>
         <div class="overflow-x-auto p-3">
           <table class="min-w-full text-base border-collapse">
             <thead class="bg-gray-50 dark:bg-gray-700/50">
             <!-- Complex Header -->
-            <tr class="first:border-t">
+            <tr class="first:border-t-2">
               <th rowspan="3" class="table-header w-[25%]">Date</th>
             </tr>
             <tr>
-              <th colspan="2" class="table-header text-center border-x dark:border-gray-600">
+              <th colspan="2" class="table-header text-center border-x border-b dark:border-gray-600">
                 <div class="text-green-600 dark:text-green-400">Morning</div>
                 <div class="text-xs text-gray-500 dark:text-gray-400 font-normal">(Before medicine)</div>
               </th>
-              <th colspan="2" class="table-header text-center border-r dark:border-gray-600">
+              <th colspan="2" class="table-header text-center border-r border-b dark:border-gray-600">
                 <div class="text-yellow-600 dark:text-yellow-400">Evening</div>
                 <div class="text-xs text-gray-500 dark:text-gray-400 font-normal">(After medicine)</div>
               </th>
               <th rowspan="2" class="table-header align-middle text-center w-[15%]">Action</th>
             </tr>
             <tr>
-              <th class="table-header text-center border-l dark:border-gray-600 w-[15%]">BP1</th>
+              <th class="table-header text-center border-x dark:border-gray-600 w-[15%]">BP1</th>
               <th class="table-header text-center border-r dark:border-gray-600 w-[15%]">BP2</th>
-              <th class="table-header text-center w-[15%]">BP1</th>
+              <th class="table-header text-center border-r w-[15%]">BP1</th>
               <th class="table-header text-center border-r dark:border-gray-600 w-[15%]">BP2</th>
             </tr>
             </thead>
             <tbody>
               @for (item of paginatedItems(); track item.id) {
                 <tr
-                  class="border-t last:border-b-2 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 dark:text-gray-300">
+                  class="border-t first:border-t-2 last:border-b-2 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 dark:text-gray-300">
                   <td class="table-cell font-semibold">{{ item.date | thaiDate }}</td>
-                  <td class="table-cell border-l dark:border-gray-600">
+                  <td class="table-cell border-x dark:border-gray-600">
                     <div [ngClass]="isBloodPressureHigh(item.morning.bp1) ? 'text-red-500' : ''">
                       {{ formatReading(item.morning.bp1) }}
                     </div>
@@ -68,7 +82,7 @@ import { BloodAddEditModal } from './blood-add-edit-modal';
                       {{ formatReading(item.morning.bp2) }}
                     </div>
                   </td>
-                  <td class="table-cell border-l dark:border-gray-600">
+                  <td class="table-cell border-x dark:border-gray-600">
                     <div [ngClass]="isBloodPressureHigh(item.evening.bp1) ? 'text-red-500' : ''">
                       {{ formatReading(item.evening.bp1) }}
                     </div>
@@ -132,6 +146,11 @@ import { BloodAddEditModal } from './blood-add-edit-modal';
       (close)="closeModal()"
       (save)="onSave($event)">
     </app-blood-add-edit-modal>
+
+    <app-print-dialog
+      [isOpen]="isPrintModalOpen()"
+      (close)="isPrintModalOpen.set(false)">
+    </app-print-dialog>
   `,
   styles: ``
 })
@@ -147,6 +166,7 @@ export class BloodList {
 // --- Modal State ---
   isModalOpen = signal(false);
   selectedItem = signal<BloodPressure | null>(null);
+  isPrintModalOpen = signal(false);
 
   // --- Computed for Display ---
   paginatedItems = computed(() => {
@@ -197,34 +217,21 @@ export class BloodList {
     });
   }
 
-  formatReading(reading: BloodPressureReading | string | null | undefined): string {
-    // 2. ตรวจสอบว่ามีข้อมูลหรือไม่
-    if (!reading) {
-      return '-';
-    }
-
-    // 3. ตรวจสอบว่าเป็น string หรือไม่ (สำหรับข้อมูลเก่า)
-    if (typeof reading === 'string') {
-      return reading; // ถ้าเป็น string, ให้แสดงผลออกไปตรงๆ เลย
-    }
-
-    // 4. ถ้าเป็น object (สำหรับข้อมูลใหม่), ให้จัดรูปแบบ
-    if (typeof reading === 'object' && reading.sys !== null && reading.dia !== null && reading.pulse !== null) {
-      return `${reading.sys}/${reading.dia} P${reading.pulse}`;
-    }
-
-    // 5. กรณีอื่นๆ ทั้งหมด
-    return '-';
+  openPrintModal(): void {
+    this.isPrintModalOpen.set(true);
   }
 
-  isBloodPressureHigh(reading: BloodPressureReading | undefined | null): boolean {
-    // 2. ตรวจสอบว่ามี object และมีค่า sys, dia หรือไม่
-    if (!reading || reading.sys === null || reading.dia === null) {
-      return false;
-    }
+  formatReading(reading: string | undefined | null): string {
+    return reading || '-';
+  }
 
-    // 3. เปรียบเทียบค่าจาก property ของ object โดยตรง
-    return reading.sys > 130 || reading.dia > 80;
+  isBloodPressureHigh(reading: string | undefined | null): boolean {
+    if (!reading) return false;
+    const parts = reading.split(/[\/P\s]+/);
+    if (parts.length < 2) return false;
+    const sys = parseInt(parts[0], 10);
+    const dia = parseInt(parts[1], 10);
+    return sys > 130 || dia > 80;
   }
 
   openModal(data: BloodPressure | null): void {
@@ -251,15 +258,21 @@ export class BloodList {
       this.closeModal();
     } catch (error) {
       this.toastService.show('Error', 'เกิดข้อผิดพลาดในการบันทึก', 'error');
+      console.error('Error saving blood:', error);
     } finally {
       this.loadingService.hide();
     }
   }
 
   async onDelete(item: BloodPressure) {
+    const thDate = (item.date as any).toDate().toLocaleDateString('th-TH', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
     const confirmed = await this.dialogService.open({
       title: 'ยืนยันการลบ',
-      message: `คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลของวันที่ <strong>${new Date(item.date).toLocaleDateString('th-TH')}</strong>?`
+      message: `คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลของวันที่ <strong>${thDate}</strong>?`
     });
 
     if (confirmed && item.id) {

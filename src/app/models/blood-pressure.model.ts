@@ -1,22 +1,16 @@
 // ในไฟล์ src/app/models/blood-pressure.model.ts
 
-export interface BloodPressureReading {
-  sys: number | null;
-  dia: number | null;
-  pulse: number | null;
-}
-
 export interface BloodPressure {
   id?: string;
-  date: any; // Firestore Timestamp
+  date: Date; // Firestore Timestamp
   morning: {
-    bp1: BloodPressureReading | null; // <-- แก้ไขเป็น Object
-    bp2: BloodPressureReading | null; // <-- แก้ไขเป็น Object
+    bp1: string;
+    bp2: string;
   };
   evening: {
-    bp1: BloodPressureReading | null; // <-- แก้ไขเป็น Object
-    bp2: BloodPressureReading | null; // <-- แก้ไขเป็น Object
+    bp1: string;
+    bp2: string;
   };
-  created?: any;
-  modify?: any;
+  created?: Date;
+  modify?: Date;
 }

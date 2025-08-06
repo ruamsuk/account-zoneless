@@ -91,15 +91,10 @@ export const routes: Routes = [
           .then(m => m.BloodList)
       },
       {
-        path: 'time-period',
-        loadComponent: () => import('./pages/blood/blood-period')
-          .then(m => m.BloodPeriod)
+        path: 'print-dialog',
+        loadComponent: () => import('./pages/blood/print-dialog')
+          .then(m => m.PrintDialog)
       },
-      {
-        path: 'time-year',
-        loadComponent: () => import('./pages/blood/blood-year')
-          .then(m => m.BloodYear)
-      }
     ]
   },
   {
