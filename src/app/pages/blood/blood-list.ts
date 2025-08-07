@@ -73,22 +73,22 @@ import { PrintDialog } from './print-dialog';
                   class="border-t first:border-t-2 last:border-b-2 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 dark:text-gray-300">
                   <td class="table-cell font-semibold">{{ item.date | thaiDate }}</td>
                   <td class="table-cell border-x dark:border-gray-600">
-                    <div [ngClass]="isBloodPressureHigh(item.morning.bp1) ? 'text-red-500' : ''">
+                    <div [ngClass]="{'text-red-500': isBloodPressureHigh(item.morning.bp1)}">
                       {{ formatReading(item.morning.bp1) }}
                     </div>
                   </td>
                   <td class="table-cell">
-                    <div [ngClass]="isBloodPressureHigh(item.morning.bp2) ? 'text-red-500' : ''">
+                    <div [ngClass]="{'text-red-500': isBloodPressureHigh(item.morning.bp2)}">
                       {{ formatReading(item.morning.bp2) }}
                     </div>
                   </td>
                   <td class="table-cell border-x dark:border-gray-600">
-                    <div [ngClass]="isBloodPressureHigh(item.evening.bp1) ? 'text-red-500' : ''">
+                    <div [ngClass]="{'text-red-500': isBloodPressureHigh(item.evening.bp1)}">
                       {{ formatReading(item.evening.bp1) }}
                     </div>
                   </td>
                   <td class="table-cell">
-                    <div [ngClass]="isBloodPressureHigh(item.evening.bp2) ? 'text-red-500' : ''">
+                    <div [ngClass]="{'text-red-500': isBloodPressureHigh(item.evening.bp2)}">
                       {{ formatReading(item.evening.bp2) }}
                     </div>
                   </td>

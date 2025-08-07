@@ -40,8 +40,9 @@ import { NgClass } from '@angular/common';
           <!-- ส่วนแสดงผลรายงาน (ที่จะถูกพิมพ์) -->
           <div #printArea class="printable-area flex-1 overflow-y-auto dark:border-gray-700 pt-4">
             @if (reportData()) {
-              <h3 class="text-xl font-bold text-center mb-4">รายงานความดันโลหิต</h3>
-              <p class="text-center mb-4">ช่วงวันที่: {{ dateRangeForm.value.startDate | thaiDate:'fullMonth' }}
+              <h3 class="text-xl font-bold text-center dark:text-gray-300 mb-4">รายงานความดันโลหิต</h3>
+              <p class="text-center mb-4 dark:text-gray-300">
+                ช่วงวันที่: {{ dateRangeForm.value.startDate | thaiDate:'fullMonth' }}
                 - {{ dateRangeForm.value.endDate | thaiDate:'fullMonth' }}</p>
               <table class="min-w-full text-base border-collapse">
                 <thead class="bg-gray-50 dark:bg-gray-700/50">
@@ -51,11 +52,11 @@ import { NgClass } from '@angular/common';
                 </tr>
                 <tr>
                   <th colspan="2" class="table-header text-center border-x dark:border-gray-600">
-                    <div class="text-green-600 dark:text-green-400">Morning</div>
+                    <div class="">Morning</div>
                     <div class="text-xs text-gray-500 dark:text-gray-400 font-normal">(Before medicine)</div>
                   </th>
-                  <th colspan="2" class="table-header text-center border-r dark:border-gray-600">
-                    <div class="text-yellow-600 dark:text-yellow-400">Evening</div>
+                  <th colspan="2" class="table-header text-center  dark:border-gray-600">
+                    <div class="">Evening</div>
                     <div class="text-xs text-gray-500 dark:text-gray-400 font-normal">(After medicine)</div>
                   </th>
                 </tr>
@@ -63,12 +64,12 @@ import { NgClass } from '@angular/common';
                   <th class="table-header text-center border-l dark:border-gray-600 w-[18.75%]">BP1</th>
                   <th class="table-header text-center border-r dark:border-gray-600 w-[18.75%]">BP2</th>
                   <th class="table-header text-center w-[18.75%]">BP1</th>
-                  <th class="table-header text-center border-r dark:border-gray-600 w-[18.75%]">BP2</th>
+                  <th class="table-header text-center dark:border-gray-600 w-[18.75%]">BP2</th>
                 </tr>
                 </thead>
                 <tbody>
-                  @for (item of reportData(); track item.id) {
-                    <tr class="border-t last:border-b dark:border-gray-700">
+                  @for (item of reportData(); track $index) {
+                    <tr class="border-t last:border-b dark:border-gray-700 dark:text-gray-300">
                       <td class="table-cell font-semibold">{{ item.date | thaiDate }}</td>
                       <td class="table-cell border-l dark:border-gray-600">
                         <div [ngClass]="isBloodPressureHigh(item.morning.bp1) ? 'high-bp' : 'normal-bp'">

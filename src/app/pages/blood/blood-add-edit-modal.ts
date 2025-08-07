@@ -31,12 +31,14 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" formGroupName="morning">
                 <div>
                   <label class="form-label">ครั้งที่ 1 (BP1)</label>
-                  <input #morningBp2Input type="text" formControlName="bp1" class="form-input"
-                         placeholder="SYS/DIA P..." bpMask [nextInput]="morningBp2Input">
+                  <!--  1. ส่ง "ป้ายชื่อ" ของ input ตัวถัดไป  -->
+                  <input type="text" formControlName="bp1" class="form-input" placeholder="SYS/DIA P..." bpMask
+                         [nextInput]="morningBp2Input">
                 </div>
                 <div>
                   <label class="form-label">ครั้งที่ 2 (BP2)</label>
-                  <input #eveningBp1Input type="text" formControlName="bp2" class="form-input"
+                  <!--  2. "ป้ายชื่อ" ถูกติดไว้ที่นี่ และส่งต่อไปยังตัวถัดไป  -->
+                  <input #morningBp2Input type="text" formControlName="bp2" class="form-input"
                          placeholder="SYS/DIA P..." bpMask [nextInput]="eveningBp1Input">
                 </div>
               </div>
@@ -48,12 +50,13 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" formGroupName="evening">
                 <div>
                   <label class="form-label">ครั้งที่ 1 (BP1)</label>
-                  <input #eveningBp2Input type="text" formControlName="bp1" class="form-input"
+                  <input #eveningBp1Input type="text" formControlName="bp1" class="form-input"
                          placeholder="SYS/DIA P..." bpMask [nextInput]="eveningBp2Input">
                 </div>
                 <div>
                   <label class="form-label">ครั้งที่ 2 (BP2)</label>
-                  <input type="text" formControlName="bp2" class="form-input" placeholder="SYS/DIA P..." bpMask>
+                  <input #eveningBp2Input type="text" formControlName="bp2" class="form-input"
+                         placeholder="SYS/DIA P..." bpMask>
                 </div>
               </div>
             </fieldset>

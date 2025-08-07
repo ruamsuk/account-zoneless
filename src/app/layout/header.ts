@@ -19,7 +19,6 @@ import { NgOptimizedImage } from '@angular/common';
             <span class="text-2xl text-white text-shadow-lg font-semibold font-serif">Account App</span>
           </a>
 
-          <!-- Credit menu -->
           <div class="hidden md:flex items-center gap-4">
 
             <!-- Account menu -->
@@ -58,7 +57,12 @@ import { NgOptimizedImage } from '@angular/common';
             <div class="relative">
               <button (click)="toggleCreditMenu($event)" class="nav-link flex items-center gap-1"
                       [class.active]="isCreditMenuOpen()">
-                Credit
+                <span>Credit</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                  <path fill-rule="evenodd"
+                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06z"
+                        clip-rule="evenodd"/>
+                </svg>
               </button>
 
               @if (isCreditMenuOpen()) {
@@ -79,6 +83,19 @@ import { NgOptimizedImage } from '@angular/common';
                 </div>
               }
             </div>
+
+            <!-- Blood Menu -->
+            <div class="relative">
+              <button routerLink="/blood/list" class="nav-link flex items-center gap-1">
+                <span>Blood</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                  <path fill-rule="evenodd"
+                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06z"
+                        clip-rule="evenodd"/>
+                </svg>
+              </button>
+            </div>
+
             <button (click)="toggleTheme()" class="btn-icon-round" title="Toggle theme">
               @if (isDarkMode()) {
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -122,7 +139,7 @@ import { NgOptimizedImage } from '@angular/common';
           </div>
         </div>
 
-        @if (isMobileMenuOpen()) {
+        <!--@if (isMobileMenuOpen()) {
           <div class="md:hidden mt-4">
             <div class="flex flex-col gap-2 ">
               <span class="mobile-menu-header">รายการเงินสด</span>
@@ -138,20 +155,77 @@ import { NgOptimizedImage } from '@angular/common';
                  class="mobile-menu-item">
                 รายงานรายปี
               </a>
-              <!-- ===== เส้นคั่น ===== -->
+              &lt;!&ndash; ===== เส้นคั่น ===== &ndash;&gt;
               <div class="px-3 py-2">
                 <div class="border-t border-gray-200 dark:border-gray-700"></div>
               </div>
 
-              <!-- ===== ส่วนบัตรเครดิต (Credit) ===== -->
+              &lt;!&ndash; ===== ส่วนบัตรเครดิต (Credit) ===== &ndash;&gt;
               <span class="mobile-menu-header">บัตรเครดิต</span>
               <a routerLink="/credit/list" (click)="closeMobileMenu()" class="mobile-menu-item">รายการบัตรเครดิต</a>
               <a routerLink="/credit/report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานประจำเดือน</a>
               <a routerLink="/credit/credit-annual-report" (click)="closeMobileMenu()"
                  class="mobile-menu-item">รายงานประจำปี</a>
 
-              <!-- ===== เส้นคั่น ===== -->
+              &lt;!&ndash; ===== เส้นคั่น ===== &ndash;&gt;
               <div class="px-3 py-2">
+                <div class="border-t border-gray-200 dark:border-gray-700"></div>
+              </div>
+
+              &lt;!&ndash; ===== ส่วนบัญชีและการตั้งค่า ===== &ndash;&gt;
+              <a routerLink="/profile" (click)="closeMobileMenu()" class="mobile-menu-item">โปรไฟล์</a>
+              @if (authService.currentUser()?.role === 'admin') {
+                <a routerLink="/user-management" (click)="closeMobileMenu()" class="mobile-menu-item">จัดการผู้ใช้</a>
+              }
+              <button (click)="logout()" class="mobile-menu-item text-red-500 w-full text-left">ออกจากระบบ</button>
+
+            </div>
+          </div>
+        }-->
+        <!-- ใน template ของ app.ts -->
+
+        @if (isMobileMenuOpen()) {
+          <!-- บล็อกที่แก้ไขแล้ว-->
+          <div
+            class="md:hidden mt-2 p-2 absolute top-full right-4 w-56 origin-top-right rounded-md bg-gray-100 dark:bg-black/60 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <div class="flex flex-col gap-1">
+
+              <!-- ===== ส่วนเงินสด (Cash) ===== -->
+              <span class="mobile-menu-header">รายงานเงินสด</span>
+              <a routerLink="/dashboard" (click)="closeMobileMenu()"
+                 class="mobile-menu-item">รายการทั้งหมด</a>
+              <a routerLink="/reports/date-range" (click)="closeMobileMenu()"
+                 class="mobile-menu-item ">รายงานตามช่วงเวลา</a>
+              <a routerLink="/financial-report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานรายเดือน</a>
+              <a routerLink="/annual-report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานรายปี</a>
+
+              <!-- ===== เส้นคั่น ===== -->
+              <div class="px-3 py-1">
+                <div class="border-t border-gray-200 dark:border-gray-700"></div>
+              </div>
+
+              <!-- ===== ส่วนบัตรเครดิต (Credit) ===== -->
+              <span class="mobile-menu-header">บัตรเครดิต</span>
+              <a routerLink="/credit-list" (click)="closeMobileMenu()" class="mobile-menu-item">รายการบัตรเครดิต</a>
+              <a routerLink="/credit-report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานประจำเดือน</a>
+              <a routerLink="/credit-annual-report" (click)="closeMobileMenu()"
+                 class="mobile-menu-item">รายงานประจำปี</a>
+
+              <!-- ===== เส้นคั่น ===== -->
+              <div class="px-3 py-1">
+                <div class="border-t border-gray-200 dark:border-gray-700"></div>
+              </div>
+
+              <!-- ===== เส้นคั่น ===== -->
+              <div class="px-3 py-1">
+                <div class="border-t border-gray-200 dark:border-gray-700"></div>
+              </div>
+
+              <span class="mobile-menu-header">ความดันโลหิต</span>
+              <a routerLink="/blood/list" (click)="closeMobileMenu()" class="mobile-menu-item">ความดันโลหิต</a>
+
+              <!-- ===== เส้นคั่น ===== -->
+              <div class="px-3 py-1">
                 <div class="border-t border-gray-200 dark:border-gray-700"></div>
               </div>
 
@@ -215,6 +289,7 @@ export class Header implements OnInit {
     if (this.isCreditMenuOpen() || !this.eRef.nativeElement.contains(event.target)) {
       this.closeTransactionsMenu();
       this.closeCreditMenu();
+      this.closeMobileMenu();
     }
   }
 

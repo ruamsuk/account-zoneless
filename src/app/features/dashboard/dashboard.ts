@@ -229,6 +229,7 @@ export class Dashboard {
 
   closeModal(): void {
     this.isModalOpen.set(false);
+    this.selectedAccount.set(null);
   }
 
   /**
@@ -266,7 +267,7 @@ export class Dashboard {
   }
 
   /**
-   *  1. Open a confirmation dialog before deleting account
+   *  1. Open a confirmation dialog before deleting an account
    *  2. Format the date using DatePipe
    *  3. Show a toast message on success or error
    *  4. Use loading service to show/hide the loading state
@@ -337,7 +338,7 @@ export class Dashboard {
 
   /**
    *  1. Paginate accounts based on the current page and items per page
-   *  2. Calculate start index based on current page
+   *  2. Calculate start index based on the current page
    *  3. Return a slice of accounts for the current page
    * */
   paginateAccounts = computed(() => {

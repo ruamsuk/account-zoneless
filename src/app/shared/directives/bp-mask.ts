@@ -33,7 +33,7 @@ export class BpMask {
 
     // Autofocus to the next input when complete
     if (isComplete && this.nextInput) {
-      this.nextInput.focus();
+      setTimeout(() => this.nextInput?.focus(), 0);
     }
   }
 

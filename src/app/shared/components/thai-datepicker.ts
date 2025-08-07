@@ -57,7 +57,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
                   class="day-cell"
                   [disabled]="!day.isCurrentMonth"
                   [class.other-month]="!day.isCurrentMonth"
-                  [class.selected]="isSameDay(day.date, selectedDate())"
+                  [class.selected]="day.isCurrentMonth && isSameDay(day.date, selectedDate())"
                   [class.today]="day.isCurrentMonth && isSameDay(day.date, today)">
                   @if (day.isCurrentMonth) {
                     <span>{{ day.day }}</span>
@@ -69,7 +69,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
           <!-- +++ MONTH VIEW +++ -->
           @if (pickerView() === 'months') {
-            <div class="grid grid-cols-3 gap-1">
+            <div class="grid grid-cols-3 gap-1 text-gray-200">
               @for (month of months; track month.value) {
                 <button type="button" (click)="selectMonth(month.value)" class="month-button">
                   {{ month.name }}
@@ -80,12 +80,12 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
           <!-- +++ YEAR VIEW +++ -->
           @if (pickerView() === 'years') {
-            <div class="flex justify-between items-center mb-2 px-2">
+            <div class="flex justify-between items-center mb-2 px-2 text-gray-800 dark:text-gray-300">
               <button type="button" (click)="changeYearPickerDecade(-10)" class="btn-nav">&lt;</button>
               <span class="font-semibold text-sm">{{ yearPickerGrid()[0] }} - {{ yearPickerGrid()[9] }}</span>
               <button type="button" (click)="changeYearPickerDecade(10)" class="btn-nav">&gt;</button>
             </div>
-            <div class="grid grid-cols-4 gap-1">
+            <div class="grid grid-cols-4 gap-1 dark:text-gray-200">
               @for (year of yearPickerGrid(); track year) {
                 <button
                   type="button"

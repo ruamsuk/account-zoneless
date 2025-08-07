@@ -109,7 +109,7 @@ export class AccountModal {
 
   // --- Component State ---
   mode = signal<'view' | 'form'>('form');
-  isEditing = computed(() => !!this.accountToEdit);
+  isEditing = computed(() => !!this.accountToEdit() && this.mode() === 'form');
   accountForm!: FormGroup;
 
   constructor() {
