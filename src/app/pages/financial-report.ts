@@ -6,6 +6,7 @@ import { DecimalPipe, NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ToastService } from '../services/toast.service';
 import { FinancialService } from '../services/financial.service';
+import { DateUtilityService } from '../services/date-utility.service';
 
 @Component({
   selector: 'app-financial-report',
@@ -121,9 +122,10 @@ import { FinancialService } from '../services/financial.service';
             </table>
           </div>
         </div>
-      } @else {
-        <p class="text-center text-gray-500 dark:text-gray-400 py-8">
-          กรุณาเลือกเดือนและปีเพื่อค้นหา
+      }
+      @if (!isFound()) {
+        <p class="text-center text-xl text-gray-900">
+          ไม่พบข้อมูลที่เลือก ลองเลือกใหม่
         </p>
       }
 
@@ -135,6 +137,7 @@ export class FinancialReport implements OnInit {
   private financialService = inject(FinancialService);
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
+  private dateUtilityService = inject(DateUtilityService);
 
   // --- Filter State ---
   selectedMonth = signal(new Date().getMonth());
@@ -144,37 +147,26 @@ export class FinancialReport implements OnInit {
   // --- Data State ---
   transactions = signal<Transaction[]>([]);
   uniqueDetails = signal<string[]>([]);
+  isFound = signal(true);
 
   // --- Data for Dropdowns ---
-  readonly months = [
-    {value: 0, name: 'มกราคม'}, {value: 1, name: 'กุมภาพันธ์'},
-    {value: 2, name: 'มีนาคม'}, {value: 3, name: 'เมษายน'},
-    {value: 4, name: 'พฤษภาคม'}, {value: 5, name: 'มิถุนายน'},
-    {value: 6, name: 'กรกฎาคม'}, {value: 7, name: 'สิงหาคม'},
-    {value: 8, name: 'กันยายน'}, {value: 9, name: 'ตุลาคม'},
-    {value: 10, name: 'พฤศจิกายน'}, {value: 11, name: 'ธันวาคม'}
-  ];
-  readonly yearRange: number[] = [];
+  readonly months = this.dateUtilityService.getMonths();
+  readonly yearRange = this.dateUtilityService.getYearRange(10) as number[];
 
 // --- Computed Signals for Summary ---
   totalIncome = computed(() =>
     this.transactions()
       .filter(t => t.isInCome) // ใช้ isInCome ที่เป็น boolean
-      .reduce((sum, t) => sum + t.amount, 0)
+      .reduce((sum, t) => sum + parseFloat(String(t.amount) || '0'), 0)
   );
   totalExpense = computed(() =>
     this.transactions()
       .filter(t => !t.isInCome) // ใช้ !isInCome สำหรับรายจ่าย
-      .reduce((sum, t) => sum + t.amount, 0)
+      .reduce((sum, t) => sum + parseFloat(String(t.amount) || '0'), 0)
   );
   balance = computed(() => this.totalIncome() - this.totalExpense());
 
   constructor() {
-    // สร้างรายการปี พ.ศ. ย้อนหลัง 10 ปี
-    const currentYearBE = new Date().getFullYear() + 543;
-    for (let i = 0; i < 10; i++) {
-      this.yearRange.push(currentYearBE - i);
-    }
   }
 
   ngOnInit(): void {
@@ -198,6 +190,7 @@ export class FinancialReport implements OnInit {
   async search(): Promise<void> {
     this.loadingService.show();
     this.transactions.set([]); // เคลียร์ข้อมูลเก่าก่อน
+    this.isFound.set(true);
 
     try {
       const yearCE = this.selectedYearBE() - 543;
@@ -226,6 +219,7 @@ export class FinancialReport implements OnInit {
       this.transactions.set([]); // เคลียร์ผลลัพธ์ถ้าเกิด error
     } finally {
       this.loadingService.hide();
+      if (this.transactions().length == 0) this.isFound.set(false);
     }
   }
 }

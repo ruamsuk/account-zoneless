@@ -20,6 +20,7 @@ export class NumberFormatDirective implements ControlValueAccessor {
   private onTouched: () => void = () => {
   };
 
+  // --- CVA Implementation ---
   writeValue(value: any): void {
     // Angular calls this method to set the initial value
     this.el.nativeElement.value = this.format(value);
@@ -37,41 +38,55 @@ export class NumberFormatDirective implements ControlValueAccessor {
     this.el.nativeElement.disabled = isDisabled;
   }
 
-  // -----------------------------------------
+  // --- Event Listeners ---
   @HostListener('input', ['$event'])
-  onInput(event: Event) {
+  onInput(event: Event): void {
     const inputElement = event.target as HTMLInputElement;
-    let value = inputElement.value;
-
-    this.onTouched(); // Mark the control as touched
-
-    // Format the view value
-    const formattedValue = this.format(value);
-    this.el.nativeElement.value = formattedValue;
-
-    // Get the numeric model value
+    const formattedValue = this.format(inputElement.value);
     const numericValue = this.unformat(formattedValue);
 
-    // Update the model value using the registered onChange function
+    this.el.nativeElement.value = formattedValue;
     this.onChange(numericValue);
   }
 
+  @HostListener('blur')
+  onBlur(): void {
+    this.onTouched();
+  }
+
+  // --- Formatting Logic ---
   private format(value: string | number | null): string {
     if (value === null || value === undefined) {
       return '';
     }
+    // 1. ทำความสะอาดข้อมูล
     let cleanValue = String(value).replace(/[^0-9.]/g, '');
+
+    // 2. จัดการกับจุดทศนิยมที่เกินมา
     const parts = cleanValue.split('.');
     if (parts.length > 2) {
       cleanValue = parts[0] + '.' + parts.slice(1).join('');
     }
+
     const [integerPart, decimalPart] = cleanValue.split('.');
     if (!integerPart) {
       return '';
     }
-    let formattedValue = new Intl.NumberFormat('en-US').format(parseInt(integerPart, 10));
+
+    // 3. ใส่ comma ให้กับส่วนจำนวนเต็ม
+    let formattedValue = new Intl.NumberFormat('en-US')
+      .format(parseInt(integerPart, 10));
+
+    // 4. จัดการกับส่วนทศนิยม
     if (decimalPart !== undefined) {
-      formattedValue += '.' + decimalPart.substring(0, 2);
+      // บังคับให้มีทศนิยม 2 ตำแหน่งเสมอ
+      formattedValue += '.' + decimalPart.padEnd(2, '0')
+        .substring(0, 2);
+    } else if (cleanValue.includes('.')) {
+      formattedValue += '.';
+    } else {
+      // กรณีเป็นจำนวนเต็ม, เพิ่ม .00 เข้าไป
+      formattedValue += '.00';
     }
     return formattedValue;
   }

@@ -6,6 +6,7 @@ import { ToastService } from '../services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { CreditMonthlyDetailModal } from './credit-monthly-detail-modal';
+import { DateUtilityService } from '../services/date-utility.service';
 
 interface AnnualReportRow extends MonthSummary {
   month: string;
@@ -103,7 +104,7 @@ interface AnnualReportRow extends MonthSummary {
               </tbody>
               <tfoot class="bg-gray-100 dark:bg-gray-800">
               <tr class="border-b-2">
-                <td class="p-3 font-semibold">รวม</td>
+                <td class="p-3 font-semibold dark:text-gray-200">รวม</td>
                 <td
                   class="p-3 text-right text-red-500 font-semibold">{{ annualSummary().totalExpense | number:'1.2-2' }}
                 </td>
@@ -135,6 +136,8 @@ export class CreditAnnualReport implements OnInit {
   private creditService = inject(CreditService);
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
+  private dateUtilityService = inject(DateUtilityService);
+  private dateUtility = inject(DateUtilityService);
 
   // --- Filter State ---
   selectedYearBE = signal(new Date().getFullYear() + 543);
@@ -148,13 +151,15 @@ export class CreditAnnualReport implements OnInit {
   isDetailModalOpen = signal(false);
   selectedMonthForDetail = signal<AnnualReportRow | null>(null);
 
-  readonly yearRange: number[] = [];
+  readonly yearRange = this.dateUtilityService.getYearRange(10);
 
   // --- Computed Signals for Summary ---
   annualSummary = computed(() => {
     const breakdown = this.monthlyBreakdown();
-    const totalExpense = breakdown.reduce((sum, m) => sum + m.expense, 0);
-    const totalCashback = breakdown.reduce((sum, m) => sum + m.cashback, 0);
+    const totalExpense = breakdown
+      .reduce((sum, m) => sum + parseFloat(String(m.expense) || '0'), 0);
+    const totalCashback = breakdown
+      .reduce((sum, m) => sum + parseFloat(String(m.cashback) || '0'), 0);
     return {
       totalExpense,
       totalCashback,
@@ -163,10 +168,6 @@ export class CreditAnnualReport implements OnInit {
   });
 
   constructor() {
-    const currentYearBE = new Date().getFullYear() + 543;
-    for (let i = 0; i < 10; i++) {
-      this.yearRange.push(currentYearBE - i);
-    }
   }
 
   ngOnInit(): void {
@@ -209,8 +210,8 @@ export class CreditAnnualReport implements OnInit {
         });
 
         // คำนวณยอดสรุป
-        const expense = transactionsForThisMonth.filter(t => !t.isCashback).reduce((sum, t) => sum + t.amount, 0);
-        const cashback = transactionsForThisMonth.filter(t => t.isCashback).reduce((sum, t) => sum + t.amount, 0);
+        const expense = transactionsForThisMonth.filter(t => !t.isCashback).reduce((sum, t) => sum + parseFloat(String(t.amount) || '0'), 0);
+        const cashback = transactionsForThisMonth.filter(t => t.isCashback).reduce((sum, t) => sum + parseFloat(String(t.amount) || '0'), 0);
 
         breakdownResult.push({
           month: monthName,

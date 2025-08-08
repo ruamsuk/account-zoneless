@@ -52,7 +52,7 @@ import { NumberFormatDirective } from '../shared/directives/number-format';
           } @else {
             <!-- +++ FORM MODE (Add/Edit) +++ -->
             <div>
-              <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-6">
+              <h2 class="text-2xl font-thasadith font-semibold text-gray-700 dark:text-gray-200 mb-6">
                 {{ isEditing() ? 'แก้ไขรายการ' : 'เพิ่มรายการใหม่' }}
               </h2>
               <form [formGroup]="accountForm" (ngSubmit)="onFormSubmit()">
@@ -147,7 +147,7 @@ export class AccountModal {
   onFormSubmit(): void {
     if (this.accountForm.invalid) return;
     const formValue = this.accountForm.value;
-    const dataToSave = {...formValue, date: new Date(formValue.date)};
+    const dataToSave = {...formValue};
     this.save.emit(dataToSave);
   }
 }

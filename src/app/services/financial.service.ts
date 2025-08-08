@@ -81,7 +81,7 @@ export class FinancialService {
       const searchTerm = detail.toLowerCase().trim(); // ทำความสะอาดคำค้นหา
 
       transactions = transactions.filter(tx =>
-        (tx.details || '').toLowerCase().trim().includes(searchTerm)
+        (tx.details || '').toLowerCase().includes(searchTerm)
       );
     }
 

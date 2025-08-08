@@ -260,7 +260,8 @@ export class Dashboard {
       }
       this.closeModal();
     } catch (error) {
-      this.toastService.show('Error', 'เกิดข้อผิดพลาดในการบันทึก', 'error');
+      this.toastService.show('Error', 'เกิดข้อผิดพลาดในการบันทึก' + error, 'error');
+      console.error('Error saving account:', error);
     } finally {
       this.loadingService.hide();
     }

@@ -6,6 +6,7 @@ import { CreditData } from '../models/credit.model';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../pipe/thai-date.pipe';
 import { FormsModule } from '@angular/forms';
+import { DateUtilityService } from '../services/date-utility.service';
 
 @Component({
   selector: 'app-credit-report',
@@ -119,6 +120,7 @@ export class CreditReport {
   private creditService = inject(CreditService);
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
+  private dateUtilityService = inject(DateUtilityService);
 
   // --- Filter State ---
   selectedMonth = signal(new Date().getMonth());
@@ -128,34 +130,23 @@ export class CreditReport {
   transactions = signal<CreditData[] | null>(null); // null = ยังไม่ได้ค้นหา
 
   // --- Data for Dropdowns ---
-  readonly months = [
-    {value: 0, name: 'มกราคม'}, {value: 1, name: 'กุมภาพันธ์'},
-    {value: 2, name: 'มีนาคม'}, {value: 3, name: 'เมษายน'},
-    {value: 4, name: 'พฤษภาคม'}, {value: 5, name: 'มิถุนายน'},
-    {value: 6, name: 'กรกฎาคม'}, {value: 7, name: 'สิงหาคม'},
-    {value: 8, name: 'กันยายน'}, {value: 9, name: 'ตุลาคม'},
-    {value: 10, name: 'พฤศจิกายน'}, {value: 11, name: 'ธันวาคม'}
-  ];
-  readonly yearRange: number[] = [];
+  readonly months = this.dateUtilityService.getMonths();
+  readonly yearRange = this.dateUtilityService.getYearRange(10) as number[];
 
   // --- Computed Signals for Summary ---
   totalExpense = computed(() =>
     (this.transactions() ?? [])
       .filter(t => !t.isCashback)
-      .reduce((sum, t) => sum + t.amount, 0)
+      .reduce((sum, t) => sum + parseFloat(String(t.amount) || '0'), 0)
   );
   totalCashback = computed(() =>
     (this.transactions() ?? [])
       .filter(t => t.isCashback)
-      .reduce((sum, t) => sum + t.amount, 0)
+      .reduce((sum, t) => sum + parseFloat(String(t.amount) || '0'), 0)
   );
   netExpense = computed(() => this.totalExpense() - this.totalCashback());
 
   constructor() {
-    const currentYearBE = new Date().getFullYear() + 543;
-    for (let i = 0; i < 10; i++) {
-      this.yearRange.push(currentYearBE - i);
-    }
   }
 
   async generateReport(): Promise<void> {

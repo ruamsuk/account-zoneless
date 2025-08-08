@@ -127,8 +127,8 @@ export class DateRangeReport {
 
   summary = computed(() => {
     const data = this.accounts() ?? [];
-    const totalIncome = data.filter(a => a.isInCome).reduce((sum, a) => sum + a.amount, 0);
-    const totalExpense = data.filter(a => !a.isInCome).reduce((sum, a) => sum + a.amount, 0);
+    const totalIncome = data.filter(a => a.isInCome).reduce((sum, a) => sum + parseFloat(String(a.amount) || '0'), 0);
+    const totalExpense = data.filter(a => !a.isInCome).reduce((sum, a) => sum + parseFloat(String(a.amount) || '0'), 0);
     return {
       totalIncome,
       totalExpense,

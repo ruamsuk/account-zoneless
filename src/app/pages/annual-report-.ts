@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastService } from '../services/toast.service';
 import { Transaction } from '../models/transection.model';
 import { MonthlyDetailModal } from './monthly-detail-modal';
+import { DateUtilityService } from '../services/date-utility.service';
 
 
 @Component({
@@ -27,7 +28,7 @@ import { MonthlyDetailModal } from './monthly-detail-modal';
           <div>
             <label class="form-label">ปี (พ.ศ.)</label>
             <select class="form-input" [(ngModel)]="selectedYearBE">
-              @for (year of yearRange; track year) {
+              @for (year of yearRange; track $index) {
                 <option [value]="year">{{ year }}</option>
               }
             </select>
@@ -36,7 +37,7 @@ import { MonthlyDetailModal } from './monthly-detail-modal';
             <label class="form-label">รายละเอียด</label>
             <select class="form-input" [(ngModel)]="selectedDetail">
               <option [ngValue]="null">-- ทั้งหมด --</option>
-              @for (detail of uniqueDetails(); track detail) {
+              @for (detail of uniqueDetails(); track $index) {
                 <option [value]="detail">{{ detail }}</option>
               }
             </select>
@@ -110,7 +111,7 @@ import { MonthlyDetailModal } from './monthly-detail-modal';
               </tr>
               </thead>
               <tbody>
-                @for (summary of monthlyBreakdown(); track summary.month) {
+                @for (summary of monthlyBreakdown(); track $index) {
                   <tr class="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50 cursor-pointer"
                       (click)="doDetail(summary)">
                     <td class="p-3 font-semibold dark:text-gray-200">{{ summary.month }}</td>
@@ -160,6 +161,7 @@ export class AnnualReport implements OnInit {
   private financialService = inject(FinancialService);
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
+  private dateUtilityService = inject(DateUtilityService);
 
 // --- State Signal for Modal ---
   isDetailModalOpen = signal(false);
@@ -176,15 +178,8 @@ export class AnnualReport implements OnInit {
   uniqueDetails = signal<string[]>([]);
 
   // --- Static Data for Dropdown ---
-  readonly months = [
-    {value: 0, name: 'มกราคม'}, {value: 1, name: 'กุมภาพันธ์'},
-    {value: 2, name: 'มีนาคม'}, {value: 3, name: 'เมษายน'},
-    {value: 4, name: 'พฤษภาคม'}, {value: 5, name: 'มิถุนายน'},
-    {value: 6, name: 'กรกฎาคม'}, {value: 7, name: 'สิงหาคม'},
-    {value: 8, name: 'กันยายน'}, {value: 9, name: 'ตุลาคม'},
-    {value: 10, name: 'พฤศจิกายน'}, {value: 11, name: 'ธันวาคม'}
-  ];
-  readonly yearRange: number[] = [];
+  readonly months = this.dateUtilityService.getMonths();
+  readonly yearRange: number[] = this.dateUtilityService.getYearRange(10);
 
   // --- Computed Signals for Summary & Analysis ---
   annualSummary = computed(() => {
