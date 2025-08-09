@@ -137,9 +137,8 @@ export class CreditAnnualReport implements OnInit {
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
   private dateUtilityService = inject(DateUtilityService);
-  private dateUtility = inject(DateUtilityService);
 
-  // --- Filter State ---
+// --- Filter State ---
   selectedYearBE = signal(new Date().getFullYear() + 543);
   selectedDetail = signal<string | null>(null);
 
@@ -194,7 +193,7 @@ export class CreditAnnualReport implements OnInit {
       // 2. จัดกลุ่มข้อมูลออกเป็น 12 เดือนในฝั่ง Client
       const breakdownResult: AnnualReportRow[] = [];
       for (let monthIndex = 0; monthIndex < 12; monthIndex++) {
-        const monthName = this.getMonthName(monthIndex);
+        const monthName = this.dateUtilityService.getMonthName(monthIndex);
 
         // 3. แปลงช่วงวันที่ของ "รอบบิล" ให้เป็นตัวเลขมิลลิวินาที
         const monthStartTime = new Date(yearCE, monthIndex - 1, 13).getTime();
@@ -244,8 +243,4 @@ export class CreditAnnualReport implements OnInit {
     this.isDetailModalOpen.set(false);
   }
 
-  private getMonthName(monthIndex: number): string {
-    const months = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
-    return months[monthIndex];
-  }
 }

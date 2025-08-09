@@ -69,7 +69,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
           <!-- +++ MONTH VIEW +++ -->
           @if (pickerView() === 'months') {
-            <div class="grid grid-cols-3 gap-1 text-gray-200">
+            <div class="grid grid-cols-3 gap-1 text-gray-800 dark:text-gray-300">
               @for (month of months; track month.value) {
                 <button type="button" (click)="selectMonth(month.value)" class="month-button">
                   {{ month.name }}

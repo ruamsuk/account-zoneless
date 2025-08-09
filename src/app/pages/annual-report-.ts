@@ -184,8 +184,8 @@ export class AnnualReport implements OnInit {
   // --- Computed Signals for Summary & Analysis ---
   annualSummary = computed(() => {
     const breakdown = this.monthlyBreakdown();
-    const totalIncome = breakdown.reduce((sum, m) => sum + m.income, 0);
-    const totalExpense = breakdown.reduce((sum, m) => sum + m.expense, 0);
+    const totalIncome = breakdown.reduce((sum, m) => sum + parseFloat(String(m.income) || '0'), 0);
+    const totalExpense = breakdown.reduce((sum, m) => sum + parseFloat(String(m.expense) || '0'), 0);
     return {
       totalIncome,
       totalExpense,
@@ -204,10 +204,24 @@ export class AnnualReport implements OnInit {
       };
     }
 
-    const maxIncome = breakdown.reduce((max, m) => m.income > max.income ? m : max, breakdown[0]);
-    const maxExpense = breakdown.reduce((max, m) => m.expense > max.expense ? m : max, breakdown[0]);
-    const minIncome = breakdown.reduce((min, m) => m.income < min.income ? m : min, breakdown[0]);
-    const minExpense = breakdown.reduce((min, m) => m.expense < min.expense ? m : min, breakdown[0]);
+    // ใช้ parseFloat() เพื่อแปลงค่าก่อนเปรียบเทียบ
+    const maxIncome = breakdown.reduce((max, m) =>
+      parseFloat(String(m.income) || '0') > parseFloat(String(max.income) || '0') ? m : max, breakdown[0]
+    );
+    const maxExpense = breakdown.reduce((max, m) =>
+      parseFloat(String(m.expense) || '0') > parseFloat(String(max.expense) || '0') ? m : max, breakdown[0]
+    );
+    const minIncome = breakdown.reduce((min, m) =>
+      parseFloat(String(m.income) || '0') < parseFloat(String(min.income) || '0') ? m : min, breakdown[0]
+    );
+    const minExpense = breakdown.reduce((min, m) =>
+      parseFloat(String(m.expense) || '0') < parseFloat(String(min.expense) || '0') ? m : min, breakdown[0]
+    );
+    /**/
+    //const maxIncome = breakdown.reduce((max, m) => m.income > max.income ? m : max, breakdown[0]);
+    //const maxExpense = breakdown.reduce((max, m) => m.expense > max.expense ? m : max, breakdown[0]);
+    //const minIncome = breakdown.reduce((min, m) => m.income < min.income ? m : min, breakdown[0]);
+    //const minExpense = breakdown.reduce((min, m) => m.expense < min.expense ? m : min, breakdown[0]);
     return {
       maxIncome: {month: maxIncome.month, amount: maxIncome.income},
       maxExpense: {month: maxExpense.month, amount: maxExpense.expense},
@@ -251,8 +265,13 @@ export class AnnualReport implements OnInit {
       // 4. ประมวลผลข้อมูล
       const breakdownResult = monthlyRanges.map((range, index) => {
         const transactions = monthlyTransactionsArray[index];
-        const income = transactions.filter(t => t.isInCome).reduce((sum, t) => sum + t.amount, 0);
-        const expense = transactions.filter(t => !t.isInCome).reduce((sum, t) => sum + t.amount, 0);
+        const income = transactions
+          .filter(t => t.isInCome)
+          .reduce((sum, t) => sum + parseFloat(String(t.amount) || '0'), 0);
+
+        const expense = transactions
+          .filter(t => !t.isInCome)
+          .reduce((sum, t) => sum + parseFloat(String(t.amount) || '0'), 0);
         return {
           month: range.month,
           income,

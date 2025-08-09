@@ -98,6 +98,12 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'monthly',
+    ...canActivate(redirectUnauthorizedToLogin),
+    loadComponent: () => import('./pages/monthly/monthly-list')
+      .then(m => m.MonthlyList)
+  },
+  {
     path: '**',
     pathMatch: 'full',
     redirectTo: '',
