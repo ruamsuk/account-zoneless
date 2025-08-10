@@ -11,6 +11,7 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { ChristianToThaiYearPipe } from '../../pipe/christian-to-thai-year.pipe';
 import { DateUtilityService } from '../../services/date-utility.service';
+import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.directive';
 
 @Component({
   selector: 'app-monthly-list',
@@ -18,7 +19,8 @@ import { DateUtilityService } from '../../services/date-utility.service';
     ReactiveFormsModule,
     ThaiDatepicker,
     ThaiDatePipe,
-    ChristianToThaiYearPipe
+    ChristianToThaiYearPipe,
+    CustomTooltipDirective
   ],
   template: `
     <main class="container mx-auto p-4 md:p-8 max-w-4xl">
@@ -48,13 +50,13 @@ import { DateUtilityService } from '../../services/date-utility.service';
                   <td class="table-cell">{{ item.datestart | thaiDate }}</td>
                   <td class="table-cell">{{ item.dateend | thaiDate }}</td>
                   <td class="table-cell text-center">
-                    <button (click)="openModal(item)" class="btn-icon" title="แก้ไข">
+                    <button (click)="openModal(item)" class="btn-icon" customTooltip="แก้ไข">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                         <path
                           d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.886 1.343Z"/>
                       </svg>
                     </button>
-                    <button (click)="onDelete(item)" class="btn-icon-danger" title="ลบ">
+                    <button (click)="onDelete(item)" class="btn-icon-danger" customTooltip="ลบ">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                         <path fill-rule="evenodd"
                               d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.33l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193v-.443A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm3.44 0a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
@@ -73,19 +75,19 @@ import { DateUtilityService } from '../../services/date-utility.service';
       @if (totalPages() > 1) {
         <div class="mt-8 flex justify-center items-center gap-4">
           <button (click)="firstPage()" [disabled]="currentPage() === 1"
-                  class="btn-paginator" title="หน้าแรก">«
+                  class="btn-paginator" customTooltip="หน้าแรก">«
           </button>
           <button (click)="previousPage()" [disabled]="currentPage() === 1"
-                  class="btn-paginator" title="หน้าก่อนหน้า">‹
+                  class="btn-paginator" customTooltip="หน้าก่อนหน้า">‹
           </button>
           <span class="text-gray-600 dark:text-gray-300">
                 หน้า {{ currentPage() }} ของ {{ totalPages() }}
               </span>
           <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
-                  class="btn-paginator" title="หน้าถัดไป">›
+                  class="btn-paginator" customTooltip="หน้าถัดไป">›
           </button>
           <button (click)="lastPage()" [disabled]="currentPage() === totalPages()"
-                  class="btn-paginator" title="หน้าสุดท้าย">»
+                  class="btn-paginator" customTooltip="หน้าสุดท้าย">»
           </button>
         </div>
       }
@@ -96,7 +98,7 @@ import { DateUtilityService } from '../../services/date-utility.service';
       <div (click)="closeModal()" class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
         <div (click)="$event.stopPropagation()"
              class="bg-white p-6 md:p-8 rounded-xl shadow-2xl z-50 w-full max-w-lg mx-auto dark:bg-gray-800">
-          <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-6">
+          <h2 class="text-2xl font-thasadith font-semibold text-gray-700 dark:text-gray-200 mb-6">
             {{ isEditing() ? 'แก้ไขรอบบัญชี' : 'เพิ่มรอบบัญชีใหม่' }}
           </h2>
           <form [formGroup]="monthlyForm" (ngSubmit)="onSubmit()">
@@ -196,12 +198,6 @@ export class MonthlyList {
   constructor() {
     this.allItems = this.getMonthlyData();
     this.initializeForm();
-    // this.loadingService.show();
-    // effect(() => {
-    //   if (this.allItems() !== undefined) {
-    //     this.loadingService.hide();
-    //   }
-    // });
   }
 
   initializeForm(data: Monthly | null = null): void {

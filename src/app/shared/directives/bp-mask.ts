@@ -74,8 +74,8 @@ export class BpMask {
     if (dia) formatted += `/${dia}`;
     if (pulse) formatted += ` P${pulse}`;
 
-    // สมมติว่า SYS มี 2-3 หลัก, DIA 2 หลัก, PULSE 2 หลัก (รวมอย่างน้อย 6 ตัว)
-    if (nums.length >= 6) {
+    // SYS มี 2-3 หลัก, DIA 2-3 หลัก, PULSE 2 หลัก (รวมอย่างน้อย 7 ตัว)
+    if (nums.length >= 7) {
       isComplete = true;
     }
 

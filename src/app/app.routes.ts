@@ -38,9 +38,9 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'reports/date-range',
-    loadComponent: () => import('./features/reports/date-range-report')
-      .then(m => m.DateRangeReport),
+    path: 'profile',
+    loadComponent: () => import('./pages/profile')
+      .then(m => m.Profile),
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
@@ -105,7 +105,7 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    pathMatch: 'full',
     redirectTo: '',
+    pathMatch: 'full'
   }
 ];

@@ -1,9 +1,10 @@
 import { Component, computed, effect, ElementRef, forwardRef, HostListener, inject, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-thai-datepicker',
-  imports: [],
+  imports: [CommonModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -218,6 +219,8 @@ export class ThaiDatepicker implements ControlValueAccessor {
       this.pickerView.set('days');
       if (this.selectedDate()) {
         this.viewDate.set(this.selectedDate()!);
+      } else {   // <--- เพิ่มมาใหม่
+        this.viewDate.set(new Date());
       }
     }
   }
@@ -258,7 +261,8 @@ export class ThaiDatepicker implements ControlValueAccessor {
   // Click outside to close
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
-    if (!this.elementRef.nativeElement.contains(event.target)) {
+    console.log('Clicked outside the datepicker');
+    if (this.isPickerOpen() && !this.elementRef.nativeElement.contains(event.target)) {
       this.isPickerOpen.set(false);
     }
   }

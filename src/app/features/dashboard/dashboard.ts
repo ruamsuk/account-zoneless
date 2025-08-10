@@ -11,6 +11,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogService } from '../../shared/services/dialog';
 import { AuthService } from '../../services/auth.service';
 import { AccountModal } from '../../pages/account-modal';
+import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.directive';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,7 +21,8 @@ import { AccountModal } from '../../pages/account-modal';
     DecimalPipe,
     FormsModule,
     ReactiveFormsModule,
-    AccountModal
+    AccountModal,
+    CustomTooltipDirective
   ],
   providers: [DatePipe],
   template: `
@@ -114,7 +116,8 @@ import { AccountModal } from '../../pages/account-modal';
                   <td class="p-3">
                     <div class="flex items-center justify-center gap-2">
                       @if (authService.currentUser()?.role !== 'user') {
-                        <button (click)="openDetailModal(acc)" title="ดูรายละเอียด" class="btn-icon text-sky-500">
+                        <button (click)="openDetailModal(acc)" customTooltip="ดูรายละเอียด"
+                                class="btn-icon text-sky-500">
                           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -124,13 +127,13 @@ import { AccountModal } from '../../pages/account-modal';
                         </button>
                       }
                       @if (authService.currentUser()?.role == 'admin' || authService.currentUser()?.role == 'manager') {
-                        <button (click)="openEditModal(acc)" title="แก้ไข" class="btn-icon text-amber-400">
+                        <button (click)="openEditModal(acc)" customTooltip="แก้ไข" class="btn-icon text-amber-400">
                           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z"/>
                           </svg>
                         </button>
-                        <button (click)="onDelete(acc)" title="ลบ" class="btn-icon text-red-500">
+                        <button (click)="onDelete(acc)" customTooltip="ลบ" class="btn-icon text-red-500">
                           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                   d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
@@ -151,19 +154,19 @@ import { AccountModal } from '../../pages/account-modal';
           @if (totalPages() > 1) {
             <div class="mt-6 flex items-center justify-center gap-2">
               <button (click)="firstPage()" [disabled]="currentPage() === 1"
-                      class="btn-paginator" title="หน้าแรก">«
+                      class="btn-paginator" customTooltip="หน้าแรก">«
               </button>
               <button (click)="previousPage()" [disabled]="currentPage() === 1"
-                      class="btn-paginator" title="หน้าก่อนหน้า">‹
+                      class="btn-paginator" customTooltip="หน้าก่อนหน้า">‹
               </button>
               <span class="text-gray-600 dark:text-gray-300">
                 หน้า {{ currentPage() }} ของ {{ totalPages() }}
               </span>
               <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
-                      class="btn-paginator" title="หน้าถัดไป">›
+                      class="btn-paginator" customTooltip="หน้าถัดไป">›
               </button>
               <button (click)="lastPage()" [disabled]="currentPage() === totalPages()"
-                      class="btn-paginator" title="หน้าสุดท้าย">»
+                      class="btn-paginator" customTooltip="หน้าสุดท้าย">»
               </button>
             </div>
           }

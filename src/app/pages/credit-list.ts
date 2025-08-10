@@ -11,6 +11,7 @@ import { ThaiDatePipe } from '../pipe/thai-date.pipe';
 import { ThaiDatepicker } from '../shared/components/thai-datepicker';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { NumberFormatDirective } from '../shared/directives/number-format';
+import { CustomTooltipDirective } from '../shared/directives/custom-tooltip.directive';
 
 @Component({
   selector: 'app-credit-list',
@@ -21,7 +22,8 @@ import { NumberFormatDirective } from '../shared/directives/number-format';
     DecimalPipe,
     ThaiDatePipe,
     ThaiDatepicker,
-    NumberFormatDirective
+    NumberFormatDirective,
+    CustomTooltipDirective
   ],
   template: `
     <div class="max-w-5xl p-4 sm:p-6 lg:p-8 mx-auto">
@@ -50,7 +52,7 @@ import { NumberFormatDirective } from '../shared/directives/number-format';
                      id="search"
                      placeholder="Search ..."
                      class="w-full px-4 py-2 border border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10 pl-10 dark:bg-gray-500 dark:border-gray-600 dark:text-white"
-                     [(ngModel)]="searchTerm">
+                     [(ngModel)]="searchTerm" customTooltip="หารายการ">
 
               @if (searchTerm()) {
                 <button (click)="clearSearch()"
@@ -92,7 +94,7 @@ import { NumberFormatDirective } from '../shared/directives/number-format';
                       {{ tx.isCashback ? '+' : '-' }} {{ tx.amount | number:'1.2-2' }}
                     </td>
                     <td class="p-3 whitespace-nowrap text-center">
-                      <button (click)="onViewDetails(tx)" title="ดูรายละเอียด" class="btn-icon text-sky-500">
+                      <button (click)="onViewDetails(tx)" customTooltip="ดูรายละเอียด" class="btn-icon text-sky-500">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -100,13 +102,13 @@ import { NumberFormatDirective } from '../shared/directives/number-format';
                                 d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                         </svg>
                       </button>
-                      <button (click)="openModal(tx)" class="btn-icon mx-2 text-green-600" title="แก้ไข">
+                      <button (click)="openModal(tx)" class="btn-icon mx-2 text-green-600" customTooltip="แก้ไข">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                           <path
                             d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.886 1.343Z"/>
                         </svg>
                       </button>
-                      <button (click)="onDelete(tx)" class="btn-icon text-red-600" title="ลบ">
+                      <button (click)="onDelete(tx)" class="btn-icon text-red-600" customTooltip="ลบ">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                           <path fill-rule="evenodd"
                                 d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.33l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193v-.443A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm3.44 0a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
@@ -123,19 +125,19 @@ import { NumberFormatDirective } from '../shared/directives/number-format';
             @if (totalPages() > 1) {
               <div class="mt-6 flex items-center justify-center gap-2">
                 <button (click)="firstPage()" [disabled]="currentPage() === 1"
-                        class="btn-paginator" title="หน้าแรก">«
+                        class="btn-paginator" customTooltip="หน้าแรก">«
                 </button>
                 <button (click)="previousPage()" [disabled]="currentPage() === 1"
-                        class="btn-paginator" title="หน้าก่อนหน้า">‹
+                        class="btn-paginator" customTooltip="หน้าก่อนหน้า">‹
                 </button>
                 <span class="text-gray-600 dark:text-gray-300">
                 หน้า {{ currentPage() }} ของ {{ totalPages() }}
               </span>
                 <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
-                        class="btn-paginator" title="หน้าถัดไป">›
+                        class="btn-paginator" customTooltip="หน้าถัดไป">›
                 </button>
                 <button (click)="lastPage()" [disabled]="currentPage() === totalPages()"
-                        class="btn-paginator" title="หน้าสุดท้าย">»
+                        class="btn-paginator" customTooltip="หน้าสุดท้าย">»
                 </button>
               </div>
             }

@@ -51,14 +51,16 @@ import { PrintDialog } from './print-dialog';
             </tr>
             <tr>
               <th colspan="2" class="table-header text-center border-x border-b dark:border-gray-600">
-                <div class="text-green-600 dark:text-green-400">Morning</div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 font-normal">(Before medicine)</div>
+                <div class="text-center text-green-600 dark:text-green-400">Morning</div>
+                <div class="text-center text-xs text-gray-500 dark:text-gray-400 font-normal">(Before medicine)</div>
               </th>
               <th colspan="2" class="table-header text-center border-r border-b dark:border-gray-600">
-                <div class="text-yellow-600 dark:text-yellow-400">Evening</div>
-                <div class="text-xs text-gray-500 dark:text-gray-400 font-normal">(After medicine)</div>
+                <div class="text-center text-yellow-600 dark:text-yellow-400">Evening</div>
+                <div class="text-center text-xs text-gray-500 dark:text-gray-400 font-normal">(After medicine)</div>
               </th>
-              <th rowspan="2" class="table-header align-middle text-center w-[15%]">Action</th>
+              <th rowspan="2" class="text-lg align-middle font-medium text-gray-800 dark:text-gray-300 w-[15%]">
+                Action
+              </th>
             </tr>
             <tr>
               <th class="table-header text-center border-x dark:border-gray-600 w-[15%]">BP1</th>

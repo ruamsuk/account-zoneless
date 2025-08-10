@@ -16,7 +16,8 @@ import { NgOptimizedImage } from '@angular/common';
 
           <a routerLink="/" class="flex items-center gap-3">
             <img ngSrc="/images/primeng-logo.png" alt="logo" class="h-8 w-8" height="43" width="40">
-            <span class="text-2xl text-white text-shadow-lg font-semibold font-serif">Account App</span>
+            <span
+              class="text-2xl hidden md:block text-white text-shadow-lg font-semibold font-serif">Account</span>
           </a>
 
           <div class="hidden md:flex items-center gap-4">
@@ -78,7 +79,6 @@ import { NgOptimizedImage } from '@angular/common';
                     <a routerLink="/credit/credit-annual-report" (click)="closeCreditMenu()" class="dropdown-item">
                       รายการรายปี
                     </a>
-                    <!-- คุณสามารถเพิ่มลิงก์อื่นๆ ได้ที่นี่ -->
                   </div>
                 </div>
               }
@@ -98,6 +98,11 @@ import { NgOptimizedImage } from '@angular/common';
 
             <div class="relative">
               <button routerLink="/monthly" class="nav-link flex items-center gap-1">Monthly</button>
+            </div>
+
+            <div class="relative">
+              <button (click)="openProfile.emit()" class="nav-link flex items-center gap-1">Profile
+              </button>
             </div>
 
             <button (click)="toggleTheme()" class="btn-icon-round" title="Toggle theme">
@@ -136,8 +141,9 @@ import { NgOptimizedImage } from '@angular/common';
               }
             </button>
             <button (click)="toggleMobileMenu()" class="btn-icon-round">
-              <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m4-6h-4"></path>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                   stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
               </svg>
             </button>
           </div>
@@ -190,7 +196,7 @@ import { NgOptimizedImage } from '@angular/common';
               </div>
 
               <!-- ===== ส่วนบัญชีและการตั้งค่า ===== -->
-              <a routerLink="/profile" (click)="closeMobileMenu()" class="mobile-menu-item">โปรไฟล์</a>
+              <a href="#" (click)="openProfileModal()" class="mobile-menu-item">โปรไฟล์</a>
               @if (authService.currentUser()?.role === 'admin') {
                 <a routerLink="/user-management" (click)="closeMobileMenu()" class="mobile-menu-item">จัดการผู้ใช้</a>
               }
@@ -217,6 +223,7 @@ export class Header implements OnInit {
 
   // Output สำหรับส่ง Event
   @Output() openTransactionModal = new EventEmitter<void>();
+  @Output() openProfile = new EventEmitter<void>();
 
   // เมธอดสำหรับเปิด/ปิด Dropdown
   toggleTransactionsMenu() {
@@ -237,13 +244,12 @@ export class Header implements OnInit {
     this.isCreditMenuOpen.set(false);
   }
 
-  // เมธอดสำหรับส่ง Event ขอเปิด Modal
-  requestOpenModal() {
-    this.openTransactionModal.emit();
-    this.closeTransactionsMenu(); // ปิด Dropdown หลังคลิก
+  openProfileModal() {
+    this.openProfile.emit();
+    this.closeMobileMenu();
   }
 
-  // ตรวจจับการคลิกนอก Dropdown เพื่อปิดเมนู
+// ตรวจจับการคลิกนอก Dropdown เพื่อปิดเมนู
   @HostListener('document:click', ['$event'])
   clickout(event: Event) {
     if (this.isCreditMenuOpen() || !this.eRef.nativeElement.contains(event.target)) {
@@ -289,5 +295,4 @@ export class Header implements OnInit {
       this.router.navigate(['/auth/login']).then();
     });
   }
-
 }

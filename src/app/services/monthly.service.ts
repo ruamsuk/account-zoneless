@@ -42,7 +42,7 @@ export class MonthlyService {
             if (yearA !== yearB) {
               return yearB - yearA;
             } else {
-              return monthA - monthB;
+              return monthB - monthA; // จากมากไปน้อย
             }
           });
         }
