@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, forwardRef, inject, input, output, signal } from '@angular/core';
+import { Component, computed, effect, forwardRef, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -105,7 +105,6 @@ import { CommonModule } from '@angular/common';
   styles: ``
 })
 export class ThaiDatepicker implements ControlValueAccessor {
-  private elementRef = inject(ElementRef);
 
   // --- State Signals ---
   shouldClose = input<boolean>(false);
@@ -138,10 +137,6 @@ export class ThaiDatepicker implements ControlValueAccessor {
     const month = this.months[date.getMonth()].name;
     const year = date.getFullYear() + 543;
     return `${day} ${month} ${year}`;
-  });
-
-  isPickerOpenCompute = computed(() => {
-    this.pickerOnOff();
   });
 
   calendarGrid = computed(() => {
@@ -273,10 +268,4 @@ export class ThaiDatepicker implements ControlValueAccessor {
       date1.getDate() === date2.getDate();
   }
 
-  // Click outside to close
-  public closePicker(): void {
-    if (this.isPickerOpen()) {
-      this.isPickerOpen.set(false);
-    }
-  }
 }
