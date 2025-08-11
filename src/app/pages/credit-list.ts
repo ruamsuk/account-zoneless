@@ -149,7 +149,7 @@ import { CustomTooltipDirective } from '../shared/directives/custom-tooltip.dire
           <!-- Add/Edit Modal -->
           @if (isModalOpen()) {
             <div (click)="closeModal()" class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
-              <div (click)="$event.stopPropagation()"
+              <div (click)="onDialogContentClick($event)"
                    class="bg-white p-6 md:p-8 rounded-xl shadow-2xl z-50 w-full max-w-lg mx-auto dark:bg-gray-800">
 
                 @if (modalMode() === 'view' && selectedTransaction()) {
@@ -189,7 +189,10 @@ import { CustomTooltipDirective } from '../shared/directives/custom-tooltip.dire
                     <form [formGroup]="creditForm" (ngSubmit)="onSubmit()">
                       <div class="mb-4">
                         <label class="form-label">วันที่</label>
-                        <app-thai-datepicker formControlName="date"></app-thai-datepicker>
+                        <app-thai-datepicker
+                          [shouldClose]="shouldClose()"
+                          (closed)="onCloseFromChild()"
+                          formControlName="date"></app-thai-datepicker>
                       </div>
                       <div class="mb-4">
                         <label class="form-label">รายละเอียด</label>
@@ -243,6 +246,7 @@ export class CreditList {
   currentPage = signal(1);
   itemsPerPage = signal(10);
   searchTerm = signal('');
+  shouldClose = signal(false);
 
   // --- Modal State ---
   isModalOpen = signal(false);
@@ -250,6 +254,15 @@ export class CreditList {
   modalMode = signal<'view' | 'form'>('form');
   isEditing = computed(() => !!this.selectedTransaction());
   creditForm!: FormGroup;
+
+  onDialogContentClick(event: MouseEvent) {
+    this.shouldClose.set(true);
+    event.stopPropagation();
+  }
+
+  onCloseFromChild(): void {
+    this.shouldClose.set(false);
+  }
 
   /**
    *  1. Get all credit from the credit service

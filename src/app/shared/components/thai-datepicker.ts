@@ -1,4 +1,4 @@
-import { Component, computed, effect, ElementRef, forwardRef, HostListener, inject, signal } from '@angular/core';
+import { Component, computed, effect, ElementRef, forwardRef, inject, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -18,7 +18,7 @@ import { CommonModule } from '@angular/common';
       <input
         type="text"
         [value]="formattedSelectedDate()"
-        (click)="togglePicker()"
+        (click)="togglePicker($event)"
         class="form-select"
         placeholder="-- เลือกวันที่ --"
         readonly>
@@ -108,10 +108,13 @@ export class ThaiDatepicker implements ControlValueAccessor {
   private elementRef = inject(ElementRef);
 
   // --- State Signals ---
+  shouldClose = input<boolean>(false);
+  closed = output<void>();
   isPickerOpen = signal(false);
   selectedDate = signal<Date | null>(null);
   viewDate = signal(new Date()); // เดือน/ปี ที่กำลังแสดงในปฏิทิน
   pickerView = signal<'days' | 'months' | 'years'>('days');
+  pickerOnOff = input<boolean>(false);
   today = new Date();
 
   valueFromParent = signal<any | null>(null);
@@ -135,6 +138,10 @@ export class ThaiDatepicker implements ControlValueAccessor {
     const month = this.months[date.getMonth()].name;
     const year = date.getFullYear() + 543;
     return `${day} ${month} ${year}`;
+  });
+
+  isPickerOpenCompute = computed(() => {
+    this.pickerOnOff();
   });
 
   calendarGrid = computed(() => {
@@ -193,6 +200,13 @@ export class ThaiDatepicker implements ControlValueAccessor {
         this.selectedDate.set(null);
       }
     });
+
+    effect(() => {
+      if (this.shouldClose()) {
+        this.isPickerOpen.set(false);
+        this.closed.emit();
+      }
+    });
   }
 
   writeValue(value: Date | null): void {
@@ -212,7 +226,8 @@ export class ThaiDatepicker implements ControlValueAccessor {
   }
 
   // --- UI Methods ---
-  togglePicker(): void {
+  togglePicker(event: MouseEvent): void {
+    event.stopPropagation();
     if (this.disabled()) return;
     this.isPickerOpen.update(v => !v);
     if (this.isPickerOpen()) {
@@ -259,10 +274,8 @@ export class ThaiDatepicker implements ControlValueAccessor {
   }
 
   // Click outside to close
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    console.log('Clicked outside the datepicker');
-    if (this.isPickerOpen() && !this.elementRef.nativeElement.contains(event.target)) {
+  public closePicker(): void {
+    if (this.isPickerOpen()) {
       this.isPickerOpen.set(false);
     }
   }

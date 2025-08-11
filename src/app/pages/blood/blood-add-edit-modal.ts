@@ -1,4 +1,4 @@
-import { Component, computed, effect, EventEmitter, inject, input, Output } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BloodPressure } from '../../models/blood-pressure.model';
 import { BpMask } from '../../shared/directives/bp-mask';
@@ -14,7 +14,7 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
   template: `
     @if (isOpen()) {
       <div (click)="onClose()" class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
-        <div (click)="$event.stopPropagation()"
+        <div (click)="onDialogContentClick($event)"
              class="bg-white p-6 md:p-8 rounded-xl shadow-2xl z-50 w-full max-w-xl mx-auto dark:bg-gray-800">
           <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-6">
             {{ isEditing() ? 'แก้ไขบันทึกความดัน' : 'เพิ่มบันทึกความดันใหม่' }}
@@ -22,7 +22,10 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
           <form [formGroup]="bpForm" (ngSubmit)="onSubmit()">
             <div class="mb-4">
               <label class="form-label">วันที่</label>
-              <app-thai-datepicker formControlName="date"></app-thai-datepicker>
+              <app-thai-datepicker
+                [shouldClose]="shouldClose()"
+                (closed)="onCloseFromChild()"
+                formControlName="date"></app-thai-datepicker>
             </div>
 
             <!-- Morning Readings -->
@@ -78,14 +81,24 @@ export class BloodAddEditModal {
   private fb = inject(FormBuilder);
 
   // --- Inputs & Outputs (Signal-based) ---
+  shouldClose = signal(false);
   isOpen = input<boolean>(false);
   itemToEdit = input<BloodPressure | null>(null);
-  @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<any>();
+  close = output<void>();
+  save = output<any>();
 
   // --- Component State ---
   isEditing = computed(() => !!this.itemToEdit());
   bpForm!: FormGroup;
+
+  onDialogContentClick(event: MouseEvent) {
+    this.shouldClose.set(true);
+    event.stopPropagation();
+  }
+
+  onCloseFromChild(): void {
+    this.shouldClose.set(false);
+  }
 
   constructor() {
     this.initializeForm(); // Initialize form structure once

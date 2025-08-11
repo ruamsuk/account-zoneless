@@ -171,8 +171,7 @@ export class ProfileModal {
       try {
         await this.authService.deleteAccount();
         this.onClose();
-        this.router.navigate(['/login']).catch(err => {
-        });
+        this.router.navigate(['/login']).then();
       } catch (err) {
         console.error('Failed to delete account', err);
         this.toastService.show('Error:', 'Could not delete account. Please try logging out and back in.', 'error');

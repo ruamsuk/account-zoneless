@@ -96,7 +96,7 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
     <!-- Add/Edit Modal -->
     @if (isModalOpen()) {
       <div (click)="closeModal()" class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
-        <div (click)="$event.stopPropagation()"
+        <div (click)="onDialogContentClick($event)"
              class="bg-white p-6 md:p-8 rounded-xl shadow-2xl z-50 w-full max-w-lg mx-auto dark:bg-gray-800">
           <h2 class="text-2xl font-thasadith font-semibold text-gray-700 dark:text-gray-200 mb-6">
             {{ isEditing() ? 'แก้ไขรอบบัญชี' : 'เพิ่มรอบบัญชีใหม่' }}
@@ -125,11 +125,17 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
               <div>
                 <label class="form-label">วันเริ่มต้น</label>
-                <app-thai-datepicker formControlName="datestart"></app-thai-datepicker>
+                <app-thai-datepicker
+                  [shouldClose]="shouldClose()"
+                  (closed)="onCloseFromChild()"
+                  formControlName="datestart"></app-thai-datepicker>
               </div>
               <div>
                 <label class="form-label">วันสิ้นสุด</label>
-                <app-thai-datepicker formControlName="dateend"></app-thai-datepicker>
+                <app-thai-datepicker
+                  [shouldClose]="shouldClose()"
+                  (closed)="onCloseFromChild()"
+                  formControlName="dateend"></app-thai-datepicker>
               </div>
             </div>
             <div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t dark:border-gray-700">
@@ -164,6 +170,7 @@ export class MonthlyList {
   itemsPerPage = signal(10);
 
   // --- Modal State ---
+  shouldClose = signal(false);
   isModalOpen = signal(false);
   selectedItem = signal<Monthly | null>(null);
   isEditing = computed(() => !!this.selectedItem());
@@ -178,6 +185,15 @@ export class MonthlyList {
     return items.slice(startIndex, startIndex + perPage);
   });
   totalPages = computed(() => Math.ceil((this.allItems() ?? []).length / this.itemsPerPage()));
+
+  onDialogContentClick(event: MouseEvent) {
+    this.shouldClose.set(true);
+    event.stopPropagation();
+  }
+
+  onCloseFromChild(): void {
+    this.shouldClose.set(false);
+  }
 
   private getMonthlyData(): Signal<Monthly[]> {
     this.loadingService.show();

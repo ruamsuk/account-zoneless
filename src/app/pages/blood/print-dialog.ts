@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, input, Output, signal } from '@angular/core';
+import { Component, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BloodService } from '../../services/blood.service';
 import { BloodPressure } from '../../models/blood-pressure.model';
@@ -17,8 +17,9 @@ import { NgClass } from '@angular/common';
   template: `
     @if (isOpen()) {
       <div (click)="onClose()" class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
-        <div (click)="$event.stopPropagation()"
-             class="dialog-container bg-white p-6 md:p-8 rounded-xl shadow-2xl z-50 w-full max-w-4xl mx-auto max-h-[90vh] flex flex-col dark:bg-gray-800">
+        <div (click)="onDialogContentClick($event)"
+             class="dialog-container bg-white p-6 md:p-8 rounded-xl shadow-2xl z-50 w-full max-w-4xl mx-auto max-h-[90vh]
+          flex flex-col dark:bg-gray-800">
 
           <!-- ส่วนหัวของ Modal (จะไม่ถูกพิมพ์) -->
           <div class="print-hide">
@@ -27,11 +28,17 @@ import { NgClass } from '@angular/common';
                   class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end mb-4">
               <div>
                 <label class="form-label">วันเริ่มต้น</label>
-                <app-thai-datepicker formControlName="startDate"></app-thai-datepicker>
+                <app-thai-datepicker
+                  [shouldClose]="shouldClose()"
+                  (closed)="onCloseFromChild()"
+                  formControlName="startDate"></app-thai-datepicker>
               </div>
               <div>
                 <label class="form-label">วันสิ้นสุด</label>
-                <app-thai-datepicker formControlName="endDate"></app-thai-datepicker>
+                <app-thai-datepicker
+                  [shouldClose]="shouldClose()"
+                  (closed)="onCloseFromChild()"
+                  formControlName="endDate"></app-thai-datepicker>
               </div>
               <button type="submit" [disabled]="dateRangeForm.invalid" class="btn-primary">แสดงตัวอย่าง</button>
             </form>
@@ -124,9 +131,10 @@ import { NgClass } from '@angular/common';
 export class PrintDialog {
   private fb = inject(FormBuilder);
   private bpService = inject(BloodService);
+  shouldClose = signal(false);
 
   isOpen = input<boolean>(false);
-  @Output() close = new EventEmitter<void>();
+  close = output<void>();
 
   dateRangeForm: FormGroup;
   reportData = signal<BloodPressure[] | null>(null);
@@ -165,5 +173,14 @@ export class PrintDialog {
     const sys = parseInt(parts[0], 10);
     const dia = parseInt(parts[1], 10);
     return sys > 130 || dia > 80;
+  }
+
+  onDialogContentClick(event: MouseEvent) {
+    this.shouldClose.set(true);
+    event.stopPropagation();
+  }
+
+  onCloseFromChild(): void {
+    this.shouldClose.set(false);
   }
 }

@@ -1,4 +1,4 @@
-import { Component, computed, effect, EventEmitter, inject, input, Output, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Account } from '../models/account.model';
 import { ThaiDatePipe } from '../pipe/thai-date.pipe';
@@ -19,7 +19,7 @@ import { NumberFormatDirective } from '../shared/directives/number-format';
   template: `
     @if (isOpen()) {
       <div (click)="onClose()" class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
-        <div (click)="$event.stopPropagation()"
+        <div (click)="onDialogContentClick($event)"
              class="bg-white p-6 md:p-8 rounded-xl shadow-2xl z-50 w-full max-w-lg mx-auto dark:bg-gray-800">
 
           @if (mode() === 'view' && accountToEdit()) {
@@ -58,7 +58,10 @@ import { NumberFormatDirective } from '../shared/directives/number-format';
               <form [formGroup]="accountForm" (ngSubmit)="onFormSubmit()">
                 <div class="mb-4">
                   <label class="form-label">วันที่</label>
-                  <app-thai-datepicker formControlName="date"></app-thai-datepicker>
+                  <app-thai-datepicker
+                    [shouldClose]="shouldClose()"
+                    (closed)="onCloseFromChild()"
+                    formControlName="date"></app-thai-datepicker>
                 </div>
                 <div class="mb-4">
                   <label class="form-label">รายละเอียด</label>
@@ -104,11 +107,12 @@ export class AccountModal {
   isOpen = input<boolean>(false);
   accountToEdit = input<Account | null>(null);
   initialMode = input.required<'view' | 'form'>();
-  @Output() close = new EventEmitter<void>();
-  @Output() save = new EventEmitter<any>();
+  close = output<void>();
+  save = output<any>();
 
   // --- Component State ---
   mode = signal<'view' | 'form'>('form');
+  shouldClose = signal(false);
   isEditing = computed(() => !!this.accountToEdit() && this.mode() === 'form');
   accountForm!: FormGroup;
 
@@ -138,6 +142,15 @@ export class AccountModal {
 
   switchToEditMode(): void {
     this.mode.set('form');
+  }
+
+  onDialogContentClick(event: MouseEvent) {
+    this.shouldClose.set(true);
+    event.stopPropagation();
+  }
+
+  onCloseFromChild(): void {
+    this.shouldClose.set(false);
   }
 
   onClose(): void {
