@@ -10,11 +10,11 @@ import { Account } from '../../models/account.model';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DialogService } from '../../shared/services/dialog';
 import { AuthService } from '../../services/auth.service';
-import { AccountModal } from '../../pages/account-modal';
+import { AccountModal } from '../account-modal';
 import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.directive';
 
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-cash-list',
   imports: [
     NgClass,
     ThaiDatePipe,
@@ -189,7 +189,7 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
   `,
   styles: ``
 })
-export class Dashboard {
+export class CashList {
   public authService = inject(AuthService);
   private accountService = inject(AccountService);
   private loadingService = inject(LoadingService);

@@ -20,7 +20,7 @@ import { DateUtilityService } from '../services/date-utility.service';
     <main class="max-w-5xl mx-auto p-4 md:p-8">
       <div class="container mx-auto px-4 md:px-8">
         <h1 class="text-2xl md:text-3xl  font-thasadith font-bold text-gray-600  mb-6">
-          รายงานรายรับ-รายจ่าย รายเดือน</h1>
+          รายงาน Debit รายเดือน</h1>
       </div>
 
       <!-- Filter Controls -->
@@ -133,7 +133,7 @@ import { DateUtilityService } from '../services/date-utility.service';
   `,
   styles: ``
 })
-export class FinancialReport implements OnInit {
+export class CashMonthlyReport implements OnInit {
   private financialService = inject(FinancialService);
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);

@@ -20,7 +20,7 @@ import { DateUtilityService } from '../services/date-utility.service';
   ],
   template: `
     <main class="container mx-auto p-4 md:p-8">
-      <h1 class="text-3xl font-thasadith font-bold text-gray-800 dark:text-gray-200 mb-6">รายงานสรุปประจำปี</h1>
+      <h1 class="text-3xl font-thasadith font-bold text-gray-800 dark:text-gray-200 mb-6">รายงานสรุปประจำปี (Cash)</h1>
 
       <!-- Filter Controls -->
       <div class="mb-4 p-4 bg-white rounded-xl shadow-md dark:bg-gray-800 max-w-4xl mx-auto">
@@ -157,7 +157,7 @@ import { DateUtilityService } from '../services/date-utility.service';
   `,
   styles: ``
 })
-export class AnnualReport implements OnInit {
+export class CashAnnualReport implements OnInit {
   private financialService = inject(FinancialService);
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);

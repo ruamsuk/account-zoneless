@@ -36,10 +36,10 @@ import { NgOptimizedImage } from '@angular/common';
               <!-- Popup menu for account -->
               @if (isTransactionsMenuOpen()) {
                 <div class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
-                  <a routerLink="/dashboard" (click)="closeTransactionsMenu()"
+                  <a routerLink="/cash-list" (click)="closeTransactionsMenu()"
                      class="dropdown-item">รายการทั้งหมด</a>
                   <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
-                  <a routerLink="/reports/date-range" (click)="closeTransactionsMenu()" class="dropdown-item">
+                  <a routerLink="/date-range" (click)="closeTransactionsMenu()" class="dropdown-item">
                     รายงานตามช่วงเวลา
                   </a>
                   <a routerLink="/financial-report" (click)="closeTransactionsMenu()"
@@ -86,7 +86,7 @@ import { NgOptimizedImage } from '@angular/common';
 
             <!-- Blood Menu -->
             <div class="relative">
-              <button routerLink="/blood/list" class="nav-link flex items-center gap-1">
+              <button (click)="toggleBloodMenu($event)" class="nav-link flex items-center gap-1">
                 <span>Blood</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                   <path fill-rule="evenodd"
@@ -94,6 +94,16 @@ import { NgOptimizedImage } from '@angular/common';
                         clip-rule="evenodd"/>
                 </svg>
               </button>
+
+              @if (isBloodMenuOpen()) {
+                <div
+                  class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
+                  <div class="py-1">
+                    <a routerLink="/blood/list" (click)="closeBloodMenu()" class="dropdown-item">All Tracker</a>
+                    <a routerLink="/blood/period" (click)="closeBloodMenu()" class="dropdown-item">Time Period</a>
+                  </div>
+                </div>
+              }
             </div>
 
             <div class="relative">
@@ -160,7 +170,7 @@ import { NgOptimizedImage } from '@angular/common';
               <span class="mobile-menu-header">รายงานเงินสด</span>
               <a routerLink="/dashboard" (click)="closeMobileMenu()"
                  class="mobile-menu-item">รายการทั้งหมด</a>
-              <a routerLink="/reports/date-range" (click)="closeMobileMenu()"
+              <a routerLink="/date-range" (click)="closeMobileMenu()"
                  class="mobile-menu-item ">รายงานตามช่วงเวลา</a>
               <a routerLink="/financial-report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานรายเดือน</a>
               <a routerLink="/annual-report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานรายปี</a>
@@ -189,6 +199,7 @@ import { NgOptimizedImage } from '@angular/common';
 
               <span class="mobile-menu-header">ความดันโลหิต</span>
               <a routerLink="/blood/list" (click)="closeMobileMenu()" class="mobile-menu-item">ความดันโลหิต</a>
+              <a routerLink="/blood/period" (click)="closeMobileMenu()" class="mobile-menu-item">ตามช่วงเวลา</a>
 
               <!-- ===== เส้นคั่น ===== -->
               <div class="px-3 py-1">
@@ -217,6 +228,8 @@ export class Header implements OnInit {
 
   isTransactionsMenuOpen = signal(false);
   isCreditMenuOpen = signal(false);
+  isBloodMenuOpen = signal(false);
+
   // สถานะสำหรับเมนูมือถือ
   isMobileMenuOpen = signal(false);
   isDarkMode = signal(false);
@@ -244,6 +257,14 @@ export class Header implements OnInit {
     this.isCreditMenuOpen.set(false);
   }
 
+  toggleBloodMenu(event: Event): void {
+    this.isBloodMenuOpen.update(value => !value);
+  }
+
+  closeBloodMenu() {
+    this.isBloodMenuOpen.set(false);
+  }
+
   openProfileModal() {
     this.openProfile.emit();
     this.closeMobileMenu();
@@ -256,6 +277,7 @@ export class Header implements OnInit {
       this.closeTransactionsMenu();
       this.closeCreditMenu();
       this.closeMobileMenu();
+      this.closeBloodMenu();
     }
   }
 

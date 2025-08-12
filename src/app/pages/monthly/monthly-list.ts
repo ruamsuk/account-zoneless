@@ -44,7 +44,8 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
             </thead>
             <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
               @for (item of paginatedItems(); track item.id) {
-                <tr class="hover:bg-gray-200  dark:hover:bg-gray-700/50   text-gray-800 dark:text-gray-300">
+                <tr
+                  class="last:border-b hover:bg-gray-200  dark:hover:bg-gray-700/50   text-gray-800 dark:text-gray-300">
                   <td class="table-cell">{{ item.year | christianToThaiYear }}</td>
                   <td class="table-cell font-semibold text-left">{{ item.month }}</td>
                   <td class="table-cell">{{ item.datestart | thaiDate }}</td>
@@ -68,29 +69,30 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
               }
             </tbody>
           </table>
+          <!-- Paginator -->
+          @if (totalPages() > 1) {
+            <div class="mt-8 flex justify-center items-center gap-4">
+              <button (click)="firstPage()" [disabled]="currentPage() === 1"
+                      class="btn-paginator" customTooltip="หน้าแรก">«
+              </button>
+              <button (click)="previousPage()" [disabled]="currentPage() === 1"
+                      class="btn-paginator" customTooltip="หน้าก่อนหน้า">‹
+              </button>
+              <span class="text-gray-600 dark:text-gray-300">
+                หน้า {{ currentPage() }} ของ {{ totalPages() }}
+              </span>
+              <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
+                      class="btn-paginator" customTooltip="หน้าถัดไป">›
+              </button>
+              <button (click)="lastPage()" [disabled]="currentPage() === totalPages()"
+                      class="btn-paginator" customTooltip="หน้าสุดท้าย">»
+              </button>
+            </div>
+          }
         </div>
       </div>
 
-      <!-- Paginator -->
-      @if (totalPages() > 1) {
-        <div class="mt-8 flex justify-center items-center gap-4">
-          <button (click)="firstPage()" [disabled]="currentPage() === 1"
-                  class="btn-paginator" customTooltip="หน้าแรก">«
-          </button>
-          <button (click)="previousPage()" [disabled]="currentPage() === 1"
-                  class="btn-paginator" customTooltip="หน้าก่อนหน้า">‹
-          </button>
-          <span class="text-gray-600 dark:text-gray-300">
-                หน้า {{ currentPage() }} ของ {{ totalPages() }}
-              </span>
-          <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
-                  class="btn-paginator" customTooltip="หน้าถัดไป">›
-          </button>
-          <button (click)="lastPage()" [disabled]="currentPage() === totalPages()"
-                  class="btn-paginator" customTooltip="หน้าสุดท้าย">»
-          </button>
-        </div>
-      }
+
     </main>
 
     <!-- Add/Edit Modal -->

@@ -251,6 +251,8 @@ export class BloodList {
     try {
       if (this.selectedItem()) { // Edit Mode
         const updatedData = {...this.selectedItem()!, ...dataToSave};
+        console.log('1.Data to save:', JSON.stringify(dataToSave, null, 2));
+
         await this.bloodService.update(updatedData);
         this.toastService.show('Success', 'อัปเดตข้อมูลสำเร็จ', 'success');
       } else { // Add Mode

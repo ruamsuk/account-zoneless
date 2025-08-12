@@ -11,5 +11,5 @@ export const adminGuard: CanActivateFn = (route, state) => {
   ) {
     return true;
   }
-  return router.createUrlTree(['/dashboard']); // หรือหน้าหลัก
+  return router.createUrlTree(['/cash-list']); // หรือหน้าหลัก
 };

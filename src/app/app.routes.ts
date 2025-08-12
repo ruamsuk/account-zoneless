@@ -15,11 +15,11 @@ export const routes: Routes = [
       .then(m => m.Welcome)
   },
   {
-    path: 'dashboard',
+    path: 'cash-list',
     pathMatch: 'full',
     ...canActivate(redirectUnauthorizedToLogin),
-    loadComponent: () => import('./features/dashboard/dashboard')
-      .then(m => m.Dashboard)
+    loadComponent: () => import('./pages/cash-list/cash-list')
+      .then(m => m.CashList)
   },
   {
     path: 'auth',
@@ -44,19 +44,25 @@ export const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
-    path: 'financial-report',
-    loadComponent: () => import('./pages/financial-report')
-      .then(m => m.FinancialReport),
+    path: 'financial-report', // month and detail
+    loadComponent: () => import('./pages/cash-monthly-report')
+      .then(m => m.CashMonthlyReport),
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
-    path: 'annual-report',
-    loadComponent: () => import('./pages/annual-report-')
-      .then(m => m.AnnualReport),
+    path: 'date-range',
+    loadComponent: () => import('./features/reports/date-range-report')
+      .then(m => m.DateRangeReport),
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
-    path: 'monthly-detail/:year/:month',
+    path: 'annual-report',  // year
+    loadComponent: () => import('./pages/cash-annual-report')
+      .then(m => m.CashAnnualReport),
+    ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'monthly-detail/:year/:month',  // month detail modal
     loadComponent: () => import('./pages/monthly-detail-modal').then(m => m.MonthlyDetailModal),
     ...canActivate(redirectUnauthorizedToLogin)
   },
@@ -89,6 +95,11 @@ export const routes: Routes = [
         path: 'list',
         loadComponent: () => import('./pages/blood/blood-list')
           .then(m => m.BloodList)
+      },
+      {
+        path: 'period',
+        loadComponent: () => import('./pages/blood/blood-period')
+          .then(m => m.BloodPeriod)
       },
       {
         path: 'print-dialog',

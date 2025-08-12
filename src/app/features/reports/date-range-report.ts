@@ -22,7 +22,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   template: `
     <div class="p-4 sm:p-6 lg:p-8">
       <div class="container mx-auto px-4 md:px-8">
-        <h1 class="text-2xl md:text-3xl font-thasadith font-bold text-white text-shadow mb-6">รายงานตามช่วงเวลา</h1>
+        <h1 class="text-2xl md:text-3xl font-thasadith font-bold text-white text-shadow mb-6">รายงานตามช่วงเวลา
+          (Debit)</h1>
       </div>
       <div class="flex items-center justify-center">
         <form [formGroup]="reportForm" (ngSubmit)="onSubmit()"
