@@ -10,18 +10,19 @@ export interface Account {
 }
 
 export interface MonthlySummary {
-  month: number;
+  month: string;
   monthName?: string;
   income: number;
   expense: number;
-  minIncome: number;
+  balance: number; // <---
+  /*minIncome: number;
   maxIncome: number;
   avgIncome: number;
   minExpense: number;
   maxExpense: number;
   avgExpense: number;
   incomeCount: number;
-  expenseCount: number;
+  expenseCount: number;*/
 }
 
 export interface YearSummary {
@@ -38,13 +39,4 @@ export interface MonthlyData {
   datestart: Date;
   dateend: Date;
   year: number;
-}
-
-export interface AccountData {
-  id: string; // หรือชนิดข้อมูลอื่นที่เหมาะสมกับ id ของเอกสารใน collection ของคุณ
-  amount: number;
-  date: Date;
-  details: string;
-  isInCome: boolean;
-  remark: string;
 }

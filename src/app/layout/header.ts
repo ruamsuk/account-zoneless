@@ -1,44 +1,119 @@
 import { Component, ElementRef, EventEmitter, HostListener, inject, OnInit, Output, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
+import { NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-header',
   imports: [
-    RouterLink
+    RouterLink,
+    NgOptimizedImage
   ],
   template: `
-    <header class="bg-transparent  sticky top-0 z-30 backdrop-blur-sm">
+    <header class="bg-transparent sticky top-0 backdrop-blur-sm z-50 print-hide">
       <nav class="container mx-auto px-4 md:px-8 py-3">
         <div class="flex justify-between items-center">
 
           <a routerLink="/" class="flex items-center gap-3">
-            <img src="/images/primeng-logo.png" alt="logo" class="h-8 w-8">
-            <span class="text-2xl text-white text-shadow-lg font-semibold font-serif">Account App</span>
+            <img ngSrc="/images/primeng-logo.png" alt="logo" class="h-8 w-8" height="43" width="40">
+            <span
+              class="text-2xl hidden md:block text-white text-shadow-lg font-semibold font-serif">Account</span>
           </a>
 
           <div class="hidden md:flex items-center gap-4">
-            <a routerLink="/dashboard" class="nav-link">Dashboard</a>
+
+            <!-- Account menu -->
             <div class="relative" #transactionsMenu>
               <button (click)="toggleTransactionsMenu()" class="nav-link flex items-center gap-1">
-                <span>Transactions</span>
+                <span>Cash</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                   <path fill-rule="evenodd"
                         d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06z"
                         clip-rule="evenodd"/>
                 </svg>
               </button>
+
+              <!-- Popup menu for account -->
               @if (isTransactionsMenuOpen()) {
-                <div class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-40">
-                  <a routerLink="/transactions" (click)="closeTransactionsMenu()"
+                <div class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
+                  <a routerLink="/cash-list" (click)="closeTransactionsMenu()"
                      class="dropdown-item">รายการทั้งหมด</a>
-                  <a href="#" (click)="requestOpenModal()" class="dropdown-item">เพิ่มรายการใหม่</a>
                   <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
-                  <a routerLink="/reports/date-range" (click)="closeTransactionsMenu()" class="dropdown-item">
+                  <a routerLink="/date-range" (click)="closeTransactionsMenu()" class="dropdown-item">
                     รายงานตามช่วงเวลา
+                  </a>
+                  <a routerLink="/financial-report" (click)="closeTransactionsMenu()"
+                     class="dropdown-item">
+                    รายงานรายเดือน/ประเภท
+                  </a>
+                  <a routerLink="/annual-report" (click)="closeTransactionsMenu()"
+                     class="dropdown-item">
+                    รายงานรายปี
                   </a>
                 </div>
               }
+            </div>
+
+            <!-- Credit Menu -->
+            <div class="relative">
+              <button (click)="toggleCreditMenu($event)" class="nav-link flex items-center gap-1"
+                      [class.active]="isCreditMenuOpen()">
+                <span>Credit</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                  <path fill-rule="evenodd"
+                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06z"
+                        clip-rule="evenodd"/>
+                </svg>
+              </button>
+
+              @if (isCreditMenuOpen()) {
+                <div
+                  class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
+                  <div class="py-1">
+                    <a routerLink="/credit/list" (click)="closeCreditMenu()" class="dropdown-item">
+                      รายการทั้งหมด
+                    </a>
+                    <a routerLink="/credit/report" (click)="closeCreditMenu()" class="dropdown-item">
+                      รายการรายเดือน
+                    </a>
+                    <a routerLink="/credit/credit-annual-report" (click)="closeCreditMenu()" class="dropdown-item">
+                      รายการรายปี
+                    </a>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <!-- Blood Menu -->
+            <div class="relative">
+              <button (click)="toggleBloodMenu($event)" class="nav-link flex items-center gap-1">
+                <span>Blood</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                  <path fill-rule="evenodd"
+                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06z"
+                        clip-rule="evenodd"/>
+                </svg>
+              </button>
+
+              @if (isBloodMenuOpen()) {
+                <div
+                  class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
+                  <div class="py-1">
+                    <a routerLink="/blood/list" (click)="closeBloodMenu()" class="dropdown-item">All Tracker</a>
+                    <a routerLink="/blood/period" (click)="closeBloodMenu()" class="dropdown-item">Time Period</a>
+                    <a routerLink="/blood/year" (click)="closeMobileMenu()" class="dropdown-item">Year List</a>
+                  </div>
+                </div>
+              }
+            </div>
+
+            <div class="relative">
+              <button routerLink="/monthly" class="nav-link flex items-center gap-1">Monthly</button>
+            </div>
+
+            <div class="relative">
+              <button (click)="openProfile.emit()" class="nav-link flex items-center gap-1">Profile
+              </button>
             </div>
 
             <button (click)="toggleTheme()" class="btn-icon-round" title="Toggle theme">
@@ -59,9 +134,90 @@ import { AuthService } from '../services/auth.service';
             <button (click)="logout()" class="btn-secondary-sm">Logout</button>
           </div>
 
+
           <div class="md:hidden flex items-center gap-2">
+            <button (click)="toggleTheme()" class="btn-icon-round" title="Toggle theme">
+              @if (isDarkMode()) {
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                     class="w-6 h-6 text-yellow-400">
+                  <path
+                    d="M12 2.25a.75.75 0 01.75.75v1.5a.75.75 0 01-1.5 0v-1.5A.75.75 0 0112 2.25zM7.5 12a4.5 4.5 0 119 0 4.5 4.5 0 01-9 0zM18.364 5.636a.75.75 0 010 1.06l-1.06 1.06a.75.75 0 01-1.06-1.06l1.06-1.06a.75.75 0 011.06 0zM21.75 12a.75.75 0 01-.75.75h-1.5a.75.75 0 010-1.5h1.5a.75.75 0 01.75.75zM18.364 18.364a.75.75 0 01-1.06 0l-1.06-1.06a.75.75 0 011.06-1.06l1.06 1.06a.75.75 0 010 1.06zM12 21.75a.75.75 0 01-.75-.75v-1.5a.75.75 0 011.5 0v1.5a.75.75 0 01-.75.75zM5.636 18.364a.75.75 0 010-1.06l1.06-1.06a.75.75 0 111.06 1.06l-1.06 1.06a.75.75 0 01-1.06 0zM3.75 12a.75.75 0 01.75-.75h1.5a.75.75 0 010 1.5h-1.5a.75.75 0 01-.75-.75zM5.636 5.636a.75.75 0 011.06 0l1.06 1.06a.75.75 0 11-1.06 1.06L5.636 6.7a.75.75 0 010-1.06z"/>
+                </svg>
+              } @else {
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                     stroke="currentColor" class="w-6 h-6 text-gray-700">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M21.752 15.002A9.72 9.72 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998Z"/>
+                </svg>
+              }
+            </button>
+            <button (click)="toggleMobileMenu()" class="btn-icon-round">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                   stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"/>
+              </svg>
+            </button>
           </div>
         </div>
+
+
+        @if (isMobileMenuOpen()) {
+          <!-- บล็อกที่แก้ไขแล้ว-->
+          <div
+            class="md:hidden mt-2 p-2 absolute top-full right-4 w-56 origin-top-right rounded-md bg-gray-100 dark:bg-black/60 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <div class="flex flex-col gap-1">
+
+              <!-- ===== ส่วนเงินสด (Cash) ===== -->
+              <span class="mobile-menu-header">รายงานเงินสด</span>
+              <a routerLink="/dashboard" (click)="closeMobileMenu()"
+                 class="mobile-menu-item">รายการทั้งหมด</a>
+              <a routerLink="/date-range" (click)="closeMobileMenu()"
+                 class="mobile-menu-item ">รายงานตามช่วงเวลา</a>
+              <a routerLink="/financial-report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานรายเดือน</a>
+              <a routerLink="/annual-report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานรายปี</a>
+
+              <!-- ===== เส้นคั่น ===== -->
+              <div class="px-3 py-1">
+                <div class="border-t border-gray-200 dark:border-gray-700"></div>
+              </div>
+
+              <!-- ===== ส่วนบัตรเครดิต (Credit) ===== -->
+              <span class="mobile-menu-header">บัตรเครดิต</span>
+              <a routerLink="/credit-list" (click)="closeMobileMenu()" class="mobile-menu-item">รายการบัตรเครดิต</a>
+              <a routerLink="/credit-report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานประจำเดือน</a>
+              <a routerLink="/credit-annual-report" (click)="closeMobileMenu()"
+                 class="mobile-menu-item">รายงานประจำปี</a>
+
+              <!-- ===== เส้นคั่น ===== -->
+              <div class="px-3 py-1">
+                <div class="border-t border-gray-200 dark:border-gray-700"></div>
+              </div>
+
+              <!-- ===== เส้นคั่น ===== -->
+              <div class="px-3 py-1">
+                <div class="border-t border-gray-200 dark:border-gray-700"></div>
+              </div>
+
+              <span class="mobile-menu-header">ความดันโลหิต</span>
+              <a routerLink="/blood/list" (click)="closeMobileMenu()" class="mobile-menu-item">ความดันโลหิต</a>
+              <a routerLink="/blood/period" (click)="closeMobileMenu()" class="mobile-menu-item">ตามช่วงเวลา</a>
+              <a routerLink="/blood/year" (click)="closeMobileMenu()" class="mobile-menu-item">รายปี</a>
+
+              <!-- ===== เส้นคั่น ===== -->
+              <div class="px-3 py-1">
+                <div class="border-t border-gray-200 dark:border-gray-700"></div>
+              </div>
+
+              <!-- ===== ส่วนบัญชีและการตั้งค่า ===== -->
+              <a href="#" (click)="openProfileModal()" class="mobile-menu-item">โปรไฟล์</a>
+              @if (authService.currentUser()?.role === 'admin') {
+                <a routerLink="/user-management" (click)="closeMobileMenu()" class="mobile-menu-item">จัดการผู้ใช้</a>
+              }
+              <button (click)="logout()" class="mobile-menu-item text-red-500 w-full text-left">ออกจากระบบ</button>
+
+            </div>
+          </div>
+        }
       </nav>
     </header>
   `,
@@ -73,11 +229,16 @@ export class Header implements OnInit {
   private eRef = inject(ElementRef);
 
   isTransactionsMenuOpen = signal(false);
+  isCreditMenuOpen = signal(false);
+  isBloodMenuOpen = signal(false);
+
+  // สถานะสำหรับเมนูมือถือ
   isMobileMenuOpen = signal(false);
   isDarkMode = signal(false);
 
   // Output สำหรับส่ง Event
   @Output() openTransactionModal = new EventEmitter<void>();
+  @Output() openProfile = new EventEmitter<void>();
 
   // เมธอดสำหรับเปิด/ปิด Dropdown
   toggleTransactionsMenu() {
@@ -88,17 +249,37 @@ export class Header implements OnInit {
     this.isTransactionsMenuOpen.set(false);
   }
 
-  // เมธอดสำหรับส่ง Event ขอเปิด Modal
-  requestOpenModal() {
-    this.openTransactionModal.emit();
-    this.closeTransactionsMenu(); // ปิด Dropdown หลังคลิก
+  // เมธอดสำหรับเปิด/ปิดเมนู Credit
+  toggleCreditMenu(event: Event): void {
+    event.stopPropagation();
+    this.isCreditMenuOpen.update(value => !value);
   }
 
-  // ตรวจจับการคลิกนอก Dropdown เพื่อปิดเมนู
+  closeCreditMenu() {
+    this.isCreditMenuOpen.set(false);
+  }
+
+  toggleBloodMenu(event: Event): void {
+    this.isBloodMenuOpen.update(value => !value);
+  }
+
+  closeBloodMenu() {
+    this.isBloodMenuOpen.set(false);
+  }
+
+  openProfileModal() {
+    this.openProfile.emit();
+    this.closeMobileMenu();
+  }
+
+// ตรวจจับการคลิกนอก Dropdown เพื่อปิดเมนู
   @HostListener('document:click', ['$event'])
   clickout(event: Event) {
-    if (!this.eRef.nativeElement.contains(event.target)) {
+    if (this.isCreditMenuOpen() || !this.eRef.nativeElement.contains(event.target)) {
       this.closeTransactionsMenu();
+      this.closeCreditMenu();
+      this.closeMobileMenu();
+      this.closeBloodMenu();
     }
   }
 
@@ -135,7 +316,7 @@ export class Header implements OnInit {
 
   logout(): void {
     this.authService.logout().then(() => {
-      this.router.navigate(['/auth/login']);
+      this.router.navigate(['/auth/login']).then();
     });
   }
 }

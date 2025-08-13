@@ -1,9 +1,10 @@
-import { Component, computed, effect, ElementRef, forwardRef, HostListener, inject, signal } from '@angular/core';
+import { Component, computed, effect, forwardRef, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-thai-datepicker',
-  imports: [],
+  imports: [CommonModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
@@ -17,7 +18,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       <input
         type="text"
         [value]="formattedSelectedDate()"
-        (click)="togglePicker()"
+        (click)="togglePicker($event)"
         class="form-select"
         placeholder="-- เลือกวันที่ --"
         readonly>
@@ -25,7 +26,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
       <!-- ==================== DATEPICKER POPUP ==================== -->
       @if (isPickerOpen()) {
         <div
-          class="absolute top-full mt-2 left-0 w-72 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-10 p-2">
+          class="absolute top-full mt-2 left-0 w-72 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-md shadow-lg z-50 p-2">
 
           <!-- +++ DAY VIEW +++ -->
           @if (pickerView() === 'days') {
@@ -57,7 +58,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
                   class="day-cell"
                   [disabled]="!day.isCurrentMonth"
                   [class.other-month]="!day.isCurrentMonth"
-                  [class.selected]="isSameDay(day.date, selectedDate())"
+                  [class.selected]="day.isCurrentMonth && isSameDay(day.date, selectedDate())"
                   [class.today]="day.isCurrentMonth && isSameDay(day.date, today)">
                   @if (day.isCurrentMonth) {
                     <span>{{ day.day }}</span>
@@ -69,7 +70,7 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
           <!-- +++ MONTH VIEW +++ -->
           @if (pickerView() === 'months') {
-            <div class="grid grid-cols-3 gap-1">
+            <div class="grid grid-cols-3 gap-1 text-gray-800 dark:text-gray-300">
               @for (month of months; track month.value) {
                 <button type="button" (click)="selectMonth(month.value)" class="month-button">
                   {{ month.name }}
@@ -80,12 +81,12 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 
           <!-- +++ YEAR VIEW +++ -->
           @if (pickerView() === 'years') {
-            <div class="flex justify-between items-center mb-2 px-2">
+            <div class="flex justify-between items-center mb-2 px-2 text-gray-800 dark:text-gray-300">
               <button type="button" (click)="changeYearPickerDecade(-10)" class="btn-nav">&lt;</button>
               <span class="font-semibold text-sm">{{ yearPickerGrid()[0] }} - {{ yearPickerGrid()[9] }}</span>
               <button type="button" (click)="changeYearPickerDecade(10)" class="btn-nav">&gt;</button>
             </div>
-            <div class="grid grid-cols-4 gap-1">
+            <div class="grid grid-cols-4 gap-1 dark:text-gray-200">
               @for (year of yearPickerGrid(); track year) {
                 <button
                   type="button"
@@ -104,13 +105,15 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   styles: ``
 })
 export class ThaiDatepicker implements ControlValueAccessor {
-  private elementRef = inject(ElementRef);
 
   // --- State Signals ---
+  shouldClose = input<boolean>(false);
+  closed = output<void>();
   isPickerOpen = signal(false);
   selectedDate = signal<Date | null>(null);
   viewDate = signal(new Date()); // เดือน/ปี ที่กำลังแสดงในปฏิทิน
   pickerView = signal<'days' | 'months' | 'years'>('days');
+  pickerOnOff = input<boolean>(false);
   today = new Date();
 
   valueFromParent = signal<any | null>(null);
@@ -192,6 +195,13 @@ export class ThaiDatepicker implements ControlValueAccessor {
         this.selectedDate.set(null);
       }
     });
+
+    effect(() => {
+      if (this.shouldClose()) {
+        this.isPickerOpen.set(false);
+        this.closed.emit();
+      }
+    });
   }
 
   writeValue(value: Date | null): void {
@@ -211,13 +221,16 @@ export class ThaiDatepicker implements ControlValueAccessor {
   }
 
   // --- UI Methods ---
-  togglePicker(): void {
+  togglePicker(event: MouseEvent): void {
+    event.stopPropagation();
     if (this.disabled()) return;
     this.isPickerOpen.update(v => !v);
     if (this.isPickerOpen()) {
       this.pickerView.set('days');
       if (this.selectedDate()) {
         this.viewDate.set(this.selectedDate()!);
+      } else {   // <--- เพิ่มมาใหม่
+        this.viewDate.set(new Date());
       }
     }
   }
@@ -255,11 +268,4 @@ export class ThaiDatepicker implements ControlValueAccessor {
       date1.getDate() === date2.getDate();
   }
 
-  // Click outside to close
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    if (!this.elementRef.nativeElement.contains(event.target)) {
-      this.isPickerOpen.set(false);
-    }
-  }
 }

@@ -88,20 +88,18 @@ import { AuthService } from '../../services/auth.service';
         <div class="overflow-x-auto">
           <table class="min-w-full">
             <thead>
-            <tr
-              class="border-b-2 border-gray-400 font-semibold text-teal-100 text-lg dark:border-gray-600 dark:text-gray-200">
-              <th class="p-3 text-left">วันที่</th>
-              <th class="p-3 text-left">รายการ</th>
-              <th class="p-3 text-right">จำนวนเงิน</th>
-              <th class="pl-10 text-left">หมายเหตุ</th>
-              <th class="p-3 text-left">ประเภท</th>
-              <th class="p-3 text-center">Actions</th>
+            <tr class="border-b-2 border-gray-400 dark:border-gray-600 dark:text-gray-200">
+              <th class="p-3 text-left text-teal-100 text-lg font-semibold">วันที่</th>
+              <th class="p-3 text-left text-teal-100 text-lg font-semibold">รายการ</th>
+              <th class="p-3 text-right text-teal-100 text-lg font-semibold">จำนวนเงิน</th>
+              <th class="pl-10 text-left text-teal-100 text-lg font-semibold">หมายเหตุ</th>
+              <th class="p-3 text-left text-teal-100 text-lg font-semibold">ประเภท</th>
+              <th class="p-3 text-center text-teal-100 text-lg font-semibold">Actions</th>
             </tr>
             </thead>
             <tbody>
               @for (acc of paginateAccounts(); track acc.id) {
-                <tr
-                  class="border-b text-gray-200 dark:border-gray-700 hover:bg-white/50 dark:hover:bg-black/50 dark:text-gray-200">
+                <tr class="border-b dark:border-gray-700 hover:bg-white/50 dark:hover:bg-black/50 dark:text-gray-200">
                   <td class="p-3" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.date | thaiDate }}</td>
                   <td class="p-3" [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.details }}</td>
                   <td class="p-3 text-right font-medium"
@@ -154,21 +152,21 @@ import { AuthService } from '../../services/auth.service';
           </table>
           <!-- Pagination -->
           @if (totalPages() > 1) {
-            <div class="mt-6 flex items-center justify-center gap-2">
+            <div class="mt-6 flex items-center justify-between">
               <button (click)="firstPage()" [disabled]="currentPage() === 1"
-                      class="btn-paginator" title="หน้าแรก">«
+                      class="btn-secondary" title="หน้าแรก">«
               </button>
               <button (click)="previousPage()" [disabled]="currentPage() === 1"
-                      class="btn-paginator" title="หน้าก่อนหน้า">‹
+                      class="btn-secondary" title="หน้าก่อนหน้า">‹
               </button>
-              <span class="text-gray-200 dark:text-gray-300">
+              <span class="text-gray-700 dark:text-gray-300">
                 หน้า {{ currentPage() }} ของ {{ totalPages() }}
               </span>
               <button (click)="nextPage()" [disabled]="currentPage() === totalPages()"
-                      class="btn-paginator" title="หน้าถัดไป">›
+                      class="btn-secondary" title="หน้าถัดไป">›
               </button>
               <button (click)="lastPage()" [disabled]="currentPage() === totalPages()"
-                      class="btn-paginator" title="หน้าสุดท้าย">»
+                      class="btn-secondary" title="หน้าสุดท้าย">»
               </button>
             </div>
           }

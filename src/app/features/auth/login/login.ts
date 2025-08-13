@@ -33,11 +33,11 @@ import { NgClass, NgOptimizedImage } from '@angular/common';
           <div class="mb-6">
             <label for="email"
                    [ngClass]="email?.invalid && email?.touched ? ['text-red-500'] : ['text-gray-600 dark:text-gray-400']"
-                   class="block text-gray-600 dark:text-gray-400 font-medium mb-2">Email
+                   class="block text-gray-800 dark:text-gray-400 font-medium mb-2">Email
             </label>
             <input
               type="email" id="email" formControlName="email"
-              class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 border"
+              class="form-input"
               [ngClass]="email?.invalid && email?.touched ?
               ['border-red-500 focus:ring-red-500'] :
               ['border-gray-300 focus:ring-blue-500 dark:border-gray-400']" autocomplete="email">
@@ -49,11 +49,11 @@ import { NgClass, NgOptimizedImage } from '@angular/common';
           <div class="mb-6">
             <label for="password"
                    [ngClass]="password?.invalid && password?.touched ? ['text-red-500'] : ['text-gray-600 dark:text-gray-400']"
-                   class="block text-gray-600 dark:text-gray-400 font-medium mb-2">Password
+                   class="block text-gray-800 dark:text-gray-400 font-medium mb-2">Password
             </label>
             <div class="relative">
               <input [type]="passwordVisible() ? 'text' : 'password'" id="password" formControlName="password"
-                     class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 border pr-10"
+                     class="form-input" placeholder="Password"
                      [ngClass]="password?.invalid && password?.touched ?
                      ['border-red-500 focus:ring-red-500'] :
                      ['border-gray-300 focus:ring-blue-500 dark:border-gray-400']" autocomplete="current-password">
@@ -84,7 +84,7 @@ import { NgClass, NgOptimizedImage } from '@angular/common';
           </div>
 
           <div class="text-right mb-6">
-            <a routerLink="/forgot-password" class="text-sm text-blue-600 hover:underline">
+            <a routerLink="/auth/forgot-password" class="text-sm text-blue-600 hover:underline">
               Forgot Password?
             </a>
           </div>
@@ -199,7 +199,7 @@ export class Login {
       .then(() => {
         this.loading.set(false);
         this.toastService.show('Success', 'Login successful!', 'success');
-        this.router.navigate(['/accounts']).then();
+        this.router.navigate(['/']).then();
       })
       .catch(error => {
         // ++ จัดการ error ที่เราโยนมาจาก service ++
@@ -213,7 +213,7 @@ export class Login {
         this.loading.set(false);
       }).finally(() => {
       this.loading.set(false);
-      this.router.navigateByUrl('/dashboard').catch(err => {
+      this.router.navigateByUrl('/').catch(err => {
         console.error('Navigation error:', err);
       });
     });

@@ -24,15 +24,6 @@
   --toast-message-font-style: italic;
 }
 
-:host {
-  display: block;
-  min-height: 100vh;
-  background-image: url('/public/images/1001.jpg'); /* <-- แก้ชื่อไฟล์ตามจริง */
-  background-size: cover;
-  background-position: center center;
-  background-attachment: fixed; /* ทำให้พื้นหลังอยู่กับที่ตอน scroll */
-}
-
 body {
   font-family: var(--font-sarabun), sans-serif;
   font-size: 1rem;
@@ -47,15 +38,25 @@ button {
   }
 }
 
-/* === Autofill Style Override for Dark Mode === */
+/* === Autofill Style Override === */
+
+/* 1. สำหรับโหมดสว่าง (Light Mode) */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-  /* ใช้ค่าสี Hex Code โดยตรง (สีเทา-700 ของ Tailwind) */
-  -webkit-box-shadow: 0 0 0 30px #374151 inset !important;
+  /* บังคับให้พื้นหลังเป็นสีขาว และตัวอักษรเป็นสีเทาเข้ม */
+  -webkit-box-shadow: 0 0 0 30px #ffffff inset !important;
+  -webkit-text-fill-color: #1f2937 !important; /* Tailwind gray-800 */
+}
 
-  /* ใช้ค่าสี Hex Code โดยตรง (สีขาว) */
+/* 2. สำหรับโหมดมืด (Dark Mode) */
+.dark input:-webkit-autofill,
+.dark input:-webkit-autofill:hover,
+.dark input:-webkit-autofill:focus,
+.dark input:-webkit-autofill:active {
+  /* บังคับให้พื้นหลังเป็นสีเทาเข้ม และตัวอักษรเป็นสีขาว */
+  -webkit-box-shadow: 0 0 0 30px #374151 inset !important; /* Tailwind gray-700 */
   -webkit-text-fill-color: #ffffff !important;
 }
 
@@ -80,6 +81,10 @@ input:-webkit-autofill:active {
   @apply bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition duration-300 disabled:opacity-50;
 }
 
+.btn-primary-sm {
+  @apply bg-blue-600 text-white text-sm font-bold py-1.5 px-1.5 rounded-lg hover:bg-blue-700 transition duration-300 disabled:opacity-50;
+}
+
 .btn-secondary {
   @apply bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-300 transition duration-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500;
 }
@@ -92,8 +97,17 @@ input:-webkit-autofill:active {
   @apply bg-gray-200 text-gray-700 text-sm font-bold py-1.5 px-3 rounded-md hover:bg-gray-300 transition dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500;
 }
 
-.mobile-menu-item {
-  @apply block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700;
+/* Paginator */
+.btn-paginator {
+  @apply px-3 py-1 text-sm font-medium border rounded-md transition-colors duration-150;
+  @apply text-gray-700 bg-white border-gray-300;
+  @apply dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600;
+  @apply hover:bg-gray-100 dark:hover:bg-gray-700;
+  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+.btn-paginator.active {
+  @apply bg-blue-600 border-blue-600 text-white dark:bg-blue-500 dark:border-blue-500;
 }
 
 .form-error {
@@ -105,16 +119,14 @@ input:-webkit-autofill:active {
   @apply px-3 py-2 rounded-md text-xl font-medium text-white text-shadow-lg dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-gray-100;
 }
 
-.btn-secondary-sm {
-  @apply px-3 py-1.5 text-sm font-semibold text-white bg-red-600 rounded-md shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-offset-2 focus-visible:outline-red-600;
-}
-
-.btn-icon-round {
-  @apply p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700;
+.mobile-menu-header {
+  @apply px-3 pt-2 pb-1 text-lg font-semibold text-gray-400 uppercase;
+  @apply text-blue-500;
 }
 
 .mobile-menu-item {
-  @apply block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700;
+  @apply block w-full text-left px-3 py-0.5 rounded-md text-lg;
+  @apply font-leera font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-150;
 }
 
 .dropdown-item {
@@ -125,8 +137,12 @@ input:-webkit-autofill:active {
   @apply h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500;
 }
 
-.btn-nav {
-  @apply p-1 rounded-full text-gray-800 dark:text-gray-200  hover:bg-gray-200 dark:hover:bg-gray-600;
+.btn-icon {
+  @apply p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-green-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-green-400;
+}
+
+.btn-icon-danger {
+  @apply p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-red-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-red-500;
 }
 
 /* Custom styles for thai-datepicker elements */
@@ -135,7 +151,7 @@ input:-webkit-autofill:active {
 }
 
 .btn-nav {
-  @apply p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-600;
+  @apply p-1 rounded-full dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600;
 }
 
 .day-cell {
@@ -148,6 +164,12 @@ input:-webkit-autofill:active {
 
 .day-cell.other-month.today {
   @apply text-gray-400 dark:text-gray-500 font-bold;
+}
+
+.day-cell.other-month.selected {
+  &:disabled {
+    @apply text-gray-400 dark:text-gray-500 font-bold;
+  }
 }
 
 .day-cell.today {
@@ -174,15 +196,49 @@ input:-webkit-autofill:active {
   @apply bg-blue-600 text-white font-bold;
 }
 
-/* Paginator */
-.btn-paginator {
-  @apply px-3 py-1 text-sm font-medium border rounded-md transition-colors duration-150;
-  @apply text-gray-700 bg-white border-gray-300;
-  @apply dark:text-gray-300 dark:bg-gray-800 dark:border-gray-600;
-  @apply hover:bg-gray-100 dark:hover:bg-gray-700;
-  @apply disabled:opacity-50 disabled:cursor-not-allowed;
+
+/* Table styles */
+.table-header {
+  @apply py-3 pl-3 text-base text-left font-medium text-gray-500 uppercase tracking-wider dark:text-gray-300;
+  @apply bg-gray-200 dark:bg-gray-700;
 }
 
-.btn-paginator.active {
-  @apply bg-blue-600 border-blue-600 text-white dark:bg-blue-500 dark:border-blue-500;
+.table-cell {
+  @apply px-4 py-3 text-base whitespace-nowrap;
+}
+
+/** Print */
+@media print {
+  /* 1. ซ่อนทุกอย่างในหน้าเว็บเป็นค่าเริ่มต้น */
+  body * {
+    visibility: hidden;
+  }
+
+  /* 2. แสดงเฉพาะส่วนที่จะพิมพ์ และ "กล่อง" ที่ครอบมันอยู่ */
+  .dialog-container, .dialog-container * {
+    visibility: visible;
+  }
+
+  /* 3. จัดการกับ "กล่อง" หลักของ Modal */
+  .dialog-container {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    padding: 0 !important; /* <-- ลบ padding ที่ไม่จำเป็น */
+    margin: 0 !important; /* <-- ลบ margin ที่ไม่จำเป็น */
+    border: none !important; /* <-- ลบเส้นขอบ */
+    box-shadow: none !important; /* <-- ลบเงา */
+  }
+
+  /* จัดการกับส่วนที่เลื่อนได้ (Scrollable Area) */
+  .printable-area {
+    overflow: visible !important; /* <-- บังคับให้แสดงเนื้อหาทั้งหมด ไม่ต้องมี scrollbar */
+    height: auto !important; /* <-- ปล่อยให้ความสูงยืดหยุ่นตามเนื้อหา */
+  }
+
+  .print-hide {
+    display: none !important;
+  }
 }

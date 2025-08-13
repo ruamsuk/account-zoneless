@@ -12,17 +12,24 @@ import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
   ]
 })
 export class NumberFormatDirective implements ControlValueAccessor {
-  private el = inject(ElementRef<HTMLInputElement>);
+  private el: ElementRef<HTMLInputElement> = inject(ElementRef);
 
-  // --- ControlValueAccessor Implementation ---
+  // --- CVA Functions ---
   private onChange: (value: number | null) => void = () => {
   };
   private onTouched: () => void = () => {
   };
 
-  writeValue(value: any): void {
-    // Angular calls this method to set the initial value
-    this.el.nativeElement.value = this.format(value);
+  // Formatter สำหรับจัดรูปแบบตอนแสดงผล (onBlur)
+  private finalFormatter = new Intl.NumberFormat('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+
+  // --- CVA Implementation ---
+  writeValue(value: number | null): void {
+    // เมธอดนี้จะถูกเรียกโดยฟอร์มเพื่ออัปเดตหน้าตาของ input
+    this.el.nativeElement.value = this.formatForBlur(value);
   }
 
   registerOnChange(fn: any): void {
@@ -33,55 +40,59 @@ export class NumberFormatDirective implements ControlValueAccessor {
     this.onTouched = fn;
   }
 
-  setDisabledState?(isDisabled: boolean): void {
+  setDisabledState(isDisabled: boolean): void {
     this.el.nativeElement.disabled = isDisabled;
   }
 
-  // -----------------------------------------
   @HostListener('input', ['$event'])
-  onInput(event: Event) {
-    const inputElement = event.target as HTMLInputElement;
-    let value = inputElement.value;
+  onInput(event: Event): void {
+    const value = (event.target as HTMLInputElement).value;
+    // 1. เมื่อผู้ใช้พิมพ์, เราจะ "ทำความสะอาด" ข้อมูล
+    const numericValue = this.unformat(value);
 
-    this.onTouched(); // Mark the control as touched
-
-    // Format the view value
-    const formattedValue = this.format(value);
-    this.el.nativeElement.value = formattedValue;
-
-    // Get the numeric model value
-    const numericValue = this.unformat(formattedValue);
-
-    // Update the model value using the registered onChange function
+    // 2. อัปเดตค่าที่ "แท้จริง" (เป็น number) กลับไปที่ form control
     this.onChange(numericValue);
   }
 
-  private format(value: string | number | null): string {
+  @HostListener('blur')
+  onBlur(): void {
+    // 3. จัดรูปแบบให้สวยงามก็ต่อเมื่อผู้ใช้ออกจากช่องกรอก
+    const value = this.unformat(this.el.nativeElement.value);
+    this.el.nativeElement.value = this.formatForBlur(value);
+    this.onTouched();
+  }
+
+  @HostListener('focus')
+  onFocus(): void {
+    // 4. เมื่อผู้ใช้กลับเข้ามา, ให้แสดงเป็นตัวเลขดิบๆ เพื่อให้แก้ไขง่าย
+    const value = this.unformat(this.el.nativeElement.value);
+    this.el.nativeElement.value = value !== null ? String(value) : '';
+  }
+
+  // --- Formatting Logic ---
+  private formatForBlur(value: number | null): string {
     if (value === null || value === undefined) {
       return '';
     }
-    let cleanValue = String(value).replace(/[^0-9.]/g, '');
-    const parts = cleanValue.split('.');
-    if (parts.length > 2) {
-      cleanValue = parts[0] + '.' + parts.slice(1).join('');
-    }
-    const [integerPart, decimalPart] = cleanValue.split('.');
-    if (!integerPart) {
-      return '';
-    }
-    let formattedValue = new Intl.NumberFormat('en-US').format(parseInt(integerPart, 10));
-    if (decimalPart !== undefined) {
-      formattedValue += '.' + decimalPart.substring(0, 2);
-    }
-    return formattedValue;
+    return this.finalFormatter.format(value);
   }
 
   private unformat(value: string): number | null {
-    if (value === null || value.trim() === '') {
+    if (!value) {
       return null;
     }
+    // อนุญาตให้มีแค่ตัวเลขและจุดทศนิยมเดียว
     const cleanValue = value.replace(/[^0-9.]/g, '');
+    const parts = cleanValue.split('.');
+    if (parts.length > 2) {
+      // ถ้ามีจุดทศนิยมมากกว่า 1 จุด, ให้ใช้แค่ 2 ส่วนแรก
+      const validValue = parts[0] + '.' + parts[1];
+      const numericValue = parseFloat(validValue);
+      return isNaN(numericValue) ? null : numericValue;
+    }
+
     const numericValue = parseFloat(cleanValue);
     return isNaN(numericValue) ? null : numericValue;
   }
+
 }
