@@ -10,6 +10,7 @@ import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
 import { BloodAddEditModal } from './blood-add-edit-modal';
 import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.directive';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-blood-period',
@@ -103,21 +104,29 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
                       </div>
                     </td>
                     <td class="table-cell text-center border-l dark:border-gray-600">
-                      <button (click)="openModal(item)" class="btn-icon mr-3" title="แก้ไข">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                             class="w-5 h-5 text-green-400">
-                          <path
-                            d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.886 1.343Z"/>
-                        </svg>
-                      </button>
-                      <button (click)="onDelete(item)" class="btn-icon-danger" title="ลบ">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                             class="w-5 h-5 text-red-500">
+                      @if (authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager') {
+                        <button (click)="openModal(item)" class="btn-icon mr-3" customTooltip="แก้ไข">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                               class="w-5 h-5 text-green-400">
+                            <path
+                              d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.886 1.343Z"/>
+                          </svg>
+                        </button>
+                        <button (click)="onDelete(item)" class="btn-icon-danger" customTooltip="ลบ">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                               class="w-5 h-5 text-red-500">
+                            <path fill-rule="evenodd"
+                                  d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.33l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193v-.443A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm3.44 0a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
+                                  clip-rule="evenodd"/>
+                          </svg>
+                        </button>
+                      } @else {
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                           <path fill-rule="evenodd"
-                                d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.33l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193v-.443A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm3.44 0a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
+                                d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
                                 clip-rule="evenodd"/>
                         </svg>
-                      </button>
+                      }
                     </td>
                   </tr>
                 }
@@ -159,6 +168,7 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
   styles: ``
 })
 export class BloodPeriod {
+  public authService = inject(AuthService);
   private bpService = inject(BloodService);
   private loadingService = inject(LoadingService);
   private fb = inject(FormBuilder);
@@ -170,7 +180,6 @@ export class BloodPeriod {
   shouldCloseDatePickers = signal(false);
   transactions = signal<BloodPressure[] | null>(null);
   selectedItem = signal<BloodPressure | null>(null);
-  isEditing = computed(() => !!this.selectedItem());
   dateRangeForm: FormGroup;
 
   // --- Pagination State ---

@@ -29,17 +29,19 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
     <div class="max-w-5xl p-4 sm:p-6 lg:p-8 mx-auto">
       <div class="flex justify-between items-center">
         <h1 class="text-4xl font-serif font-bold text-white text-shadow-lg">Dashboard</h1>
-        <button (click)="openAddModal()"
-                class="btn-primary sm:btn-primary-sm  inline-flex items-center">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 md:mr-2">
-            <path fill-rule="evenodd"
-                  d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
-                  clip-rule="evenodd"/>
-          </svg>
-          <span class="hidden sm:block">
+        @if (authService.currentUser()?.role == 'admin' || authService.currentUser()?.role == 'manager') {
+          <button (click)="openAddModal()"
+                  class="btn-primary sm:btn-primary-sm  inline-flex items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-5 h-5 md:mr-2">
+              <path fill-rule="evenodd"
+                    d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zM12.75 9a.75.75 0 00-1.5 0v2.25H9a.75.75 0 000 1.5h2.25V15a.75.75 0 001.5 0v-2.25H15a.75.75 0 000-1.5h-2.25V9z"
+                    clip-rule="evenodd"/>
+            </svg>
+            <span class="hidden sm:block">
             เพิ่มรายการ
           </span>
-        </button>
+          </button>
+        }
       </div>
     </div>
 
@@ -139,6 +141,12 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
                                   d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
                           </svg>
                         </button>
+                      } @else {
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                          <path fill-rule="evenodd"
+                                d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+                                clip-rule="evenodd"/>
+                        </svg>
                       }
                     </div>
                   </td>
@@ -173,11 +181,7 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
         </div>
       </div>
     </div>
-    <div class="p-4 sm:p-6 lg:p-8">
-      <p class="text-gray-500 dark:text-gray-400 text-center">
-        © {{ _year }} Ruamsuk&trade; Kanchanaburi. All rights reserved.
-      </p>
-    </div>
+
 
     <app-account-modal
       [isOpen]="isModalOpen()"
@@ -200,7 +204,6 @@ export class CashList {
   currentPage = signal(1);
   itemsPerPage = signal(9);
   searchTerm = signal('');
-  _year = new Date().getFullYear();
 
   // --- Data & State ---
   accounts = this.getAccounts();

@@ -45,6 +45,7 @@ import { ProfileModal } from './pages/profile-modal';
       [isOpen]="isProfileModalOpen()"
       (close)="closeProfileModal()">
     </app-profile-modal>
+
   `,
   styles: [],
 })

@@ -102,6 +102,11 @@ export const routes: Routes = [
           .then(m => m.BloodPeriod)
       },
       {
+        path: 'year',
+        loadComponent: () => import('./pages/blood/blood-year')
+          .then(m => m.BloodYear)
+      },
+      {
         path: 'print-dialog',
         loadComponent: () => import('./pages/blood/print-dialog')
           .then(m => m.PrintDialog)

@@ -101,6 +101,7 @@ import { NgOptimizedImage } from '@angular/common';
                   <div class="py-1">
                     <a routerLink="/blood/list" (click)="closeBloodMenu()" class="dropdown-item">All Tracker</a>
                     <a routerLink="/blood/period" (click)="closeBloodMenu()" class="dropdown-item">Time Period</a>
+                    <a routerLink="/blood/year" (click)="closeMobileMenu()" class="dropdown-item">Year List</a>
                   </div>
                 </div>
               }
@@ -200,6 +201,7 @@ import { NgOptimizedImage } from '@angular/common';
               <span class="mobile-menu-header">ความดันโลหิต</span>
               <a routerLink="/blood/list" (click)="closeMobileMenu()" class="mobile-menu-item">ความดันโลหิต</a>
               <a routerLink="/blood/period" (click)="closeMobileMenu()" class="mobile-menu-item">ตามช่วงเวลา</a>
+              <a routerLink="/blood/year" (click)="closeMobileMenu()" class="mobile-menu-item">รายปี</a>
 
               <!-- ===== เส้นคั่น ===== -->
               <div class="px-3 py-1">

@@ -77,4 +77,23 @@ export class BloodService {
     const querySnapshot = await getDocs(q);
     return querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as BloodPressure));
   }
+
+  async getBloodByYear(Year: number): Promise<BloodPressure[]> {
+    const startDate = new Date(Year, 0, 1);
+    const endDate = new Date(Year, 11, 31);
+
+    const q = query(
+      this.bpCollection,
+      where('date', '>=', Timestamp.fromDate(startDate)),
+      where('date', '<=', Timestamp.fromDate(endDate)),
+      orderBy('date', 'desc')
+    );
+
+    const querySnapshot = await getDocs(q);
+    const transactions = querySnapshot.docs.map(doc => ({id: doc.id, ...doc.data()} as BloodPressure));
+
+    return transactions.sort((a, b) => (b.date as any).toDate().getTime() - (a.date as any).toDate().getTime());
+
+  }
+
 }

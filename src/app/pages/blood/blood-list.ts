@@ -10,6 +10,8 @@ import { NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { BloodAddEditModal } from './blood-add-edit-modal';
 import { PrintDialog } from './print-dialog';
+import { AuthService } from '../../services/auth.service';
+import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.directive';
 
 @Component({
   selector: 'app-blood-list',
@@ -17,7 +19,8 @@ import { PrintDialog } from './print-dialog';
     NgClass,
     ThaiDatePipe,
     BloodAddEditModal,
-    PrintDialog
+    PrintDialog,
+    CustomTooltipDirective
   ],
   template: `
     <main class="container mx-auto p-4 md:p-8">
@@ -26,21 +29,25 @@ import { PrintDialog } from './print-dialog';
           class="hidden md:block text-3xl text-gray-100 text-shadow-lg font-semibold font-serif  dark:text-gray-200 underline underline-offset-4">
           Blood Pressure Tracker</h1>
         <div class="flex items-end md:items-center gap-2 ">
-          <button (click)="openModal(null)" class="btn-primary">+ เพิ่มบันทึก</button>
+          @if (authService.currentUser()?.role == 'admin' || authService.currentUser()?.role == 'manager') {
+            <button (click)="openModal(null)" class="btn-primary">+ เพิ่มบันทึก</button>
+          }
         </div>
       </div>
 
       <!-- Table Display -->
       <div class="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden">
         <div class="p-3">
-          <button (click)="openPrintModal()" class="inline-flex btn-primary" title="พิมพ์รายงาน">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-              <path fill-rule="evenodd"
-                    d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.552c.377.046.74.14 1.095.282.355.143.66.348.905.602a4.004 4.004 0 0 1 1.595 5.565A4.004 4.004 0 0 1 15.25 19h-3.5a.75.75 0 0 1 0-1.5h3.5a2.5 2.5 0 1 0 0-5h-10a2.5 2.5 0 1 0 0 5h3.5a.75.75 0 0 1 0 1.5h-3.5A4.004 4.004 0 0 1 2 12.75a4.004 4.004 0 0 1 1.595-5.565c.244-.254.55-.459.905-.602.355-.142.718-.236 1.095-.282V2.75Z"
-                    clip-rule="evenodd"/>
-            </svg>
-            <span class="pl-2">พิมพ์</span>
-          </button>
+          @if (authService.currentUser()?.role == 'admin' || authService.currentUser()?.role == 'manager') {
+            <button (click)="openPrintModal()" class="inline-flex btn-primary" title="พิมพ์รายงาน">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                <path fill-rule="evenodd"
+                      d="M5 2.75C5 1.784 5.784 1 6.75 1h6.5c.966 0 1.75.784 1.75 1.75v3.552c.377.046.74.14 1.095.282.355.143.66.348.905.602a4.004 4.004 0 0 1 1.595 5.565A4.004 4.004 0 0 1 15.25 19h-3.5a.75.75 0 0 1 0-1.5h3.5a2.5 2.5 0 1 0 0-5h-10a2.5 2.5 0 1 0 0 5h3.5a.75.75 0 0 1 0 1.5h-3.5A4.004 4.004 0 0 1 2 12.75a4.004 4.004 0 0 1 1.595-5.565c.244-.254.55-.459.905-.602.355-.142.718-.236 1.095-.282V2.75Z"
+                      clip-rule="evenodd"/>
+              </svg>
+              <span class="pl-2">พิมพ์</span>
+            </button>
+          }
         </div>
         <div class="overflow-x-auto p-3">
           <table class="min-w-full text-base border-collapse">
@@ -95,21 +102,29 @@ import { PrintDialog } from './print-dialog';
                     </div>
                   </td>
                   <td class="table-cell text-center border-l dark:border-gray-600">
-                    <button (click)="openModal(item)" class="btn-icon mr-3" title="แก้ไข">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                           class="w-5 h-5 text-green-400">
-                        <path
-                          d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.886 1.343Z"/>
-                      </svg>
-                    </button>
-                    <button (click)="onDelete(item)" class="btn-icon-danger" title="ลบ">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                           class="w-5 h-5 text-red-500">
+                    @if (authService.currentUser()?.role == 'admin' || authService.currentUser()?.role == 'manager') {
+                      <button (click)="openModal(item)" class="btn-icon mr-3" customTooltip="แก้ไข">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                             class="w-5 h-5 text-green-400">
+                          <path
+                            d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.886 1.343Z"/>
+                        </svg>
+                      </button>
+                      <button (click)="onDelete(item)" class="btn-icon-danger" customTooltip="ลบ">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                             class="w-5 h-5 text-red-500">
+                          <path fill-rule="evenodd"
+                                d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.33l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193v-.443A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm3.44 0a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
+                                clip-rule="evenodd"/>
+                        </svg>
+                      </button>
+                    } @else {
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                         <path fill-rule="evenodd"
-                              d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.33l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193v-.443A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm3.44 0a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
+                              d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
                               clip-rule="evenodd"/>
                       </svg>
-                    </button>
+                    }
                   </td>
                 </tr>
               }
@@ -157,6 +172,7 @@ import { PrintDialog } from './print-dialog';
   styles: ``
 })
 export class BloodList {
+  public authService = inject(AuthService);
   private bloodService = inject(BloodService);
   private loadingService = inject(LoadingService);
   private dialogService = inject(DialogService);
@@ -251,7 +267,6 @@ export class BloodList {
     try {
       if (this.selectedItem()) { // Edit Mode
         const updatedData = {...this.selectedItem()!, ...dataToSave};
-        console.log('1.Data to save:', JSON.stringify(dataToSave, null, 2));
 
         await this.bloodService.update(updatedData);
         this.toastService.show('Success', 'อัปเดตข้อมูลสำเร็จ', 'success');

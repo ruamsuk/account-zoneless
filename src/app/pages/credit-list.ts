@@ -12,6 +12,7 @@ import { ThaiDatepicker } from '../shared/components/thai-datepicker';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { NumberFormatDirective } from '../shared/directives/number-format';
 import { CustomTooltipDirective } from '../shared/directives/custom-tooltip.directive';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-credit-list',
@@ -29,7 +30,9 @@ import { CustomTooltipDirective } from '../shared/directives/custom-tooltip.dire
     <div class="max-w-5xl p-4 sm:p-6 lg:p-8 mx-auto">
       <div class="flex justify-between items-center">
         <h1 class="text-2xl md:text-3xl font-serif font-bold text-white text-shadow-lg">Credit List</h1>
-        <button (click)="openModal(null)" class="btn-primary">+ เพิ่มรายการ</button>
+        @if (authService.currentUser()?.role == 'admin' || authService.currentUser()?.role == 'manager') {
+          <button (click)="openModal(null)" class="btn-primary">+ เพิ่มรายการ</button>
+        }
       </div>
     </div>
     <div class="p-4 sm:p-6 lg:p-8">
@@ -94,30 +97,43 @@ import { CustomTooltipDirective } from '../shared/directives/custom-tooltip.dire
                       {{ tx.isCashback ? '+' : '-' }} {{ tx.amount | number:'1.2-2' }}
                     </td>
                     <td class="p-3 whitespace-nowrap text-center">
-                      <button (click)="onViewDetails(tx)" customTooltip="ดูรายละเอียด" class="btn-icon text-sky-500">
-                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                        </svg>
-                      </button>
-                      <button (click)="openModal(tx)" class="btn-icon mx-2 text-green-600" customTooltip="แก้ไข">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                          <path
-                            d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.886 1.343Z"/>
-                        </svg>
-                      </button>
-                      <button (click)="onDelete(tx)" class="btn-icon text-red-600" customTooltip="ลบ">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
-                          <path fill-rule="evenodd"
-                                d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.33l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193v-.443A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm3.44 0a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
-                                clip-rule="evenodd"/>
-                        </svg>
-                      </button>
+                      @if (authService.currentUser()?.role == 'admin' || authService.currentUser()?.role == 'manager') {
+                        <button (click)="onViewDetails(tx)" customTooltip="ดูรายละเอียด" class="btn-icon text-sky-500">
+                          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                          </svg>
+                        </button>
+                        <button (click)="openModal(tx)" class="btn-icon mx-2 text-green-600" customTooltip="แก้ไข">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                               class="w-5 h-5">
+                            <path
+                              d="m2.695 14.762-1.262 3.155a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.886L17.5 5.501a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.886 1.343Z"/>
+                          </svg>
+                        </button>
+                        <button (click)="onDelete(tx)" class="btn-icon text-red-600" customTooltip="ลบ">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                               class="w-5 h-5">
+                            <path fill-rule="evenodd"
+                                  d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.58.22-2.365.468a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.33l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193v-.443A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm3.44 0a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z"
+                                  clip-rule="evenodd"/>
+                          </svg>
+                        </button>
+                      } @else {
+                        <div class="pl-5">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                               class="w-5 h-5">
+                            <path fill-rule="evenodd"
+                                  d="M10 1a4.5 4.5 0 0 0-4.5 4.5V9H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-.5V5.5A4.5 4.5 0 0 0 10 1Zm3 8V5.5a3 3 0 1 0-6 0V9h6Z"
+                                  clip-rule="evenodd"/>
+                          </svg>
+                        </div>
+                      }
                     </td>
                   </tr>
-                }
+                } <!-- End of Transaction Row -->
               </tbody>
             </table>
 
@@ -235,6 +251,7 @@ import { CustomTooltipDirective } from '../shared/directives/custom-tooltip.dire
   styles: ``
 })
 export class CreditList {
+  public authService = inject(AuthService);
   private creditService = inject(CreditService);
   private loadingService = inject(LoadingService);
   private dialogService = inject(DialogService);
