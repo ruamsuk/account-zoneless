@@ -15,13 +15,6 @@ export const routes: Routes = [
       .then(m => m.Welcome)
   },
   {
-    path: 'cash-list',
-    pathMatch: 'full',
-    ...canActivate(redirectUnauthorizedToLogin),
-    loadComponent: () => import('./pages/accounts/cash-list')
-      .then(m => m.CashList)
-  },
-  {
     path: 'auth',
     ...canActivate(redirectLoggedInToHome),
     children: [
@@ -42,6 +35,13 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/profile/profile')
       .then(m => m.Profile),
     ...canActivate(redirectUnauthorizedToLogin)
+  },
+  {
+    path: 'cash-list',
+    pathMatch: 'full',
+    ...canActivate(redirectUnauthorizedToLogin),
+    loadComponent: () => import('./pages/accounts/cash-list')
+      .then(m => m.CashList)
   },
   {
     path: 'financial-report', // month and detail
@@ -119,9 +119,9 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/monthly/monthly-list')
       .then(m => m.MonthlyList)
   },
-  {
-    path: '**',
-    redirectTo: '',
-    pathMatch: 'full'
-  }
+  // {
+  //   path: '**',
+  //   redirectTo: '',
+  //   pathMatch: 'full'
+  // }
 ];

@@ -183,9 +183,9 @@ import { NgOptimizedImage } from '@angular/common';
 
               <!-- ===== ส่วนบัตรเครดิต (Credit) ===== -->
               <span class="mobile-menu-header">บัตรเครดิต</span>
-              <a routerLink="/credit-list" (click)="closeMobileMenu()" class="mobile-menu-item">รายการบัตรเครดิต</a>
-              <a routerLink="/credit-report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานประจำเดือน</a>
-              <a routerLink="/credit-annual-report" (click)="closeMobileMenu()"
+              <a routerLink="/credit/list" (click)="closeMobileMenu()" class="mobile-menu-item">รายการบัตรเครดิต</a>
+              <a routerLink="/credit/report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานประจำเดือน</a>
+              <a routerLink="/credit/credit-annual-report" (click)="closeMobileMenu()"
                  class="mobile-menu-item">รายงานประจำปี</a>
 
               <!-- ===== เส้นคั่น ===== -->
