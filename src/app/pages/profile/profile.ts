@@ -1,10 +1,10 @@
 import { NgClass, TitleCasePipe } from '@angular/common';
 import { Component, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/auth.service';
-import { LoadingService } from '../services/loading.service';
-import { ToastService } from '../services/toast.service';
-import { DialogService } from '../shared/services/dialog';
+import { AuthService } from '../../services/auth.service';
+import { LoadingService } from '../../services/loading.service';
+import { ToastService } from '../../services/toast.service';
+import { DialogService } from '../../shared/services/dialog';
 
 @Component({
   selector: 'app-profile',

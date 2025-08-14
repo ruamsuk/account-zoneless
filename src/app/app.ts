@@ -7,7 +7,7 @@ import { Header } from './layout/header';
 import { Subscription } from 'rxjs';
 import { RouterOutlet } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
-import { ProfileModal } from './pages/profile-modal';
+import { ProfileModal } from './pages/profile/profile-modal';
 
 @Component({
   selector: 'app-root',

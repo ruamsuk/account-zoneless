@@ -23,8 +23,6 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
             <div class="mb-4">
               <label class="form-label">วันที่</label>
               <app-thai-datepicker
-                [shouldClose]="shouldClose()"
-                (closed)="onCloseFromChild()"
                 formControlName="date"></app-thai-datepicker>
             </div>
 
@@ -96,9 +94,10 @@ export class BloodAddEditModal {
     event.stopPropagation();
   }
 
-  onCloseFromChild(): void {
-    this.shouldClose.set(false);
-  }
+  // ทำงานไม่ถูกต้อง
+  // onCloseFromChild(): void {
+  //   this.shouldClose.set(false);
+  // }
 
   constructor() {
     this.initializeForm(); // Initialize form structure once

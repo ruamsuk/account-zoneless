@@ -1,12 +1,12 @@
 import { Component, computed, inject, OnInit, signal } from '@angular/core';
-import { MonthSummary } from '../models/credit.model';
-import { CreditService } from '../services/credit.service';
-import { LoadingService } from '../services/loading.service';
-import { ToastService } from '../services/toast.service';
+import { MonthSummary } from '../../models/credit.model';
+import { CreditService } from '../../services/credit.service';
+import { LoadingService } from '../../services/loading.service';
+import { ToastService } from '../../services/toast.service';
 import { FormsModule } from '@angular/forms';
 import { DecimalPipe } from '@angular/common';
 import { CreditMonthlyDetailModal } from './credit-monthly-detail-modal';
-import { DateUtilityService } from '../services/date-utility.service';
+import { DateUtilityService } from '../../services/date-utility.service';
 
 interface AnnualReportRow extends MonthSummary {
   month: string;

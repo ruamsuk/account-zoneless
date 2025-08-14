@@ -169,7 +169,7 @@ import { NgOptimizedImage } from '@angular/common';
 
               <!-- ===== ส่วนเงินสด (Cash) ===== -->
               <span class="mobile-menu-header">รายงานเงินสด</span>
-              <a routerLink="/dashboard" (click)="closeMobileMenu()"
+              <a routerLink="/cash-list" (click)="closeMobileMenu()"
                  class="mobile-menu-item">รายการทั้งหมด</a>
               <a routerLink="/date-range" (click)="closeMobileMenu()"
                  class="mobile-menu-item ">รายงานตามช่วงเวลา</a>

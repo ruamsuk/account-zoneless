@@ -143,15 +143,11 @@ import { AuthService } from '../../services/auth.service';
               <div>
                 <label class="form-label">วันเริ่มต้น</label>
                 <app-thai-datepicker
-                  [shouldClose]="shouldClose()"
-                  (closed)="onCloseFromChild()"
                   formControlName="datestart"></app-thai-datepicker>
               </div>
               <div>
                 <label class="form-label">วันสิ้นสุด</label>
                 <app-thai-datepicker
-                  [shouldClose]="shouldClose()"
-                  (closed)="onCloseFromChild()"
                   formControlName="dateend"></app-thai-datepicker>
               </div>
             </div>
@@ -283,9 +279,10 @@ export class MonthlyList {
   }
 
   async onDelete(item: Monthly): Promise<void> {
+    const yearBE = item.year + 543;
     const confirmed = await this.dialogService.open({
       title: 'ยืนยันการลบ',
-      message: `คุณแน่ใจหรือไม่ว่าต้องการลบรอบบัญชี <strong>${item.month} ${item.year}</strong>?`
+      message: `คุณแน่ใจหรือไม่ว่าต้องการลบรอบบัญชี <strong>${item.month} ${yearBE}</strong>?`
     });
     if (confirmed && item.id) {
       this.loadingService.show();

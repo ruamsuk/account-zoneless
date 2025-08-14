@@ -1,12 +1,12 @@
 import { Component, computed, inject, signal } from '@angular/core';
-import { CreditService } from '../services/credit.service';
-import { LoadingService } from '../services/loading.service';
-import { ToastService } from '../services/toast.service';
-import { CreditData } from '../models/credit.model';
+import { CreditService } from '../../services/credit.service';
+import { LoadingService } from '../../services/loading.service';
+import { ToastService } from '../../services/toast.service';
+import { CreditData } from '../../models/credit.model';
 import { DecimalPipe, NgClass } from '@angular/common';
-import { ThaiDatePipe } from '../pipe/thai-date.pipe';
+import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { FormsModule } from '@angular/forms';
-import { DateUtilityService } from '../services/date-utility.service';
+import { DateUtilityService } from '../../services/date-utility.service';
 
 @Component({
   selector: 'app-credit-report',

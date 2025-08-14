@@ -18,7 +18,7 @@ export const routes: Routes = [
     path: 'cash-list',
     pathMatch: 'full',
     ...canActivate(redirectUnauthorizedToLogin),
-    loadComponent: () => import('./pages/cash-list/cash-list')
+    loadComponent: () => import('./pages/accounts/cash-list')
       .then(m => m.CashList)
   },
   {
@@ -39,13 +39,13 @@ export const routes: Routes = [
   },
   {
     path: 'profile',
-    loadComponent: () => import('./pages/profile')
+    loadComponent: () => import('./pages/profile/profile')
       .then(m => m.Profile),
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'financial-report', // month and detail
-    loadComponent: () => import('./pages/cash-monthly-report')
+    loadComponent: () => import('./pages/accounts/cash-monthly-report')
       .then(m => m.CashMonthlyReport),
     ...canActivate(redirectUnauthorizedToLogin)
   },
@@ -57,13 +57,13 @@ export const routes: Routes = [
   },
   {
     path: 'annual-report',  // year
-    loadComponent: () => import('./pages/cash-annual-report')
+    loadComponent: () => import('./pages/accounts/cash-annual-report')
       .then(m => m.CashAnnualReport),
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
     path: 'monthly-detail/:year/:month',  // month detail modal
-    loadComponent: () => import('./pages/monthly-detail-modal').then(m => m.MonthlyDetailModal),
+    loadComponent: () => import('./pages/accounts/monthly-detail-modal').then(m => m.MonthlyDetailModal),
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
@@ -72,17 +72,17 @@ export const routes: Routes = [
     children: [
       {
         path: 'list',
-        loadComponent: () => import('./pages/credit-list')
+        loadComponent: () => import('./pages/credit/credit-list')
           .then(m => m.CreditList)
       },
       {
         path: 'report',
-        loadComponent: () => import('./pages/credit-report')
+        loadComponent: () => import('./pages/credit/credit-report')
           .then(m => m.CreditReport),
       },
       {
         path: 'credit-annual-report',
-        loadComponent: () => import('./pages/credit-annual-report')
+        loadComponent: () => import('./pages/credit/credit-annual-report')
           .then(m => m.CreditAnnualReport),
       },
     ]

@@ -89,10 +89,6 @@ input:-webkit-autofill:active {
   @apply bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-300 transition duration-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500;
 }
 
-.btn-icon-round {
-  @apply p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200;
-}
-
 .btn-secondary-sm {
   @apply bg-gray-200 text-gray-700 text-sm font-bold py-1.5 px-3 rounded-md hover:bg-gray-300 transition dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500;
 }
@@ -140,6 +136,11 @@ input:-webkit-autofill:active {
 .btn-icon {
   @apply p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-green-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-green-400;
 }
+
+.btn-icon-round {
+  @apply p-2 rounded-full text-white dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200;
+}
+
 
 .btn-icon-danger {
   @apply p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-red-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-red-500;

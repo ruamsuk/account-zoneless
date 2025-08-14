@@ -1,18 +1,18 @@
 import { Component, computed, inject, Signal, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ToastService } from '../services/toast.service';
-import { DialogService } from '../shared/services/dialog';
-import { LoadingService } from '../services/loading.service';
-import { CreditService } from '../services/credit.service';
+import { ToastService } from '../../services/toast.service';
+import { DialogService } from '../../shared/services/dialog';
+import { LoadingService } from '../../services/loading.service';
+import { CreditService } from '../../services/credit.service';
 import { toSignal } from '@angular/core/rxjs-interop';
-import { CreditData } from '../models/credit.model';
+import { CreditData } from '../../models/credit.model';
 import { DecimalPipe, NgClass } from '@angular/common';
-import { ThaiDatePipe } from '../pipe/thai-date.pipe';
-import { ThaiDatepicker } from '../shared/components/thai-datepicker';
+import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
+import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { NumberFormatDirective } from '../shared/directives/number-format';
-import { CustomTooltipDirective } from '../shared/directives/custom-tooltip.directive';
-import { AuthService } from '../services/auth.service';
+import { NumberFormatDirective } from '../../shared/directives/number-format';
+import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.directive';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-credit-list',
@@ -206,8 +206,6 @@ import { AuthService } from '../services/auth.service';
                       <div class="mb-4">
                         <label class="form-label">วันที่</label>
                         <app-thai-datepicker
-                          [shouldClose]="shouldClose()"
-                          (closed)="onCloseFromChild()"
                           formControlName="date"></app-thai-datepicker>
                       </div>
                       <div class="mb-4">

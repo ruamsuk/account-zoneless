@@ -1,6 +1,6 @@
 import { Component, computed, EventEmitter, input, Output } from '@angular/core';
-import { Transaction } from '../models/transection.model';
-import { ThaiDatePipe } from '../pipe/thai-date.pipe';
+import { Transaction } from '../../models/transection.model';
+import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { DecimalPipe, NgClass } from '@angular/common';
 
 @Component({

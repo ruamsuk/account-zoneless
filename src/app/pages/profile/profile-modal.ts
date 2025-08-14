@@ -1,9 +1,9 @@
 import { Component, effect, EventEmitter, inject, input, Output, signal } from '@angular/core';
-import { AuthService } from '../services/auth.service';
-import { DialogService } from '../shared/services/dialog';
+import { AuthService } from '../../services/auth.service';
+import { DialogService } from '../../shared/services/dialog';
 import { Router } from '@angular/router';
-import { LoadingService } from '../services/loading.service';
-import { ToastService } from '../services/toast.service';
+import { LoadingService } from '../../services/loading.service';
+import { ToastService } from '../../services/toast.service';
 import { NgClass, TitleCasePipe } from '@angular/common';
 
 @Component({

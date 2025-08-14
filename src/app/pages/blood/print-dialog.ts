@@ -29,15 +29,11 @@ import { NgClass } from '@angular/common';
               <div>
                 <label class="form-label">วันเริ่มต้น</label>
                 <app-thai-datepicker
-                  [shouldClose]="shouldClose()"
-                  (closed)="onCloseFromChild()"
                   formControlName="startDate"></app-thai-datepicker>
               </div>
               <div>
                 <label class="form-label">วันสิ้นสุด</label>
                 <app-thai-datepicker
-                  [shouldClose]="shouldClose()"
-                  (closed)="onCloseFromChild()"
                   formControlName="endDate"></app-thai-datepicker>
               </div>
               <button type="submit" [disabled]="dateRangeForm.invalid" class="btn-primary">แสดงตัวอย่าง</button>
@@ -180,7 +176,7 @@ export class PrintDialog {
     event.stopPropagation();
   }
 
-  onCloseFromChild(): void {
-    this.shouldClose.set(false);
-  }
+  // onCloseFromChild(): void {
+  //   this.shouldClose.set(false);
+  // }
 }

@@ -1,10 +1,10 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Account } from '../models/account.model';
-import { ThaiDatePipe } from '../pipe/thai-date.pipe';
+import { Account } from '../../models/account.model';
+import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { DecimalPipe, NgClass } from '@angular/common';
-import { ThaiDatepicker } from '../shared/components/thai-datepicker';
-import { NumberFormatDirective } from '../shared/directives/number-format';
+import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
+import { NumberFormatDirective } from '../../shared/directives/number-format';
 
 @Component({
   selector: 'app-account-modal',
@@ -59,8 +59,6 @@ import { NumberFormatDirective } from '../shared/directives/number-format';
                 <div class="mb-4">
                   <label class="form-label">วันที่</label>
                   <app-thai-datepicker
-                    [shouldClose]="shouldClose()"
-                    (closed)="onCloseFromChild()"
                     formControlName="date"></app-thai-datepicker>
                 </div>
                 <div class="mb-4">
@@ -149,9 +147,9 @@ export class AccountModal {
     event.stopPropagation();
   }
 
-  onCloseFromChild(): void {
-    this.shouldClose.set(false);
-  }
+  // onCloseFromChild(): void {
+  //   this.shouldClose.set(false);
+  // }
 
   onClose(): void {
     this.close.emit();

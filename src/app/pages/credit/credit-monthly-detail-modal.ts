@@ -1,7 +1,7 @@
 import { Component, computed, EventEmitter, input, Output } from '@angular/core';
-import { CreditData } from '../models/credit.model';
+import { CreditData } from '../../models/credit.model';
 import { DecimalPipe, NgClass } from '@angular/common';
-import { ThaiDatePipe } from '../pipe/thai-date.pipe';
+import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 
 @Component({
   selector: 'app-credit-monthly-detail-modal',
