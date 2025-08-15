@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountService } from '../../services/account.service';
 import { Account } from '../../models/account.model';
@@ -60,44 +60,33 @@ import { NumberFormatDirective } from '../../shared/directives/number-format';
   styles: ``
 })
 export class AccountForm {
-  @Output() formClose = new EventEmitter<void>();
+  formClose = output<void>();
 
-  // 👇 1. เปลี่ยน @Input เป็น private property และสร้าง Setter
-  private _accountToEdit: Account | null = null;
-
-  @Input()
-  set accountToEdit(account: Account | null) {
-    this._accountToEdit = account;
-    // console.log('accountToEdit', JSON.stringify(account, null, 2));
-    // 2. ทันทีที่ได้รับข้อมูล ให้ patch ค่าลงฟอร์ม
-    if (this.accountForm && account) {
-      // 1. แปลง Timestamp เป็น Date object ก่อน
-      // const jsDate = account.date ? (account.date as any).toDate() : null;
-
-      // 2. นำ Date object ที่แปลงแล้วไปใช้งาน
-      this.accountForm.patchValue({
-        ...account,
-        // date: jsDate ? jsDate.toISOString().substring(0, 10) : ''
-      });
-    }
-  }
-
-  get accountToEdit(): Account | null {
-    return this._accountToEdit;
-  }
+  accountToEdit = input<Account | null>(null);
 
   private fb = inject(FormBuilder);
   private accountService = inject(AccountService);
   private toastService = inject(ToastService);
 
-  // 3. สร้างฟอร์มทันที ไม่ต้องรอ ngOnInit
-  accountForm: FormGroup = this.fb.group({
-    details: ['', Validators.required],
-    amount: [null, [Validators.required, Validators.min(0.01)]],
-    isInCome: [false, Validators.required],
-    date: [new Date(), Validators.required],
-    remark: ['']
-  });
+  accountForm!: FormGroup;
+
+  constructor() {
+    effect(() => {
+      const account = this.accountToEdit();
+      this.initializeForm(account);
+    });
+  }
+
+  private initializeForm(data: Account | null = null): void {
+    const dateValue = data?.date || new Date();
+    this.accountForm = this.fb.group({
+      date: [dateValue, Validators.required],
+      details: [data?.details || '', Validators.required],
+      amount: [data?.amount || 0, [Validators.required, Validators.min(0.01)]],
+      isInCome: [data?.isInCome || false],
+      remark: [data?.remark || '']
+    });
+  }
 
   onSubmit(): void {
     if (this.accountForm.invalid) return;

@@ -1,4 +1,4 @@
-import { Component, computed, EventEmitter, input, Output } from '@angular/core';
+import { Component, computed, input, output } from '@angular/core';
 import { Transaction } from '../../models/transection.model';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { DecimalPipe, NgClass } from '@angular/common';
@@ -82,7 +82,7 @@ export class MonthlyDetailModal {
   monthName = input<string>('');
   yearBE = input<number>(0);
   transactions = input<Transaction[]>([]);
-  @Output() close = new EventEmitter<void>();
+  close = output<void>();
 
   // --- Computed Signals for Summary ---
   totalIncome = computed(() =>
