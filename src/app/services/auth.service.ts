@@ -120,10 +120,10 @@ export class AuthService {
   /**
    * อัปเดต role ของผู้ใช้ใน Firestore
    * @param uid - User ID ของผู้ใช้ที่ต้องการอัปเดต
-   * @param role - Role ใหม่ที่จะกำหนด ('admin', 'member', หรือ 'user')
+   * @param role - Role ใหม่ที่จะกำหนด ('admin', 'manager', 'member', หรือ 'user')
    * @returns Promise<void>
    */
-  updateUserRole(uid: string, role: 'admin' | 'member' | 'user'): Promise<void> {
+  updateUserRole(uid: string, role: 'admin' | 'manager' | 'member' | 'user'): Promise<void> {
     const userDocRef = doc(this.firestore, `users/${uid}`);
     return updateDoc(userDocRef, {role: role});
   }

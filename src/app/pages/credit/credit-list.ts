@@ -275,9 +275,9 @@ export class CreditList {
     event.stopPropagation();
   }
 
-  onCloseFromChild(): void {
-    this.shouldClose.set(false);
-  }
+  // onCloseFromChild(): void {
+  //   this.shouldClose.set(false);
+  // }
 
   /**
    *  1. Get all credit from the credit service

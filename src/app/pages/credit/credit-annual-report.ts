@@ -102,7 +102,7 @@ interface AnnualReportRow extends MonthSummary {
                   </tr>
                 }
               </tbody>
-              <tfoot class="bg-gray-100 dark:bg-gray-800">
+              <tfoot class="bg-gray-100 dark:bg-gray-700">
               <tr class="border-b-2">
                 <td class="p-3 font-semibold dark:text-gray-200">รวม</td>
                 <td
@@ -112,7 +112,7 @@ interface AnnualReportRow extends MonthSummary {
                   class="p-3 text-right text-green-500 font-semibold">{{ annualSummary().totalCashback | number:'1.2-2' }}
                 </td>
                 <td
-                  class="p-3 text-right text-blue-600 font-semibold">{{ annualSummary().netExpense | number:'1.2-2' }}
+                  class="p-3 text-right text-blue-600 dark:text-blue-400 font-semibold">{{ annualSummary().netExpense | number:'1.2-2' }}
                 </td>
               </tr>
             </table>

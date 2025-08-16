@@ -119,9 +119,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/monthly/monthly-list')
       .then(m => m.MonthlyList)
   },
-  // {
-  //   path: '**',
-  //   redirectTo: '',
-  //   pathMatch: 'full'
-  // }
+  {
+    path: 'user-management',
+    ...canActivate(redirectUnauthorizedToLogin),
+    loadComponent: () => import('./features/user/user-management')
+      .then(m => m.UserManagement)
+  },
 ];

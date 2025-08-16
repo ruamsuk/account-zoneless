@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, HostListener, inject, OnInit, Output, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, OnInit, output, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { NgOptimizedImage } from '@angular/common';
@@ -86,7 +86,7 @@ import { NgOptimizedImage } from '@angular/common';
 
             <!-- Blood Menu -->
             <div class="relative">
-              <button (click)="toggleBloodMenu($event)" class="nav-link flex items-center gap-1">
+              <button (click)="toggleBloodMenu()" class="nav-link flex items-center gap-1">
                 <span>Blood</span>
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
                   <path fill-rule="evenodd"
@@ -99,9 +99,9 @@ import { NgOptimizedImage } from '@angular/common';
                 <div
                   class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
                   <div class="py-1">
-                    <a routerLink="/blood/list" (click)="closeBloodMenu()" class="dropdown-item">All Tracker</a>
+                    <a routerLink="/blood/list" (click)="closeBloodMenu()" class="dropdown-item">All Blood Tracker</a>
                     <a routerLink="/blood/period" (click)="closeBloodMenu()" class="dropdown-item">Time Period</a>
-                    <a routerLink="/blood/year" (click)="closeMobileMenu()" class="dropdown-item">Year List</a>
+                    <a routerLink="/blood/year" (click)="closeMobileMenu()" class="dropdown-item">Year Period</a>
                   </div>
                 </div>
               }
@@ -112,8 +112,24 @@ import { NgOptimizedImage } from '@angular/common';
             </div>
 
             <div class="relative">
-              <button (click)="openProfile.emit()" class="nav-link flex items-center gap-1">Profile
+              <button (click)="toggleUserMenu()" class="nav-link flex items-center gap-1">
+                <span>User</span>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                  <path fill-rule="evenodd"
+                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06z"
+                        clip-rule="evenodd"/>
+                </svg>
               </button>
+
+              @if (isUserMenuOpen()) {
+                <div
+                  class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
+                  <div class="py-1">
+                    <a (click)="profileClick()" class="dropdown-item cursor-pointer">User Profile</a>
+                    <a routerLink="/user-management" (click)="closeUserMenu()" class="dropdown-item">User Management</a>
+                  </div>
+                </div>
+              }
             </div>
 
             <button (click)="toggleTheme()" class="btn-icon-round" title="Toggle theme">
@@ -231,16 +247,22 @@ export class Header implements OnInit {
   isTransactionsMenuOpen = signal(false);
   isCreditMenuOpen = signal(false);
   isBloodMenuOpen = signal(false);
+  isUserMenuOpen = signal(false);
 
   // สถานะสำหรับเมนูมือถือ
   isMobileMenuOpen = signal(false);
   isDarkMode = signal(false);
 
   // Output สำหรับส่ง Event
-  @Output() openTransactionModal = new EventEmitter<void>();
-  @Output() openProfile = new EventEmitter<void>();
+  openTransactionModal = output<void>();
+  openProfile = output<void>();
 
   // เมธอดสำหรับเปิด/ปิด Dropdown
+  profileClick() {
+    this.openProfile.emit();
+    this.closeUserMenu();
+  }
+
   toggleTransactionsMenu() {
     this.isTransactionsMenuOpen.update(value => !value);
   }
@@ -259,12 +281,20 @@ export class Header implements OnInit {
     this.isCreditMenuOpen.set(false);
   }
 
-  toggleBloodMenu(event: Event): void {
+  toggleBloodMenu(): void {
     this.isBloodMenuOpen.update(value => !value);
   }
 
   closeBloodMenu() {
     this.isBloodMenuOpen.set(false);
+  }
+
+  toggleUserMenu(): void {
+    this.isUserMenuOpen.update(value => !value);
+  }
+
+  closeUserMenu() {
+    this.isUserMenuOpen.set(false);
   }
 
   openProfileModal() {
@@ -280,6 +310,7 @@ export class Header implements OnInit {
       this.closeCreditMenu();
       this.closeMobileMenu();
       this.closeBloodMenu();
+      this.closeUserMenu();
     }
   }
 

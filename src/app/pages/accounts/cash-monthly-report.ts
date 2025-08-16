@@ -7,6 +7,7 @@ import { FormsModule } from '@angular/forms';
 import { ToastService } from '../../services/toast.service';
 import { FinancialService } from '../../services/financial.service';
 import { DateUtilityService } from '../../services/date-utility.service';
+import { PaginationService } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-financial-report',
@@ -99,10 +100,10 @@ import { DateUtilityService } from '../../services/date-utility.service';
               </tr>
               </thead>
               <tbody>
-                @for (tx of transactions(); track tx.id; let i = $index) {
+                @for (tx of paginator.paginatedItems(); track tx.id; let i = $index) {
                   <tr class="border-b dark:text-gray-200 dark:border-gray-700 hover:bg-black/20 dark:hover:bg-black/50"
                       [ngClass]="tx.isInCome ? ['bg-green-50 dark:bg-green-900/30'] : ['']">
-                    <td class="p-3 whitespace-nowrap">{{ i + 1 }}</td>
+                    <td class="p-3 whitespace-nowrap">{{ (paginator.currentPage() - 1) * itemsPerPage() + i + 1 }}</td>
                     <td class="p-3 whitespace-nowrap"
                         [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['']">{{ tx.date | thaiDate }}
                     </td>
@@ -120,6 +121,20 @@ import { DateUtilityService } from '../../services/date-utility.service';
                 }
               </tbody>
             </table>
+
+            <!-- Pagination control -->
+            @if (paginator.totalPages() > 1) {
+              <div class="mt-8 flex justify-center items-center gap-4">
+                <button (click)="paginator.previousPage()" [disabled]="paginator.currentPage() === 1"
+                        class="btn-paginator">Previous
+                </button>
+                <span class="text-sm text-gray-700 dark:text-gray-300">Page {{ paginator.currentPage() }}
+                  of {{ paginator.totalPages() }}</span>
+                <button (click)="paginator.nextPage()" [disabled]="paginator.currentPage() === paginator.totalPages()"
+                        class="btn-paginator">Next
+                </button>
+              </div>
+            }
           </div>
         </div>
       }
@@ -138,6 +153,7 @@ export class CashMonthlyReport implements OnInit {
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
   private dateUtilityService = inject(DateUtilityService);
+  private paginationService = inject(PaginationService);
 
   // --- Filter State ---
   selectedMonth = signal(new Date().getMonth());
@@ -148,6 +164,10 @@ export class CashMonthlyReport implements OnInit {
   transactions = signal<Transaction[]>([]);
   uniqueDetails = signal<string[]>([]);
   isFound = signal(true);
+
+  // --- Pagination State ---
+  itemsPerPage = signal(15); // กำหนดจำนวนรายการต่อหน้า
+  paginator = this.paginationService.createPaginator(this.transactions, this.itemsPerPage);
 
   // --- Data for Dropdowns ---
   readonly months = this.dateUtilityService.getMonths();
@@ -191,7 +211,7 @@ export class CashMonthlyReport implements OnInit {
     this.loadingService.show();
     this.transactions.set([]); // เคลียร์ข้อมูลเก่าก่อน
     this.isFound.set(true);
-
+    this.paginator.reset();
     try {
       const yearCE = this.selectedYearBE() - 543;
       // 1. ไปดึงช่วงวันที่ที่ถูกต้องมาก่อน

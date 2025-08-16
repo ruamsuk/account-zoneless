@@ -9,6 +9,7 @@ import { DecimalPipe, NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PaginationService } from '../../services/pagination.service';
 
 @Component({
   selector: 'app-date-range-report',
@@ -76,11 +77,11 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                 </tr>
                 </thead>
                 <tbody>
-                  @for (acc of accounts(); track acc.id; let i = $index) {
+                  @for (acc of paginator.paginatedItems(); track acc.id; let i = $index) {
                     <tr
                       class="border-b dark:border-gray-700 dark:text-gray-300 hover:bg-white/50 dark:hover:bg-black/50"
                       [ngClass]="acc.isInCome ? ['bg-green-100/50 dark:bg-green-900/30'] : []">
-                      <td class="p-3">{{ i + 1 }}</td>
+                      <td class="p-3">{{ (paginator.currentPage() - 1) * itemsPerPage() + i + 1 }}</td>
                       <td class="p-3 whitespace-nowrap"
                           [ngClass]="{'text-green-500' : acc.isInCome}">{{ acc.date | thaiDate }}
                       </td>
@@ -108,6 +109,20 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
                   }
                 </tbody>
               </table>
+
+              <!-- Pagination control -->
+              @if (paginator.totalPages() > 1) {
+                <div class="mt-8 flex justify-center items-center gap-4">
+                  <button (click)="paginator.previousPage()" [disabled]="paginator.currentPage() === 1"
+                          class="btn-paginator">Previous
+                  </button>
+                  <span class="text-sm text-gray-700 dark:text-gray-300">Page {{ paginator.currentPage() }}
+                    of {{ paginator.totalPages() }}</span>
+                  <button (click)="paginator.nextPage()" [disabled]="paginator.currentPage() === paginator.totalPages()"
+                          class="btn-paginator">Next
+                  </button>
+                </div>
+              }
             </div>
           </div>
         </div>
@@ -122,6 +137,12 @@ export class DateRangeReport {
   private loadingService = inject(LoadingService);
   private toastService = inject(ToastService);
   private destroyRef = inject(DestroyRef);
+  private paginationService = inject(PaginationService);
+
+  // --- Pagination State ---
+  transactions = signal<Account[]>([]);
+  itemsPerPage = signal(15); // กำหนดจำนวนรายการต่อหน้า
+  paginator = this.paginationService.createPaginator(this.transactions, this.itemsPerPage);
 
   reportForm: FormGroup;
   accounts = signal<Account[] | undefined>(undefined);
@@ -182,6 +203,7 @@ export class DateRangeReport {
         next: (accounts) => {
           // จัดการกรณีสำเร็จที่นี่ที่เดียว
           this.accounts.set(accounts);
+          this.transactions.set(accounts);
         },
         complete: () => {
           // อาจจะมีการทำงานเพิ่มเติมเมื่อเสร็จสิ้น
