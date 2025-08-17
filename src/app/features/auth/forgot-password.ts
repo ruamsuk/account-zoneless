@@ -46,7 +46,7 @@ import { LoadingService } from '../../services/loading.service';
 
         <p class="text-center mt-6 text-gray-600 dark:text-gray-300">
           Remember your password?
-          <a routerLink="/login" class="text-blue-600 hover:underline">Back to Login</a>
+          <a routerLink="/auth/login" class="text-blue-600 hover:underline">Back to Login</a>
         </p>
       </div>
     </div>

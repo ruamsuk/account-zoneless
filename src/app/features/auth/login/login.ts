@@ -224,7 +224,7 @@ export class Login {
 
     try {
       await this.authService.signInWithGoogle()
-        .then(() => this.router.navigate(['/account'])); // เปลี่ยนเส้นทางไปยังหน้า accounts หลังจากล็อกอินสำเร็จ
+        .then(() => this.router.navigate(['/'])); // เปลี่ยนเส้นทางไปยังหน้า accounts หลังจากล็อกอินสำเร็จ
     } catch (error) {
       console.error('Google Sign-In error:', error);
       this.toastService.show('Error', `${error}`, 'error');
