@@ -15,7 +15,7 @@ import { DialogService } from '../../shared/services/dialog';
   template: `
     <main class="container mx-auto p-4 md:p-8">
       <div class="max-w-2xl mx-auto">
-        <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">User Profile</h1>
+        <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200 mb-6">******</h1>
 
         <div class="bg-white p-6 rounded-xl shadow-md dark:bg-gray-800">
 

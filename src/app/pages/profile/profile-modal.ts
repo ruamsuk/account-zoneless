@@ -1,4 +1,4 @@
-import { Component, effect, EventEmitter, inject, input, Output, signal } from '@angular/core';
+import { Component, effect, inject, input, output, signal } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { DialogService } from '../../shared/services/dialog';
 import { Router } from '@angular/router';
@@ -113,7 +113,7 @@ import { NgClass, TitleCasePipe } from '@angular/common';
 })
 export class ProfileModal {
   isOpen = input<boolean>(false);
-  @Output() close = new EventEmitter<void>();
+  close = output<void>();
 
   public authService = inject(AuthService);
   private dialogService = inject(DialogService);

@@ -210,10 +210,9 @@ export class AuthService {
     return deleteUser(user);
   }
 
-  logout() {
-    return signOut(this.auth).then(() => {
-      this.toastService.show('Success', 'You have been logged out.', 'success');
-    });
+  async logout() {
+    await signOut(this.auth);
+    this.toastService.show('Success', 'You have been logged out.', 'success');
   }
 
   /**
@@ -260,7 +259,7 @@ export class AuthService {
 
         // 2. อัปเดต URL ใน Firestore 'users' collection (เหมือนเดิม)
         const userDocRef = doc(this.firestore, `users/${user.uid}`);
-        // console.log(`%c[AuthService] 4. Preparing to update Firestore document at path: ${userDocRef.path}`, 'color: blue; font-weight: bold;');
+        // console.log(`%c[AuthService] 4. Preparing to update a Firestore document at a path: ${userDocRef.path}`, 'color: blue; font-weight: bold;');
 
         return setDoc(userDocRef, {photoURL: photoURL}, {merge: true});
       })

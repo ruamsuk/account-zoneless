@@ -66,6 +66,7 @@ import { NgOptimizedImage } from '@angular/common';
                 </svg>
               </button>
 
+              <!-- Popup menu for credit -->
               @if (isCreditMenuOpen()) {
                 <div
                   class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
@@ -95,6 +96,7 @@ import { NgOptimizedImage } from '@angular/common';
                 </svg>
               </button>
 
+              <!-- Popup menu for blood tracker -->
               @if (isBloodMenuOpen()) {
                 <div
                   class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
@@ -111,6 +113,7 @@ import { NgOptimizedImage } from '@angular/common';
               <button routerLink="/monthly" class="nav-link flex items-center gap-1">Monthly</button>
             </div>
 
+            <!-- User menu -->
             <div class="relative">
               <button (click)="toggleUserMenu()" class="nav-link flex items-center gap-1">
                 <span>User</span>
@@ -121,12 +124,18 @@ import { NgOptimizedImage } from '@angular/common';
                 </svg>
               </button>
 
+              <!-- Popup menu for user -->
               @if (isUserMenuOpen()) {
                 <div
                   class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
                   <div class="py-1">
-                    <a (click)="profileClick()" class="dropdown-item cursor-pointer">User Profile</a>
-                    <a routerLink="/user-management" (click)="closeUserMenu()" class="dropdown-item">User Management</a>
+                    <button (click)="openProfile.emit(); closeUserMenu()" class="dropdown-item cursor-pointer">User
+                      Profile
+                    </button>
+                    @if (authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager') {
+                      <a routerLink="/user-management" (click)="closeUserMenu()" class="dropdown-item">User
+                        Management</a>
+                    }
                   </div>
                 </div>
               }
@@ -180,7 +189,7 @@ import { NgOptimizedImage } from '@angular/common';
         @if (isMobileMenuOpen()) {
           <!-- บล็อกที่แก้ไขแล้ว-->
           <div
-            class="md:hidden mt-2 p-2 absolute top-full right-4 w-56 origin-top-right rounded-md bg-gray-100 dark:bg-black/60 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            class="md:hidden mt-2 p-2 absolute top-full right-4 w-56 origin-top-right rounded-md bg-gray-100 dark:bg-black/60 shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none overflow-y-auto max-h-[calc(100vh-5rem)]">
             <div class="flex flex-col gap-1">
 
               <!-- ===== ส่วนเงินสด (Cash) ===== -->
@@ -225,8 +234,9 @@ import { NgOptimizedImage } from '@angular/common';
               </div>
 
               <!-- ===== ส่วนบัญชีและการตั้งค่า ===== -->
-              <a href="#" (click)="openProfileModal()" class="mobile-menu-item">โปรไฟล์</a>
-              @if (authService.currentUser()?.role === 'admin') {
+              <button (click)="openProfile.emit(); closeMobileMenu()" class="mobile-menu-item cursor-pointer">โปรไฟล์
+              </button>
+              @if (authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager') {
                 <a routerLink="/user-management" (click)="closeMobileMenu()" class="mobile-menu-item">จัดการผู้ใช้</a>
               }
               <button (click)="logout()" class="mobile-menu-item text-red-500 w-full text-left">ออกจากระบบ</button>
@@ -260,7 +270,6 @@ export class Header implements OnInit {
   // เมธอดสำหรับเปิด/ปิด Dropdown
   profileClick() {
     this.openProfile.emit();
-    this.closeUserMenu();
   }
 
   toggleTransactionsMenu() {

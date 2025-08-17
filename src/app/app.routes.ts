@@ -31,12 +31,6 @@ export const routes: Routes = [
     ]
   },
   {
-    path: 'profile',
-    loadComponent: () => import('./pages/profile/profile')
-      .then(m => m.Profile),
-    ...canActivate(redirectUnauthorizedToLogin)
-  },
-  {
     path: 'cash-list',
     pathMatch: 'full',
     ...canActivate(redirectUnauthorizedToLogin),
