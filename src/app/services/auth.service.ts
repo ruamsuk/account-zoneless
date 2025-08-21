@@ -196,7 +196,7 @@ export class AuthService {
       });
   }
 
-  // ++ เพิ่มเมธอดสำหรับการยืนยันอีเมล ++
+  // ++ เพิ่มเมธอดสำหรับลืมรหัสผ่าน ++
   resetPassword(email: string): Promise<void> {
     return sendPasswordResetEmail(this.auth, email);
   }
@@ -244,7 +244,7 @@ export class AuthService {
 
     if (!user) {
       console.error('[AuthService] Update failed: User not logged in.');
-      this.toastService.show('Authentication Error: User not logged in.', 'error');
+      this.toastService.show('Authentication Error','Error: User not logged in.', 'error');
       return Promise.reject('Authentication Error: User not logged in');
     }
 

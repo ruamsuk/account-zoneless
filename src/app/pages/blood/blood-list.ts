@@ -103,7 +103,7 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
                   </td>
                   <td class="table-cell text-center border-l dark:border-gray-600">
                     @if (authService.currentUser()?.role == 'admin' || authService.currentUser()?.role == 'manager') {
-                      <button (click)="openModal(item)" class="btn-icon mr-3" customTooltip="แก้ไข">
+                      <button (click)="openModal(item)" class="btn-icon" customTooltip="แก้ไข">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                              class="w-5 h-5 text-green-400">
                           <path

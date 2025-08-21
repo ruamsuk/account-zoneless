@@ -79,9 +79,9 @@ interface AnnualReportRow extends MonthSummary {
               <thead class="bg-gray-50 dark:bg-gray-700">
               <tr>
                 <th class="table-header">เดือน</th>
-                <th class="table-header text-right">ยอดใช้จ่าย</th>
-                <th class="table-header text-right">Cashback</th>
-                <th class="table-header text-right">ยอดสุทธิ</th>
+                <th class="table-header-r">ยอดใช้จ่าย</th>
+                <th class="table-header-r">Cashback</th>
+                <th class="table-header-r">ยอดสุทธิ</th>
               </tr>
               </thead>
               <tbody>

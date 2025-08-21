@@ -72,20 +72,20 @@ import { DateUtilityService } from '../../services/date-utility.service';
               <table class="min-w-full">
                 <thead class="bg-gray-50 dark:bg-gray-700">
                 <tr>
-                  <th class="p-3 text-left w-2.5">#</th>
-                  <th class="p-3 text-left">วันที่</th>
-                  <th class="p-3 text-left">รายละเอียด</th>
-                  <th class="p-3 text-right">จำนวนเงิน</th>
+                  <th class="table-header w-2.5">#</th>
+                  <th class="table-header">วันที่</th>
+                  <th class="table-header">รายละเอียด</th>
+                  <th class="table-header-r">จำนวนเงิน</th>
                 </tr>
                 </thead>
                 <tbody>
                   @for (tx of transactions(); track tx.id; let i = $index) {
                     <tr class="border-b dark:border-gray-700 text-base text-gray-700 dark:text-gray-300"
                         [ngClass]="tx.isCashback ? ['bg-green-50 dark:bg-green-900/20'] : ['']">
-                      <td class="p-3 whitespace-nowrap text-left">{{ i + 1 }}</td>
-                      <td class="p-3 whitespace-nowrap">{{ tx.date | thaiDate }}</td>
-                      <td class="p-3 whitespace-nowrap">{{ tx.details }}</td>
-                      <td class="p-3 whitespace-nowrap text-right text-base"
+                      <td class="table-cell text-left">{{ i + 1 }}</td>
+                      <td class="table-cell">{{ tx.date | thaiDate }}</td>
+                      <td class="table-cell">{{ tx.details }}</td>
+                      <td class="table-cell text-right"
                           [ngClass]="tx.isCashback ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-500']">
                         {{ tx.isCashback ? '+' : '-' }} {{ tx.amount | number:'1.2-2' }}
                       </td>
