@@ -141,6 +141,11 @@ import { NgOptimizedImage } from '@angular/common';
               }
             </div>
 
+            @if (authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager') {
+              <div class="relative">
+                <button routerLink="/delete-data" class="nav-link flex items-center gap-1">Delete</button>
+              </div>
+            }
             <button (click)="toggleTheme()" class="btn-icon-round" title="Toggle theme">
               @if (isDarkMode()) {
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
@@ -218,11 +223,6 @@ import { NgOptimizedImage } from '@angular/common';
                 <div class="border-t border-gray-200 dark:border-gray-700"></div>
               </div>
 
-              <!-- ===== เส้นคั่น ===== -->
-              <div class="px-3 py-1">
-                <div class="border-t border-gray-200 dark:border-gray-700"></div>
-              </div>
-
               <span class="mobile-menu-header">ความดันโลหิต</span>
               <a routerLink="/blood/list" (click)="closeMobileMenu()" class="mobile-menu-item">ความดันโลหิต</a>
               <a routerLink="/blood/period" (click)="closeMobileMenu()" class="mobile-menu-item">ตามช่วงเวลา</a>
@@ -234,10 +234,13 @@ import { NgOptimizedImage } from '@angular/common';
               </div>
 
               <!-- ===== ส่วนบัญชีและการตั้งค่า ===== -->
+              <span class="mobile-menu-header">Setting</span>
               <button (click)="openProfile.emit(); closeMobileMenu()" class="mobile-menu-item cursor-pointer">โปรไฟล์
               </button>
               @if (authService.currentUser()?.role === 'admin' || authService.currentUser()?.role === 'manager') {
+                <a routerLink="/monthly" (click)="closeMobileMenu()" class="mobile-menu-item">จัดการรอบบัญชี</a>
                 <a routerLink="/user-management" (click)="closeMobileMenu()" class="mobile-menu-item">จัดการผู้ใช้</a>
+                <a routerLink="/delete-data" (click)="closeMobileMenu()" class="mobile-menu-item">ลบข้อมูลรายปี</a>
               }
               <button (click)="logout()" class="mobile-menu-item text-red-500 w-full text-left">ออกจากระบบ</button>
 
@@ -266,11 +269,6 @@ export class Header implements OnInit {
   // Output สำหรับส่ง Event
   openTransactionModal = output<void>();
   openProfile = output<void>();
-
-  // เมธอดสำหรับเปิด/ปิด Dropdown
-  profileClick() {
-    this.openProfile.emit();
-  }
 
   toggleTransactionsMenu() {
     this.isTransactionsMenuOpen.update(value => !value);
@@ -304,11 +302,6 @@ export class Header implements OnInit {
 
   closeUserMenu() {
     this.isUserMenuOpen.set(false);
-  }
-
-  openProfileModal() {
-    this.openProfile.emit();
-    this.closeMobileMenu();
   }
 
 // ตรวจจับการคลิกนอก Dropdown เพื่อปิดเมนู

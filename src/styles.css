@@ -133,6 +133,12 @@ input:-webkit-autofill:active {
   @apply h-4 w-4 text-indigo-600 border-gray-300 focus:ring-indigo-500;
 }
 
+.btn-danger {
+  @apply bg-red-600 text-white font-bold py-2 px-4 rounded-lg;
+  @apply hover:bg-red-700 transition duration-300;
+  @apply disabled:opacity-50 disabled:bg-red-700/25 disabled:text-gray-500 disabled:cursor-not-allowed;
+}
+
 .btn-icon {
   @apply p-1 rounded-full text-gray-500 hover:bg-gray-100 hover:text-green-600 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-green-400;
 }

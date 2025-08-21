@@ -119,4 +119,10 @@ export const routes: Routes = [
     loadComponent: () => import('./features/user/user-management')
       .then(m => m.UserManagement)
   },
+  {
+    path: 'delete-data',
+    ...canActivate(redirectUnauthorizedToLogin),
+    loadComponent: () => import('./pages/delete-data/delete-data')
+      .then(m => m.DeleteData)
+  }
 ];

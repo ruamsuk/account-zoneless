@@ -28,7 +28,7 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
   template: `
     <div class="max-w-5xl p-4 sm:p-6 lg:p-8 mx-auto">
       <div class="flex justify-between items-center">
-        <h1 class="text-4xl font-serif font-bold text-white text-shadow-lg">Dashboard</h1>
+        <h1 class="text-4xl font-serif font-bold text-white text-shadow-lg">Cash List</h1>
         @if (authService.currentUser()?.role == 'admin' || authService.currentUser()?.role == 'manager') {
           <button (click)="openAddModal()"
                   class="btn-primary sm:btn-primary-sm  inline-flex items-center">
