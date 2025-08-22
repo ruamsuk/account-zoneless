@@ -30,7 +30,7 @@ import { NumberFormatDirective } from '../../shared/directives/number-format';
                 <p><strong>วันที่:</strong> {{ accountToEdit()?.date | thaiDate:'fullMonth' }}</p>
                 <p><strong>รายละเอียด:</strong> {{ accountToEdit()?.details }}</p>
                 <p><strong>จำนวนเงิน:</strong>
-                  <span [ngClass]="accountToEdit()?.isInCome ? ['text-green-600'] : ['text-red-600']">
+                  <span [ngClass]="accountToEdit()?.isInCome ? 'text-green-600' : 'text-red-600'">
                     {{ accountToEdit()?.amount | number:'1.2-2' }}
                   </span>
                 </p>
@@ -63,7 +63,9 @@ import { NumberFormatDirective } from '../../shared/directives/number-format';
                 </div>
                 <div class="mb-4">
                   <label class="form-label">รายละเอียด</label>
-                  <input type="text" formControlName="details" class="form-input">
+                  <input type="text"
+                         formControlName="details"
+                         class="form-input" autocomplete="on">
                 </div>
                 <div class="mb-4">
                   <label class="form-label">จำนวนเงิน</label>
@@ -76,7 +78,9 @@ import { NumberFormatDirective } from '../../shared/directives/number-format';
                 </div>
                 <div class="mb-4">
                   <label class="form-label">หมายเหตุ</label>
-                  <input type="text" formControlName="remark" class="form-input">
+                  <input type="text"
+                         formControlName="remark"
+                         class="form-input" autocomplete="on">
                 </div>
                 <div class="flex items-center mb-6">
                   <input type="checkbox" id="isInCome" formControlName="isInCome"

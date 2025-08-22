@@ -210,7 +210,9 @@ import { AuthService } from '../../services/auth.service';
                       </div>
                       <div class="mb-4">
                         <label class="form-label">รายละเอียด</label>
-                        <input type="text" formControlName="details" class="form-input">
+                        <input type="text"
+                               formControlName="details"
+                               class="form-input" autocomplete="on">
                       </div>
                       <div class="mb-4">
                         <label class="form-label">จำนวนเงิน</label>
@@ -222,7 +224,9 @@ import { AuthService } from '../../services/auth.service';
                       </div>
                       <div class="mb-4">
                         <label class="form-label">หมายเหตุ</label>
-                        <input type="text" formControlName="remark" class="form-input">
+                        <input type="text"
+                               formControlName="remark"
+                               class="form-input" autocomplete="on">
                       </div>
                       <div class="flex items-center mb-6">
                         <input type="checkbox" id="isCashback" formControlName="isCashback"
