@@ -26,6 +26,8 @@ import { PaginationService } from '../../services/pagination.service';
         <h1 class="text-2xl md:text-3xl font-thasadith font-bold text-white text-shadow mb-6">รายงานตามช่วงเวลา
           (Debit)</h1>
       </div>
+
+      <!-- Filter Controls -->
       <div class="flex items-center justify-center">
         <form [formGroup]="reportForm" (ngSubmit)="onSubmit()"
               class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg flex flex-col md:flex-row gap-4 items-center z-40">
@@ -40,29 +42,37 @@ import { PaginationService } from '../../services/pagination.service';
           <button type="submit" class="btn-primary mt-auto">ดูรายงาน</button>
         </form>
       </div>
-      @if (accounts()) {
-        <div
-          class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-6 grid grid-cols-1 md:grid-cols-3 gap-4 text-center max-w-5xl mx-auto z-0">
-          <div>
-            <h3 class="text-lg font-semibold text-green-700 dark:text-green-400">รายรับรวม</h3>
-            <p
-              class="text-2xl font-bold text-green-600 dark:text-green-300">{{ summary().totalIncome | number:'1.2-2' }}</p>
-          </div>
-          <div>
-            <h3 class="text-lg font-semibold text-red-700 dark:text-red-400">รายจ่ายรวม</h3>
-            <p
-              class="text-2xl font-bold text-red-600 dark:text-red-300">{{ summary().totalExpense | number:'1.2-2' }}</p>
-          </div>
-          <div>
-            <h3 class="text-lg font-semibold text-blue-700 dark:text-blue-400">คงเหลือ</h3>
-            <p class="text-2xl font-bold text-blue-600 dark:text-blue-300">{{ summary().balance | number:'1.2-2' }}</p>
-          </div>
-        </div>
 
+      <!-- Result Display -->
+      @if (accounts()) {
         <div class="p-4 sm:p-6 lg:p-8 z-0">
           <div class="bg-white/70 dark:bg-black/60 backdrop-blur-sm p-6 rounded-xl shadow-lg mt-1 max-w-5xl mx-auto">
-            <h2 class="text-2xl font-thasadith font-semibold text-green-700 dark:text-gray-200 mb-4">
-              รายละเอียดข้อมูล</h2>
+
+            <!-- Summary -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6 text-center">
+              <div class="p-4 bg-green-50 dark:bg-green-900/50 rounded-lg">
+                <p class="text-sm text-green-700 dark:text-green-300">รายรับรวม</p>
+                <p
+                  class="text-2xl font-bold text-green-800 dark:text-green-200">{{ summary().totalIncome | number:'1.2-2' }}</p>
+              </div>
+              <div class="p-4 bg-red-50 dark:bg-red-900/50 rounded-lg">
+                <p class="text-sm text-red-700 dark:text-red-300">รายจ่ายรวม</p>
+                <p
+                  class="text-2xl font-bold text-red-800 dark:text-red-200">{{ summary().totalExpense | number:'1.2-2' }}</p>
+              </div>
+              <div class="p-4 rounded-lg"
+                   [ngClass]="summary().balance >= 0 ? ['bg-blue-50 dark:bg-blue-900/50'] : ['bg-orange-50 dark:bg-orange-900/50']">
+                <p class="text-sm"
+                   [ngClass]="summary().balance >= 0 ? ['text-blue-700 dark:text-blue-300'] : ['text-orange-700 dark:text-orange-300']">
+                  คงเหลือ (สมดุล)</p>
+                <p class="text-2xl font-bold"
+                   [ngClass]="summary().balance >= 0 ? ['text-blue-800 dark:text-blue-200'] : ['text-orange-800 dark:text-orange-200']">
+                  {{ summary().balance | number:'1.2-2' }}
+                </p>
+              </div>
+            </div>
+
+            <!-- Table -->
             <div class="overflow-x-auto">
               <table class="min-w-full">
                 <thead>

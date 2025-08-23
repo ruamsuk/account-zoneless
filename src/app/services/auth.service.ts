@@ -92,7 +92,7 @@ export class AuthService {
       () => {
         this.logout().then(() => {
           console.log('logout');
-          this.router.navigateByUrl('/login').then();
+          this.router.navigateByUrl('/auth/login').then();
         });
       },
       30 * 60 * 1000,
@@ -211,7 +211,8 @@ export class AuthService {
   }
 
   async logout() {
-    await signOut(this.auth);
+    await signOut(this.auth).then(() => {
+    });
     this.toastService.show('Success', 'You have been logged out.', 'success');
   }
 
@@ -244,7 +245,7 @@ export class AuthService {
 
     if (!user) {
       console.error('[AuthService] Update failed: User not logged in.');
-      this.toastService.show('Authentication Error','Error: User not logged in.', 'error');
+      this.toastService.show('Authentication Error', 'Error: User not logged in.', 'error');
       return Promise.reject('Authentication Error: User not logged in');
     }
 
