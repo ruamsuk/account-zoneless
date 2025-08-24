@@ -23,7 +23,7 @@ import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.d
     CustomTooltipDirective
   ],
   template: `
-    <main class="container mx-auto p-4 md:p-8">
+    <main class="container max-w-5xl mx-auto p-4 md:p-8">
       <div class="flex justify-end md:justify-between items-center mb-6">
         <h1
           class="hidden md:block text-3xl text-gray-100 text-shadow-lg font-semibold font-serif  dark:text-gray-200 underline underline-offset-4">
