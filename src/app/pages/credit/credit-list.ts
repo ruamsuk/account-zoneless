@@ -80,7 +80,8 @@ import { AuthService } from '../../services/auth.service';
                 <th class="p-3 text-left w-2.5">#</th>
                 <th class="p-3 text-left">วันที่</th>
                 <th class="p-3 text-left">รายละเอียด</th>
-                <th class="p-3 text-right">จำนวนเงิน</th>
+                <th class="p-3 whitespace-nowrap text-right">จำนวนเงิน</th>
+                <th class="p-3 text-left">หมายเหตุ</th>
                 <th class="p-3 text-center">Actions</th>
               </tr>
               </thead>
@@ -89,14 +90,15 @@ import { AuthService } from '../../services/auth.service';
                   <tr
                     class="text-base text-gray-800 dark:text-gray-300 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                     [ngClass]="tx.isCashback ? ['bg-green-100/50 dark:bg-green-900/30'] : []">
-                    <td class="p-3 whitespace-nowrap text-left">{{ (currentPage() - 1) * itemsPerPage() + i + 1 }}</td>
-                    <td class="p-3 whitespace-nowrap">{{ tx.date | thaiDate }}</td>
-                    <td class="p-3 whitespace-nowrap">{{ tx.details }}</td>
-                    <td class="p-3 whitespace-nowrap text-right"
+                    <td class="table-cell text-left">{{ (currentPage() - 1) * itemsPerPage() + i + 1 }}</td>
+                    <td class="table-cell">{{ tx.date | thaiDate }}</td>
+                    <td class="table-cell">{{ tx.details }}</td>
+                    <td class="table-cell text-right"
                         [ngClass]="tx.isCashback ? ['text-green-600'] : ['text-red-600']">
                       {{ tx.isCashback ? '+' : '-' }} {{ tx.amount | number:'1.2-2' }}
                     </td>
-                    <td class="p-3 whitespace-nowrap text-center">
+                    <td class="table-cell">{{ tx.remark }}</td>
+                    <td class="table-cell text-center">
                       @if (authService.currentUser()?.role == 'admin' || authService.currentUser()?.role == 'manager') {
                         <button (click)="onViewDetails(tx)" customTooltip="ดูรายละเอียด" class="btn-icon text-sky-500">
                           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
