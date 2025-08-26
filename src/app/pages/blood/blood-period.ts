@@ -23,7 +23,7 @@ import { AuthService } from '../../services/auth.service';
     CustomTooltipDirective
   ],
   template: `
-    <main class="container mx-auto p-4 md:p-8">
+    <main class="container max-w-4xl mx-auto p-4 md:p-8">
       <h1 class="text-3xl font-thasadith font-bold text-gray-800 dark:text-gray-200 mb-6">รายงานตามช่วงเวลา</h1>
 
       <!-- Filter Controls -->

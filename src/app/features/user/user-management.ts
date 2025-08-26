@@ -17,7 +17,7 @@ import { catchError, Observable, tap, throwError } from 'rxjs';
     NgOptimizedImage
   ],
   template: `
-    <main class="container mx-auto p-4 md:p-8">
+    <main class="container max-w-4xl mx-auto p-4 md:p-8">
       <div class="flex justify-between items-center px-1.5">
         <h1 class="text-3xl md:text-4xl font-bold font-leera text-gray-800 dark:text-gray-200 mb-6">User Role
           Management</h1>
