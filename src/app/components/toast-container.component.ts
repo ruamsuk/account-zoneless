@@ -35,7 +35,7 @@ import { ToastMessage, ToastService } from '../services/toast.service';
                   {{ message.summary }}
                 </strong>
               }
-              <p class="mt-1 text-md" [ngClass]="getTextColor(message.type, 'text')">
+              <p class="mt-1 text-base" [ngClass]="getTextColor(message.type, 'text')">
                 {{ message.text }}
               </p>
             </div>
@@ -69,18 +69,33 @@ export class ToastContainer {
   // --- Helper Methods สำหรับจัดการสไตล์ ---
 
   getToastClasses(type: ToastMessage['type']): string {
-    const baseClasses = 'dark:bg-gray-800 border';
+    const baseClasses = 'border backdrop-filter backdrop-blur-sm'; // เพิ่มคลาสนี้
     switch (type) {
       case 'success':
-        return `${baseClasses} bg-green-50 border-green-200 dark:border-green-700`;
+        // bg-green-500/20 หมายถึงใช้สีเขียว 500 ที่มีความทึบ 20%
+        return `${baseClasses} bg-green-300/20 border-green-400 dark:border-green-700`;
       case 'error':
-        return `${baseClasses} bg-red-50 border-red-200 dark:border-red-700`;
+        return `${baseClasses} bg-red-300/20 border-red-400 dark:border-red-700`;
       case 'warning':
-        return `${baseClasses} bg-yellow-50 border-yellow-200 dark:border-yellow-700`;
+        return `${baseClasses} bg-yellow-300/20 border-yellow-400 dark:border-yellow-700`;
       case 'info':
-        return `${baseClasses} bg-blue-50 border-blue-200 dark:border-blue-700`;
+        return `${baseClasses} bg-blue-300/20 border-blue-400 dark:border-blue-700`;
     }
   }
+
+  // getToastClasses(type: ToastMessage['type']): string {
+  //   const baseClasses = 'dark:bg-gray-800 border';
+  //   switch (type) {
+  //     case 'success':
+  //       return `${baseClasses} bg-green-50 border-green-200 dark:border-green-700`;
+  //     case 'error':
+  //       return `${baseClasses} bg-red-50 border-red-200 dark:border-red-700`;
+  //     case 'warning':
+  //       return `${baseClasses} bg-yellow-50 border-yellow-200 dark:border-yellow-700`;
+  //     case 'info':
+  //       return `${baseClasses} bg-blue-50 border-blue-200 dark:border-blue-700`;
+  //   }
+  // }
 
   getIconColor(type: ToastMessage['type']): string {
     switch (type) {

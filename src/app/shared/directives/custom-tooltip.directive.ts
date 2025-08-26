@@ -14,9 +14,42 @@ export class CustomTooltipDirective {
 
   text = input<string>('', {alias: 'customTooltip'});
 
+  @HostListener('click')
+  toggleTooltip(): void {
+    const tooltipText = this.text();
+    if (!tooltipText) return;
+
+    if (this.overlayRef) {
+      // ถ้า overlay กำลังแสดงอยู่ ให้ซ่อนมัน
+      this.hide();
+    } else {
+      // ถ้ายังไม่แสดง ให้สร้างและแสดง overlay
+      this.show();
+    }
+  }
+
+  // ใช้ event 'mouseenter' และ 'mouseleave' สำหรับการ hover บน desktop เท่านั้น
   @HostListener('mouseenter')
-  show(): void {
-    const tooltipText = this.text(); // <-- 3. เรียกใช้ signal เพื่อเอาค่า
+  onMouseEnter(): void {
+    // ถ้าไม่มี overlay อยู่ และหน้าจอไม่ใช่ mobile
+    if (!this.overlayRef && !this.isMobile()) {
+      this.show();
+    }
+  }
+
+  @HostListener('mouseleave')
+  onMouseLeave(): void {
+    // ซ่อน tooltip เมื่อออกจากพื้นที่ของ element
+    // แต่ให้ delay เล็กน้อย เผื่อเมาส์เผลอขยับ
+    setTimeout(() => {
+      if (this.overlayRef) {
+        this.hide();
+      }
+    }, 100);
+  }
+
+  private show(): void {
+    const tooltipText = this.text();
     if (this.overlayRef || !tooltipText) return;
 
     const positionStrategy = this.overlay.position()
@@ -34,14 +67,19 @@ export class CustomTooltipDirective {
     const tooltipPortal = new ComponentPortal(Tooltip);
     const componentRef = this.overlayRef.attach(tooltipPortal);
     componentRef.instance.text = tooltipText;
+
+    // เมื่อมีการคลิกที่ใดก็ได้นอก overlay ให้ซ่อน tooltip
+    this.overlayRef.outsidePointerEvents().subscribe(() => this.hide());
   }
 
-  @HostListener('mouseleave')
-  hide(): void {
+  private hide(): void {
     if (this.overlayRef) {
       this.overlayRef.dispose();
       this.overlayRef = null;
     }
   }
 
+  private isMobile(): boolean {
+    return /Mobi|Android/i.test(navigator.userAgent);
+  }
 }
