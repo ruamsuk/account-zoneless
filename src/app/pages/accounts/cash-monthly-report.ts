@@ -30,7 +30,7 @@ import { PaginationService } from '../../services/pagination.service';
           <!-- Month Selector -->
           <div>
             <label class="form-label">เดือน</label>
-            <select class="form-input" [(ngModel)]="selectedMonth">
+            <select class="form-input border-gray-300" [(ngModel)]="selectedMonth">
               @for (month of months; track month.value) {
                 <option [value]="month.value">{{ month.name }}</option>
               }
@@ -39,7 +39,7 @@ import { PaginationService } from '../../services/pagination.service';
           <!-- Year Selector -->
           <div>
             <label class="form-label">ปี (พ.ศ.)</label>
-            <select class="form-input" [(ngModel)]="selectedYearBE">
+            <select class="form-input border-gray-300" [(ngModel)]="selectedYearBE">
               @for (year of yearRange; track year) {
                 <option [value]="year">{{ year }}</option>
               }
@@ -48,7 +48,7 @@ import { PaginationService } from '../../services/pagination.service';
           <!-- Detail Selector -->
           <div>
             <label class="form-label">รายละเอียด</label>
-            <select class="form-input" [(ngModel)]="selectedDetail">
+            <select class="form-input border-gray-300" [(ngModel)]="selectedDetail">
               <option [ngValue]="null">-- ทั้งหมด --</option>
               @for (detail of uniqueDetails(); track detail) {
                 <option [value]="detail">{{ detail }}</option>
@@ -94,9 +94,9 @@ import { PaginationService } from '../../services/pagination.service';
                 <th>#</th>
                 <th class="p-3">วันที่</th>
                 <th class="p-3">รายละเอียด</th>
+                <th class="p-3 text-right">จำนวนเงิน</th>
                 <th class="p-3">หมายเหตุ</th>
-                <th class="p-3 text-right">
-                  จำนวนเงิน
+
               </tr>
               </thead>
               <tbody>
@@ -110,13 +110,14 @@ import { PaginationService } from '../../services/pagination.service';
                     <td class="p-3 whitespace-nowrap"
                         [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['']">{{ tx.details }}
                     </td>
-                    <td class="p-3 whitespace-nowrap"
-                        [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['']">{{ tx.remark }}
-                    </td>
                     <td class="p-3 whitespace-nowrap text-right"
                         [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-400']">
                       {{ tx.amount | number:'1.2-2' }}
                     </td>
+                    <td class="p-3 whitespace-nowrap"
+                        [ngClass]="tx.isInCome ? ['text-green-600 dark:text-green-400'] : ['']">{{ tx.remark }}
+                    </td>
+
                   </tr>
                 }
               </tbody>

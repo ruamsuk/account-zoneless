@@ -33,7 +33,7 @@ import { BloodAddEditModal } from './blood-add-edit-modal';
           <!-- Year Selector -->
           <div>
             <label class="form-label">ปี (พ.ศ.)</label>
-            <select class="form-input w-full" [(ngModel)]="selectedYearBE">
+            <select class="form-input border-gray-300 w-full" [(ngModel)]="selectedYearBE">
               @for (year of yearRange; track year) {
                 <option [value]="year">{{ year }}</option>
               }

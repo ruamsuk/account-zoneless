@@ -30,7 +30,7 @@ interface AnnualReportRow extends MonthSummary {
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
           <div>
             <label class="form-label">ปี (พ.ศ.)</label>
-            <select class="form-input" [(ngModel)]="selectedYearBE">
+            <select class="form-input border-gray-300" [(ngModel)]="selectedYearBE">
               @for (year of yearRange; track year) {
                 <option [value]="year">{{ year }}</option>
               }
@@ -38,7 +38,7 @@ interface AnnualReportRow extends MonthSummary {
           </div>
           <div>
             <label class="form-label">รายละเอียด</label>
-            <select class="form-input" [(ngModel)]="selectedDetail">
+            <select class="form-input border-gray-300" [(ngModel)]="selectedDetail">
               <option [ngValue]="null">-- ทั้งหมด --</option>
               @for (detail of uniqueDetails(); track detail) {
                 <option [value]="detail">{{ detail }}</option>

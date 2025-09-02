@@ -36,12 +36,14 @@ import { NgClass, NgOptimizedImage } from '@angular/common';
                    class="block text-gray-800 dark:text-gray-400 font-medium mb-2">Email
             </label>
             <input
-              type="email" id="email" formControlName="email"
+              type="email"
+              id="email"
+              formControlName="email"
+              [ngClass]="email?.invalid && email?.touched
+              ? ['border', 'border-red-500', 'focus:ring-red-500']
+              : ['border', 'border-gray-300', 'focus:ring-blue-500', 'dark:border-gray-400']"
               class="form-input"
-              [ngClass]="email?.invalid && email?.touched ?
-              ['border-red-500 focus:ring-red-500'] :
-              ['border-gray-300 focus:ring-blue-500 dark:border-gray-400']" autocomplete="email">
-
+              autocomplete="email">
             @if (email?.invalid && email?.touched) {
               <p class="mt-1 text-sm text-red-600">กรุณากรอกอีเมลให้ถูกต้อง</p>
             }

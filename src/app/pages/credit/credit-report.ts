@@ -27,7 +27,7 @@ import { DateUtilityService } from '../../services/date-utility.service';
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
           <div>
             <label class="form-label">เดือน</label>
-            <select class="form-input" [(ngModel)]="selectedMonth">
+            <select class="form-input border-gray-300" [(ngModel)]="selectedMonth">
               @for (month of months; track month.value) {
                 <option [value]="month.value">{{ month.name }}</option>
               }
@@ -35,7 +35,7 @@ import { DateUtilityService } from '../../services/date-utility.service';
           </div>
           <div>
             <label class="form-label">ปี (พ.ศ.)</label>
-            <select class="form-input" [(ngModel)]="selectedYearBE">
+            <select class="form-input border-gray-300" [(ngModel)]="selectedYearBE">
               @for (year of yearRange; track year) {
                 <option [value]="year">{{ year }}</option>
               }

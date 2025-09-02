@@ -20,14 +20,15 @@ import { DateUtilityService } from '../../services/date-utility.service';
   ],
   template: `
     <main class="container mx-auto p-4 md:p-8">
-      <h1 class="text-3xl font-thasadith font-bold text-gray-800 dark:text-gray-200 mb-6">รายงานสรุปประจำปี (Cash)</h1>
+      <h1 class="ml-7 text-3xl font-thasadith font-bold text-gray-800 dark:text-gray-200 mb-6">รายงานสรุปประจำปี
+        (Cash)</h1>
 
       <!-- Filter Controls -->
       <div class="mb-4 p-4 bg-white rounded-xl shadow-md dark:bg-gray-800 max-w-4xl mx-auto">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
           <div>
             <label class="form-label">ปี (พ.ศ.)</label>
-            <select class="form-input" [(ngModel)]="selectedYearBE">
+            <select class="form-input border-gray-300" [(ngModel)]="selectedYearBE">
               @for (year of yearRange; track $index) {
                 <option [value]="year">{{ year }}</option>
               }
@@ -35,7 +36,7 @@ import { DateUtilityService } from '../../services/date-utility.service';
           </div>
           <div>
             <label class="form-label">รายละเอียด</label>
-            <select class="form-input" [(ngModel)]="selectedDetail">
+            <select class="form-input border-gray-300" [(ngModel)]="selectedDetail">
               <option [ngValue]="null">-- ทั้งหมด --</option>
               @for (detail of uniqueDetails(); track $index) {
                 <option [value]="detail">{{ detail }}</option>
