@@ -75,7 +75,7 @@ input:-webkit-autofill:active {
 
 .form-input {
   @apply w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2;
-  @apply focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white;
+  @apply focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600  dark:text-white;
 }
 
 

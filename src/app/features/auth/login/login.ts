@@ -55,7 +55,7 @@ import { NgClass, NgOptimizedImage } from '@angular/common';
             </label>
             <div class="relative">
               <input [type]="passwordVisible() ? 'text' : 'password'" id="password" formControlName="password"
-                     class="form-input" placeholder="Password"
+                     class="form-input"
                      [ngClass]="password?.invalid && password?.touched ?
                      ['border-red-500 focus:ring-red-500'] :
                      ['border-gray-300 focus:ring-blue-500 dark:border-gray-400']" autocomplete="current-password">
@@ -210,8 +210,7 @@ export class Login {
         } else {
           this.errorMessage.set('Invalid email or password. Please try again.');
         }
-        this.toastService.show('Error', `${this.errorMessage}`, 'error');
-        console.error('Login error:', error);
+        console.error('Login error: ', error);
         this.loading.set(false);
       }).finally(() => {
       this.loading.set(false);

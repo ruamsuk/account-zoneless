@@ -16,7 +16,7 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
       <div (click)="onClose()" class="fixed inset-0 bg-black/50 z-40 flex items-center justify-center p-4">
         <div (click)="onDialogContentClick($event)"
              class="bg-white p-6 md:p-8 rounded-xl shadow-2xl z-50 w-full max-w-xl mx-auto dark:bg-gray-800">
-          <h2 class="text-2xl font-semibold text-gray-700 dark:text-gray-200 mb-6">
+          <h2 class="text-2xl font-thasadith font-semibold text-gray-700 dark:text-gray-200 mb-6">
             {{ isEditing() ? 'แก้ไขบันทึกความดัน' : 'เพิ่มบันทึกความดันใหม่' }}
           </h2>
           <form [formGroup]="bpForm" (ngSubmit)="onSubmit()">
@@ -33,13 +33,14 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
                 <div>
                   <label class="form-label">ครั้งที่ 1 (BP1)</label>
                   <!--  1. ส่ง "ป้ายชื่อ" ของ input ตัวถัดไป  -->
-                  <input type="text" formControlName="bp1" class="form-input" placeholder="SYS/DIA P..." bpMask
+                  <input type="text" formControlName="bp1" class="form-input border-gray-300" placeholder="SYS/DIA P..."
+                         bpMask
                          [nextInput]="morningBp2Input">
                 </div>
                 <div>
                   <label class="form-label">ครั้งที่ 2 (BP2)</label>
                   <!--  2. "ป้ายชื่อ" ถูกติดไว้ที่นี่ และส่งต่อไปยังตัวถัดไป  -->
-                  <input #morningBp2Input type="text" formControlName="bp2" class="form-input"
+                  <input #morningBp2Input type="text" formControlName="bp2" class="form-input border-gray-300"
                          placeholder="SYS/DIA P..." bpMask [nextInput]="eveningBp1Input">
                 </div>
               </div>
@@ -51,12 +52,12 @@ import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
               <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" formGroupName="evening">
                 <div>
                   <label class="form-label">ครั้งที่ 1 (BP1)</label>
-                  <input #eveningBp1Input type="text" formControlName="bp1" class="form-input"
+                  <input #eveningBp1Input type="text" formControlName="bp1" class="form-input border-gray-300"
                          placeholder="SYS/DIA P..." bpMask [nextInput]="eveningBp2Input">
                 </div>
                 <div>
                   <label class="form-label">ครั้งที่ 2 (BP2)</label>
-                  <input #eveningBp2Input type="text" formControlName="bp2" class="form-input"
+                  <input #eveningBp2Input type="text" formControlName="bp2" class="form-input border-gray-300"
                          placeholder="SYS/DIA P..." bpMask>
                 </div>
               </div>

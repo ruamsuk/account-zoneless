@@ -5,6 +5,7 @@ import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
 import { NumberFormatDirective } from '../../shared/directives/number-format';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-account-modal',
@@ -46,7 +47,9 @@ import { NumberFormatDirective } from '../../shared/directives/number-format';
               </div>
               <div class="flex items-center justify-end gap-4 mt-8 pt-6 border-t dark:border-gray-700">
                 <button type="button" (click)="onClose()" class="btn-secondary">Close</button>
-                <button type="button" (click)="switchToEditMode()" class="btn-primary">Edit</button>
+                @if (auth.currentUser()?.role == 'admin' || auth.currentUser()?.role == 'manager') {
+                  <button type="button" (click)="switchToEditMode()" class="btn-primary">Edit</button>
+                }
               </div>
             </div>
           } @else {
@@ -65,22 +68,22 @@ import { NumberFormatDirective } from '../../shared/directives/number-format';
                   <label class="form-label">รายละเอียด</label>
                   <input type="text"
                          formControlName="details"
-                         class="form-input" autocomplete="on">
+                         class="form-input border-gray-300" autocomplete="on">
                 </div>
                 <div class="mb-4">
-                  <label class="form-label">จำนวนเงิน</label>
+                  <label class="form-label border-gray-300">จำนวนเงิน</label>
                   <input id="amount"
                          type="text"
                          inputmode="decimal"
                          formControlName="amount"
-                         class="form-input"
+                         class="form-input border-gray-300"
                          appNumberFormat>
                 </div>
                 <div class="mb-4">
                   <label class="form-label">หมายเหตุ</label>
                   <input type="text"
                          formControlName="remark"
-                         class="form-input" autocomplete="on">
+                         class="form-input border-gray-300" autocomplete="on">
                 </div>
                 <div class="flex items-center mb-6">
                   <input type="checkbox" id="isInCome" formControlName="isInCome"
@@ -103,6 +106,7 @@ import { NumberFormatDirective } from '../../shared/directives/number-format';
   styles: ``
 })
 export class AccountModal {
+  public auth = inject(AuthService);
   private fb = inject(FormBuilder);
 
   // --- Inputs & Outputs (Signal-based) ---
