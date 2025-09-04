@@ -80,6 +80,10 @@ import { NgOptimizedImage } from '@angular/common';
                     <a routerLink="/credit/credit-annual-report" (click)="closeCreditMenu()" class="dropdown-item">
                       รายการรายปี
                     </a>
+                    <a routerLink="/update-details" (click)="closeTransactionsMenu()"
+                       class="dropdown-item">
+                      แก้ไขรายการ
+                    </a>
                   </div>
                 </div>
               }
@@ -217,7 +221,10 @@ import { NgOptimizedImage } from '@angular/common';
               <a routerLink="/credit/report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานประจำเดือน</a>
               <a routerLink="/credit/credit-annual-report" (click)="closeMobileMenu()"
                  class="mobile-menu-item">รายงานประจำปี</a>
-
+              <a routerLink="/update-details" (click)="closeMobileMenu()"
+                 class="dropdown-item">
+                แก้ไขรายการ
+              </a>
               <!-- ===== เส้นคั่น ===== -->
               <div class="px-3 py-1">
                 <div class="border-t border-gray-200 dark:border-gray-700"></div>

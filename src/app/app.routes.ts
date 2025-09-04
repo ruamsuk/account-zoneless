@@ -61,6 +61,13 @@ export const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin)
   },
   {
+    path: 'update-details',
+    loadComponent: () => import('./features/accounts/update-details')
+      .then(m => m.UpdateDetails),
+    ...canActivate(redirectUnauthorizedToLogin),
+
+  },
+  {
     path: 'credit',
     ...canActivate(redirectUnauthorizedToLogin),
     children: [

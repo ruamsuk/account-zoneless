@@ -1,15 +1,20 @@
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
 import {
   addDoc,
   collection,
   collectionData,
   deleteDoc,
   doc,
+  DocumentSnapshot,
   Firestore,
+  getDocs,
+  limit,
   orderBy,
   query,
+  startAfter,
   updateDoc,
-  where
+  where,
+  writeBatch
 } from '@angular/fire/firestore';
 import { Observable } from 'rxjs';
 import { Account } from '../models/account.model';
@@ -20,6 +25,8 @@ import { Account } from '../models/account.model';
 export class AccountService {
   private firestore: Firestore = inject(Firestore);
   private accountsCollection = collection(this.firestore, 'accounts');
+
+  progress = signal<{ processed: number; total: number } | null>(null);
 
   /**
    *  1. Get all accounts from Firestore
@@ -100,5 +107,51 @@ export class AccountService {
   deleteAccount(id: string): Promise<void> {
     const accountDocRef = doc(this.firestore, `accounts/${id}`);
     return deleteDoc(accountDocRef);
+  }
+
+  /**
+   * อัปเดตฟิลด์ details เฉพาะเอกสารที่มีค่าที่ต้องการ โดยแบ่งเป็น batch
+   * @param {string} oldValue - ค่าเก่าที่ต้องการค้นหา
+   * @param {string} newValue - ค่าใหม่ที่ต้องการแทนที่
+   * @param {string} total
+   */
+  async updateDetailsWithProgress(oldValue: string | null, newValue: string | null, total: number): Promise<void> {
+    const baseQuery = query(
+      collection(this.firestore, 'accounts'),
+      where('details', '==', oldValue)
+    );
+    let lastVisible: DocumentSnapshot | null = null;
+    let documentsProcessed = 0;
+
+    try {
+      while (documentsProcessed < total) {
+        let q = query(baseQuery, limit(500));
+        if (lastVisible) {
+          q = query(baseQuery, limit(500), startAfter(lastVisible));
+        }
+
+        const snapshot = await getDocs(q);
+        if (snapshot.empty) break;
+
+        const batch = writeBatch(this.firestore);
+        snapshot.docs.forEach(doc => {
+          batch.update(doc.ref, {details: newValue});
+        });
+        await batch.commit();
+
+        documentsProcessed += snapshot.size;
+
+        // อัปเดต signal แทนการ next()
+        this.progress.set({processed: documentsProcessed, total});
+
+        lastVisible = snapshot.docs[snapshot.docs.length - 1];
+      }
+
+      // ทำงานเสร็จ
+      this.progress.set({processed: total, total});
+    } catch (error) {
+      console.error('Update failed', error);
+      throw error;
+    }
   }
 }

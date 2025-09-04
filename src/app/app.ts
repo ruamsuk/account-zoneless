@@ -8,6 +8,7 @@ import { Subscription } from 'rxjs';
 import { RouterOutlet } from '@angular/router';
 import { TitleCasePipe } from '@angular/common';
 import { ProfileModal } from './pages/profile/profile-modal';
+import { AccountService } from './services/account.service';
 
 @Component({
   selector: 'app-root',
@@ -46,14 +47,20 @@ import { ProfileModal } from './pages/profile/profile-modal';
       (close)="closeProfileModal()">
     </app-profile-modal>
 
+    <!--<app-update-details-modal
+      [open]="modalOpen()" [status]="accountService.progress()"/>-->
+
   `,
   styles: [],
 })
 export class App implements OnDestroy {
   public authService = inject(AuthService);
+  public accountService = inject(AccountService);
   private componentSubscription: Subscription | undefined;
 
   isProfileModalOpen = signal(false);
+
+  // modalOpen = signal(false);
 
   openProfileModal(): void {
     this.isProfileModalOpen.set(true);
@@ -62,6 +69,11 @@ export class App implements OnDestroy {
   closeProfileModal(): void {
     this.isProfileModalOpen.set(false);
   }
+
+  // startUpdate() {
+  //   this.modalOpen.set(true);
+  //   this.accountService.updateDetailsWithProgress('old', 'new', 2000).then();
+  // }
 
   /**
    *  @HostListener
