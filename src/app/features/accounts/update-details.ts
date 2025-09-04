@@ -4,7 +4,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CreditService } from '../../services/credit.service';
 import { DialogService } from '../../shared/services/dialog';
 import { LoadingService } from '../../services/loading.service';
-import { ToastService } from '../../services/toast.service';
 
 @Component({
   selector: 'app-update-details-modal',
@@ -59,7 +58,6 @@ import { ToastService } from '../../services/toast.service';
 export class UpdateDetails {
   private dialogService = inject(DialogService);
   private loadingService = inject(LoadingService);
-  private toastService = inject(ToastService);
   creditService = inject(CreditService);
   // Input signals (read-only)
   // open = input<boolean>(true);
@@ -69,7 +67,7 @@ export class UpdateDetails {
   selectedField = signal<string | null>(null);
   selectedDetails = signal<string | null>(null);
   // 1. เพิ่ม signal สำหรับเก็บสถานะ
-  progressStatus = signal<{ processed: number; total: number } | null>(null);
+  // progressStatus = signal<{ processed: number; total: number } | null>(null);
 
   async startUpdate() {
     const field = this.selectedField();
