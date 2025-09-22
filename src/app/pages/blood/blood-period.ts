@@ -7,7 +7,7 @@ import { ToastService } from '../../services/toast.service';
 import { BloodPressure } from '../../models/blood-pressure.model';
 import { NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
-import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
+import { _thaiDatepicker } from '../../shared/components/_thai-datepicker';
 import { BloodAddEditModal } from './blood-add-edit-modal';
 import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.directive';
 import { AuthService } from '../../services/auth.service';
@@ -17,7 +17,7 @@ import { AuthService } from '../../services/auth.service';
   imports: [
     NgClass,
     ThaiDatePipe,
-    ThaiDatepicker,
+    _thaiDatepicker,
     ReactiveFormsModule,
     BloodAddEditModal,
     CustomTooltipDirective

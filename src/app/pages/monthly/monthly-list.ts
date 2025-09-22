@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { toSignal } from '@angular/core/rxjs-interop';
 import { Monthly } from '../../models/monthly.model';
 import { catchError, Observable, tap, throwError } from 'rxjs';
-import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
+import { _thaiDatepicker } from '../../shared/components/_thai-datepicker';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { ChristianToThaiYearPipe } from '../../pipe/christian-to-thai-year.pipe';
 import { DateUtilityService } from '../../services/date-utility.service';
@@ -18,7 +18,7 @@ import { AuthService } from '../../services/auth.service';
   selector: 'app-monthly-list',
   imports: [
     ReactiveFormsModule,
-    ThaiDatepicker,
+    _thaiDatepicker,
     ThaiDatePipe,
     ChristianToThaiYearPipe,
     CustomTooltipDirective

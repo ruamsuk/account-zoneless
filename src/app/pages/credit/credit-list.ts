@@ -8,7 +8,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { CreditData } from '../../models/credit.model';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
-import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
+import { _thaiDatepicker } from '../../shared/components/_thai-datepicker';
 import { catchError, Observable, tap, throwError } from 'rxjs';
 import { NumberFormatDirective } from '../../shared/directives/number-format';
 import { CustomTooltipDirective } from '../../shared/directives/custom-tooltip.directive';
@@ -22,7 +22,7 @@ import { AuthService } from '../../services/auth.service';
     NgClass,
     DecimalPipe,
     ThaiDatePipe,
-    ThaiDatepicker,
+    _thaiDatepicker,
     NumberFormatDirective,
     CustomTooltipDirective
   ],
@@ -91,23 +91,21 @@ import { AuthService } from '../../services/auth.service';
                     class="text-base text-gray-800 dark:text-gray-300 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50"
                     [ngClass]="tx.isCashback ? ['bg-green-100/50 dark:bg-green-900/30'] : []">
                     <td class="table-cell text-left"
-                        [ngClass]="tx.isCashback ? ['text-green-600'] : ['text-red-600']">
+                        [ngClass]="tx.isCashback ? ['text-green-600'] : []">
                       {{ (currentPage() - 1) * itemsPerPage() + i + 1 }}
                     </td>
-                    <td class="table-cell"
-                        [ngClass]="tx.isCashback ? ['text-green-600'] : ['text-red-600']">
+                    <td class="table-cell" [ngClass]="tx.isCashback ? ['text-green-600'] : []">
                       {{ tx.date | thaiDate }}
                     </td>
                     <td class="table-cell"
-                        [ngClass]="tx.isCashback ? ['text-green-600'] : ['text-red-600']">
+                        [ngClass]="tx.isCashback ? ['text-green-600'] : []">
                       {{ tx.details }}
                     </td>
                     <td class="table-cell text-right"
                         [ngClass]="tx.isCashback ? ['text-green-600'] : ['text-red-600']">
                       {{ tx.isCashback ? '+' : '-' }} {{ tx.amount | number:'1.2-2' }}
                     </td>
-                    <td class="table-cell"
-                        [ngClass]="tx.isCashback ? ['text-green-600'] : ['text-red-600']">
+                    <td class="table-cell">
                       {{ tx.remark }}
                     </td>
                     <td class="table-cell text-center">

@@ -7,7 +7,7 @@ import { ToastService } from '../../services/toast.service';
 import { tap } from 'rxjs';
 import { DecimalPipe, NgClass } from '@angular/common';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
-import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
+import { _thaiDatepicker } from '../../shared/components/_thai-datepicker';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PaginationService } from '../../services/pagination.service';
 
@@ -18,7 +18,7 @@ import { PaginationService } from '../../services/pagination.service';
     DecimalPipe,
     NgClass,
     ThaiDatePipe,
-    ThaiDatepicker
+    _thaiDatepicker
   ],
   template: `
     <div class="p-4 sm:p-6 lg:p-8">

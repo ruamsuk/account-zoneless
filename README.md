@@ -13,7 +13,7 @@
 * **หน้า Blood** บันทึกข้อมูลความดันโลหิต และพิมพ์รายงาน
 * **การออกแบบที่ตอบสนอง (Responsive Design):** ใช้งานได้ดีบนทุกขนาดหน้าจอ
 * **โหมดมืด/สว่าง (Dark/Light Mode):** รองรับการสลับธีม
-* **ThaiDatepicker** แสดงวัน เดือน ปี พ.ศ. (BE) ได้ถูกต้องสวยงาม
+* **_thaiDatepicker** แสดงวัน เดือน ปี พ.ศ. (BE) ได้ถูกต้องสวยงาม
 * **Mask and Number Directive** สำหรับ Input
 
 ---
@@ -103,7 +103,7 @@
 
 ```typescript
 // 1. Import Component เข้ามา
-import { ThaiDatepickerComponent } from './shared/components/thai-datepicker.ts';
+import { ThaiDatepickerComponent } from './shared/components/_thai-datepicker.ts';
 
 @Component({
   standalone: true,

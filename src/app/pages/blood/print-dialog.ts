@@ -2,7 +2,7 @@ import { Component, inject, input, output, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BloodService } from '../../services/blood.service';
 import { BloodPressure } from '../../models/blood-pressure.model';
-import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
+import { _thaiDatepicker } from '../../shared/components/_thai-datepicker';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { NgClass } from '@angular/common';
 
@@ -10,7 +10,7 @@ import { NgClass } from '@angular/common';
   selector: 'app-print-dialog',
   imports: [
     ReactiveFormsModule,
-    ThaiDatepicker,
+    _thaiDatepicker,
     ThaiDatePipe,
     NgClass
   ],

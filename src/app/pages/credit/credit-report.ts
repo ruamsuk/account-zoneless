@@ -82,9 +82,15 @@ import { DateUtilityService } from '../../services/date-utility.service';
                   @for (tx of transactions(); track tx.id; let i = $index) {
                     <tr class="border-b dark:border-gray-700 text-base text-gray-700 dark:text-gray-300"
                         [ngClass]="tx.isCashback ? ['bg-green-50 dark:bg-green-900/20'] : ['']">
-                      <td class="table-cell text-left">{{ i + 1 }}</td>
-                      <td class="table-cell">{{ tx.date | thaiDate }}</td>
-                      <td class="table-cell">{{ tx.details }}</td>
+                      <td class="table-cell text-left"
+                          [ngClass]="tx.isCashback ? ['text-green-600'] : []">{{ i + 1 }}
+                      </td>
+                      <td class="table-cell"
+                          [ngClass]="tx.isCashback ? ['text-green-600'] : []">{{ tx.date | thaiDate }}
+                      </td>
+                      <td class="table-cell"
+                          [ngClass]="tx.isCashback ? ['text-green-600'] : []">{{ tx.details }}
+                      </td>
                       <td class="table-cell text-right"
                           [ngClass]="tx.isCashback ? ['text-green-600 dark:text-green-400'] : ['text-red-600 dark:text-red-500']">
                         {{ tx.isCashback ? '+' : '-' }} {{ tx.amount | number:'1.2-2' }}

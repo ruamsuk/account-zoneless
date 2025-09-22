@@ -2,14 +2,14 @@ import { Component, computed, effect, inject, input, output, signal } from '@ang
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { BloodPressure } from '../../models/blood-pressure.model';
 import { BpMask } from '../../shared/directives/bp-mask';
-import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
+import { _thaiDatepicker } from '../../shared/components/_thai-datepicker';
 
 @Component({
   selector: 'app-blood-add-edit-modal',
   imports: [
     ReactiveFormsModule,
     BpMask,
-    ThaiDatepicker
+    _thaiDatepicker
   ],
   template: `
     @if (isOpen()) {

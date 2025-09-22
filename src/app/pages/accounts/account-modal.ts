@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Account } from '../../models/account.model';
 import { ThaiDatePipe } from '../../pipe/thai-date.pipe';
 import { DecimalPipe, NgClass } from '@angular/common';
-import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
+import { _thaiDatepicker } from '../../shared/components/_thai-datepicker';
 import { NumberFormatDirective } from '../../shared/directives/number-format';
 import { AuthService } from '../../services/auth.service';
 
@@ -14,7 +14,7 @@ import { AuthService } from '../../services/auth.service';
     ThaiDatePipe,
     DecimalPipe,
     NgClass,
-    ThaiDatepicker,
+    _thaiDatepicker,
     NumberFormatDirective
   ],
   template: `

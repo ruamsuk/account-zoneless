@@ -36,17 +36,17 @@ import { NgOptimizedImage } from '@angular/common';
               <!-- Popup menu for account -->
               @if (isTransactionsMenuOpen()) {
                 <div class="absolute right-0 mt-2 w-56 bg-white dark:bg-gray-700 rounded-md shadow-lg py-1 z-50">
-                  <a routerLink="/cash-list" (click)="closeTransactionsMenu()"
+                  <a routerLink="/account/cash-list" (click)="closeTransactionsMenu()"
                      class="dropdown-item">รายการทั้งหมด</a>
                   <div class="border-t border-gray-200 dark:border-gray-600 my-1"></div>
-                  <a routerLink="/date-range" (click)="closeTransactionsMenu()" class="dropdown-item">
+                  <a routerLink="/account/date-range" (click)="closeTransactionsMenu()" class="dropdown-item">
                     รายงานตามช่วงเวลา
                   </a>
-                  <a routerLink="/financial-report" (click)="closeTransactionsMenu()"
+                  <a routerLink="/account/financial-report" (click)="closeTransactionsMenu()"
                      class="dropdown-item">
                     รายงานรายเดือน/ประเภท
                   </a>
-                  <a routerLink="/annual-report" (click)="closeTransactionsMenu()"
+                  <a routerLink="/account/annual-report" (click)="closeTransactionsMenu()"
                      class="dropdown-item">
                     รายงานรายปี
                   </a>
@@ -203,12 +203,13 @@ import { NgOptimizedImage } from '@angular/common';
 
               <!-- ===== ส่วนเงินสด (Cash) ===== -->
               <span class="mobile-menu-header">รายงานเงินสด</span>
-              <a routerLink="/cash-list" (click)="closeMobileMenu()"
+              <a routerLink="/account/cash-list" (click)="closeMobileMenu()"
                  class="mobile-menu-item">รายการทั้งหมด</a>
-              <a routerLink="/date-range" (click)="closeMobileMenu()"
+              <a routerLink="/account/date-range" (click)="closeMobileMenu()"
                  class="mobile-menu-item ">รายงานตามช่วงเวลา</a>
-              <a routerLink="/financial-report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานรายเดือน</a>
-              <a routerLink="/annual-report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานรายปี</a>
+              <a routerLink="/account/financial-report" (click)="closeMobileMenu()" class="mobile-menu-item">รายงานรายเดือน</a>
+              <a routerLink="/account/annual-report" (click)="closeMobileMenu()"
+                 class="mobile-menu-item">รายงานรายปี</a>
 
               <!-- ===== เส้นคั่น ===== -->
               <div class="px-3 py-1">

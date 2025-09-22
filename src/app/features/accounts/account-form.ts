@@ -2,7 +2,7 @@ import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountService } from '../../services/account.service';
 import { Account } from '../../models/account.model';
-import { ThaiDatepicker } from '../../shared/components/thai-datepicker';
+import { _thaiDatepicker } from '../../shared/components/_thai-datepicker';
 import { ToastService } from '../../services/toast.service';
 import { NumberFormatDirective } from '../../shared/directives/number-format';
 
@@ -10,7 +10,7 @@ import { NumberFormatDirective } from '../../shared/directives/number-format';
   selector: 'app-account-form',
   imports: [
     ReactiveFormsModule,
-    ThaiDatepicker,
+    _thaiDatepicker,
     NumberFormatDirective,
     NumberFormatDirective
   ],

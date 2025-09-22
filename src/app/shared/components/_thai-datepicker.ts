@@ -1,27 +1,14 @@
-import {
-  AfterViewInit,
-  Component,
-  computed,
-  effect,
-  ElementRef,
-  forwardRef,
-  HostListener,
-  model,
-  Renderer2,
-  signal,
-  ViewChild
-} from '@angular/core';
+import { Component, computed, effect, forwardRef, input, output, signal } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-thai-datepicker',
-  standalone: true,
   imports: [CommonModule],
   providers: [
     {
       provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ThaiDatepicker),
+      useExisting: forwardRef(() => _thaiDatepicker),
       multi: true
     }
   ],
@@ -114,43 +101,35 @@ import { CommonModule } from '@angular/common';
         </div>
       }
     </div>
-  `
+  `,
+  styles: ``
 })
-export class ThaiDatepicker implements ControlValueAccessor, AfterViewInit {
-  @ViewChild('datepickerContainer') datepickerContainer!: ElementRef;
+export class _thaiDatepicker implements ControlValueAccessor {
 
-  @HostListener('document:click', ['$event'])
-  onDocumentClick(event: MouseEvent): void {
-    const target = event.target as HTMLElement;
-
-    // ถ้าไม่ได้คลิกใน container และ popup เปิดอยู่ → ปิด
-    if (this.isPickerOpen() && !this.datepickerContainer.nativeElement.contains(target)) {
-      this.isPickerOpen.set(false);
-    }
-  }
-
-  ngAfterViewInit(): void {
-    // ป้องกันกรณี ViewChild ยังไม่พร้อม
-    if (!this.datepickerContainer) return;
-    this.renderer.listen('document', 'click', (event: MouseEvent) => {
-      const target = event.target as HTMLElement;
-      if (this.isPickerOpen() && !this.datepickerContainer.nativeElement.contains(target)) {
-        this.isPickerOpen.set(false);
-      }
-    });
-
-  }
-
-  // ✅ Hybrid state
-  selectedDate = model<Date | null>(null); // ใช้ได้ทั้ง signal และ formControlName
-
-  // ✅ Internal signals
+  // --- State Signals ---
+  shouldClose = input<boolean>(false);
+  closed = output<void>();
   isPickerOpen = signal(false);
-  viewDate = signal(new Date());
+  selectedDate = signal<Date | null>(null);
+  viewDate = signal(new Date()); // เดือน/ปี ที่กำลังแสดงในปฏิทิน
   pickerView = signal<'days' | 'months' | 'years'>('days');
-  disabled = signal(false);
+  pickerOnOff = input<boolean>(false);
+  today = new Date();
 
-  // ✅ Computed
+  valueFromParent = signal<any | null>(null);
+
+  // --- Data ---
+  readonly months = [
+    {value: 0, name: 'มกราคม'}, {value: 1, name: 'กุมภาพันธ์'},
+    {value: 2, name: 'มีนาคม'}, {value: 3, name: 'เมษายน'},
+    {value: 4, name: 'พฤษภาคม'}, {value: 5, name: 'มิถุนายน'},
+    {value: 6, name: 'กรกฎาคม'}, {value: 7, name: 'สิงหาคม'},
+    {value: 8, name: 'กันยายน'}, {value: 9, name: 'ตุลาคม'},
+    {value: 10, name: 'พฤศจิกายน'}, {value: 11, name: 'ธันวาคม'}
+  ];
+  readonly weekDays = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+
+  // --- Computed Signals ---
   formattedSelectedDate = computed(() => {
     const date = this.selectedDate();
     if (!date) return '';
@@ -160,66 +139,6 @@ export class ThaiDatepicker implements ControlValueAccessor, AfterViewInit {
     return `${day} ${month} ${year}`;
   });
 
-  // ✅ CVA methods
-  private _onChange = (_: any) => {
-  };
-  private _onTouched = () => {
-  };
-
-  writeValue(value: Date | null): void {
-    this.selectedDate.set(value);
-  }
-
-  registerOnChange(fn: any): void {
-    this._onChange = fn;
-  }
-
-  registerOnTouched(fn: any): void {
-    this._onTouched = fn;
-  }
-
-  setDisabledState(isDisabled: boolean): void {
-    this.disabled.set(isDisabled);
-  }
-
-  // ✅ Sync signal → form
-  constructor(
-    private renderer: Renderer2,
-    private el: ElementRef
-  ) {
-    effect(() => {
-      this._onChange(this.selectedDate());
-    });
-  }
-
-  // ✅ UI interaction
-  togglePicker(event: MouseEvent): void {
-    event.stopPropagation();
-    alert('togglePicker');
-    if (this.disabled()) return;
-    this.isPickerOpen.update(v => !v);
-    this._onTouched(); // แจ้ง touched
-  }
-
-  selectDate(date: Date): void {
-    this.selectedDate.set(date);
-    this.isPickerOpen.set(false);
-  }
-
-  // ✅ Static data
-  readonly weekDays = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
-
-  // ✅ Static data
-  readonly months = [
-    {value: 0, name: 'มกราคม'}, {value: 1, name: 'กุมภาพันธ์'},
-    {value: 2, name: 'มีนาคม'}, {value: 3, name: 'เมษายน'},
-    {value: 4, name: 'พฤษภาคม'}, {value: 5, name: 'มิถุนายน'},
-    {value: 6, name: 'กรกฎาคม'}, {value: 7, name: 'สิงหาคม'},
-    {value: 8, name: 'กันยายน'}, {value: 9, name: 'ตุลาคม'},
-    {value: 10, name: 'พฤศจิกายน'}, {value: 11, name: 'ธันวาคม'}
-  ];
-
-  // ✅ Calendar grid
   calendarGrid = computed(() => {
     const date = this.viewDate();
     const year = date.getFullYear();
@@ -227,61 +146,126 @@ export class ThaiDatepicker implements ControlValueAccessor, AfterViewInit {
 
     const firstDayOfMonth = new Date(year, month, 1);
     const lastDayOfMonth = new Date(year, month + 1, 0);
-    const startingDayOfWeek = firstDayOfMonth.getDay();
+    const startingDayOfWeek = firstDayOfMonth.getDay(); // 0=Sun, 1=Mon,...
     const daysInMonth = lastDayOfMonth.getDate();
 
     const grid: { day: number, date: Date, isCurrentMonth: boolean }[] = [];
 
+    // Add blank days for the start of the month
     for (let i = 0; i < startingDayOfWeek; i++) {
-      grid.push({day: 0, date: new Date(), isCurrentMonth: false});
+      grid.push({day: 0, date: new Date(), isCurrentMonth: false}); // Placeholder
     }
 
+    // Add days of the current month
     for (let day = 1; day <= daysInMonth; day++) {
       grid.push({day, date: new Date(year, month, day), isCurrentMonth: true});
     }
-
     return grid;
   });
 
-  // ✅ Year picker grid
   yearPickerGrid = computed(() => {
     const year = this.viewDate().getFullYear() + 543;
-    const startYear = Math.floor((year - 1) / 10) * 10 + 1;
+    const startYear = Math.floor((year - 1) / 10) * 10 + 1; // Start of the decade
     return Array.from({length: 10}, (_, i) => startYear + i);
   });
 
-// ✅ Utility method
-  isSameDay(date1: Date | null, date2: Date | null): boolean {
-    if (!date1 || !date2) return false;
-    return date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate();
+  // --- CVA Implementation ---
+  onChange: any = () => {
+  };
+  onTouched: any = () => {
+  };
+  disabled = signal(false);
+
+  constructor() {
+    effect(() => {
+      const value = this.valueFromParent();
+      let dateValue: Date | null = null;
+
+      if (value instanceof Date) {
+        dateValue = value;
+      } else if (value && typeof value.toDate === 'function') {
+        // Use type assertion (as any) to bypass incorrect type inference
+        dateValue = (value as any).toDate();
+      }
+
+      if (dateValue && !isNaN(dateValue.getTime())) {
+        this.selectedDate.set(dateValue);
+        this.viewDate.set(dateValue);
+      } else {
+        this.selectedDate.set(null);
+      }
+    });
+
+    effect(() => {
+      if (this.shouldClose()) {
+        this.isPickerOpen.set(false);
+        this.closed.emit();
+      }
+    });
   }
 
-// ✅ Month navigation
+  writeValue(value: Date | null): void {
+    this.valueFromParent.set(value);
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled.set(isDisabled);
+  }
+
+  // --- UI Methods ---
+  togglePicker(event: MouseEvent): void {
+    event.stopPropagation();
+    if (this.disabled()) return;
+    this.isPickerOpen.update(v => !v);
+    if (this.isPickerOpen()) {
+      this.pickerView.set('days');
+      if (this.selectedDate()) {
+        this.viewDate.set(this.selectedDate()!);
+      } else {   // <--- เพิ่มมาใหม่
+        this.viewDate.set(new Date());
+      }
+    }
+  }
+
   changeMonth(offset: number): void {
     this.viewDate.update(d => new Date(d.getFullYear(), d.getMonth() + offset, 1));
   }
 
-// ✅ Select month
+  selectDate(date: Date): void {
+    this.selectedDate.set(date);
+    this.onChange(date);
+    this.isPickerOpen.set(false);
+  }
+
   selectMonth(monthIndex: number): void {
     this.viewDate.update(d => new Date(d.getFullYear(), monthIndex, 1));
     this.pickerView.set('days');
   }
 
-// ✅ Year navigation
-  changeYearPickerDecade(offset: number): void {
-    this.viewDate.update(d => new Date(d.getFullYear() + offset, d.getMonth(), 1));
-  }
-
-// ✅ Select year
   selectYear(yearBE: number): void {
     const yearCE = yearBE - 543;
     this.viewDate.update(d => new Date(yearCE, d.getMonth(), 1));
     this.pickerView.set('days');
   }
 
-// ✅ Today (ใช้ใน class.today)
-  today = new Date();
+  changeYearPickerDecade(offset: number): void {
+    this.viewDate.update(d => new Date(d.getFullYear() + offset, d.getMonth(), 1));
+  }
+
+  // --- Helper Methods ---
+  isSameDay(date1: Date | null, date2: Date | null): boolean {
+    if (!date1 || !date2) return false;
+    return date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate();
+  }
 
 }

@@ -30,36 +30,39 @@ export const routes: Routes = [
       }
     ]
   },
+  /* Cash */
   {
-    path: 'cash-list',
-    pathMatch: 'full',
+    path: 'account',
     ...canActivate(redirectUnauthorizedToLogin),
-    loadComponent: () => import('./pages/accounts/cash-list')
-      .then(m => m.CashList)
+    children: [
+      {
+        path: 'cash-list',
+        loadComponent: () => import('./pages/accounts/cash-list')
+          .then(m => m.CashList)
+      },
+      {
+        path: 'financial-report', // month and detail
+        loadComponent: () => import('./pages/accounts/cash-monthly-report')
+          .then(m => m.CashMonthlyReport)
+      },
+      {
+        path: 'date-range',
+        loadComponent: () => import('./features/reports/date-range-report')
+          .then(m => m.DateRangeReport)
+      },
+      {
+        path: 'annual-report',  // year
+        loadComponent: () => import('./pages/accounts/cash-annual-report')
+          .then(m => m.CashAnnualReport)
+      },
+      {
+        path: 'monthly-detail/:year/:month',  // month detail modal
+        loadComponent: () => import('./pages/accounts/monthly-detail-modal')
+          .then(m => m.MonthlyDetailModal)
+      }
+    ]
   },
-  {
-    path: 'financial-report', // month and detail
-    loadComponent: () => import('./pages/accounts/cash-monthly-report')
-      .then(m => m.CashMonthlyReport),
-    ...canActivate(redirectUnauthorizedToLogin)
-  },
-  {
-    path: 'date-range',
-    loadComponent: () => import('./features/reports/date-range-report')
-      .then(m => m.DateRangeReport),
-    ...canActivate(redirectUnauthorizedToLogin)
-  },
-  {
-    path: 'annual-report',  // year
-    loadComponent: () => import('./pages/accounts/cash-annual-report')
-      .then(m => m.CashAnnualReport),
-    ...canActivate(redirectUnauthorizedToLogin)
-  },
-  {
-    path: 'monthly-detail/:year/:month',  // month detail modal
-    loadComponent: () => import('./pages/accounts/monthly-detail-modal').then(m => m.MonthlyDetailModal),
-    ...canActivate(redirectUnauthorizedToLogin)
-  },
+  /* delete data */
   {
     path: 'update-details',
     loadComponent: () => import('./features/accounts/update-details')
@@ -67,6 +70,7 @@ export const routes: Routes = [
     ...canActivate(redirectUnauthorizedToLogin),
 
   },
+  /* Credit */
   {
     path: 'credit',
     ...canActivate(redirectUnauthorizedToLogin),
